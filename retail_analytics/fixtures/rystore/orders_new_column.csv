@@ -1,0 +1,2 @@
+order_id,order_datetime,store_id,customer_id,order_channel,payment_method,order_status,subtotal,discount_total,vat_total,delivery_fee,total_amount,channel_code
+ORD900001,2025-06-01 10:15:00,ST901,CUST90001,In-store,Card,Completed,10.0,0.0,1.0,0.0,11.0,IS

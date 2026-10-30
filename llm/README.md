@@ -11,7 +11,7 @@ Antes do 05: preparação do ambiente (skills da Databricks em `.claude/skills/`
 | [03](prompt_03.md) | Contrato de dados com a fonte | contract | 02 | Concluído, 1.0.0 ([contrato](../contracts/rystore.odcs.yaml), [pauta](../contracts/rystore_open_points.md)) |
 | [04](prompt_04.md) | Decisões de arquitetura em aberto | — | 03 | Concluído ([decisões](../knowledge/decisions/decision-log.md)) |
 | [05](prompt_05.md) | Carga dos CSVs no Supabase (origem) | — | 04 | Concluído ([script](../scripts/load_rystore_to_supabase.py)) |
-| [06](prompt_06.md) | Dados de teste da ingestão e da bronze | test-data | 02, 03 | Pendente |
+| [06](prompt_06.md) | Dados de teste da ingestão e da bronze | test-data | 02, 03 | Concluído ([fixtures](../retail_analytics/fixtures/rystore/expected.json)) |
 | [07](prompt_07.md) | Ingestão boto3 e camada bronze | — | 04, 05, 06 | Pendente |
 | [08](prompt_08.md) | Camada silver | — | 07 | Pendente |
 | [09](prompt_09.md) | Camada gold (modelo dimensional) | — | 08 | Pendente |

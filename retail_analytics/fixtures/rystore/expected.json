@@ -1,0 +1,55 @@
+{
+  "_about": "Expected result of validate_delivery for each synthetic fixture, written before the code (skill test-data). line = line number in the file, header = 1. fatal = the whole delivery is stopped (schema drift); quarantine = only that line is set aside.",
+  "cases": [
+    {
+      "file": "orders_clean.csv", "table": "orders",
+      "accepted": 5, "quarantine": [], "fatal": null,
+      "why": "Clean delivery with the edge cases of the profile: anonymous order (empty customer_id), Cancelled with total 0, Refunded, a time in the spring DST gap (2025-03-30 01:30) and one in the autumn repeated hour (2025-10-26 01:30). Bronze keeps all of them as text."
+    },
+    {
+      "file": "order_items_clean.csv", "table": "order_items",
+      "accepted": 5, "quarantine": [], "fatal": null,
+      "why": "Items with and without promotion_id (optional)."
+    },
+    {
+      "file": "orders_broken_line.csv", "table": "orders",
+      "accepted": 2, "quarantine": [{"line": 3, "reason": "column_count"}], "fatal": null,
+      "why": "Line 3 has 11 fields instead of 12."
+    },
+    {
+      "file": "orders_broken_bytes.csv", "table": "orders",
+      "accepted": 2, "quarantine": [{"line": 3, "reason": "encoding"}], "fatal": null,
+      "why": "Line 3 has a byte that is not ASCII (0xFF)."
+    },
+    {
+      "file": "orders_new_column.csv", "table": "orders",
+      "accepted": 0, "quarantine": [], "fatal": "schema_drift",
+      "why": "A new column (channel_code) is a change of the contract: the delivery stops."
+    },
+    {
+      "file": "orders_renamed_column.csv", "table": "orders",
+      "accepted": 0, "quarantine": [], "fatal": "schema_drift",
+      "why": "Second delivery with drift: order_status renamed to order_state. The schema check must stop it."
+    },
+    {
+      "file": "orders_duplicate_key.csv", "table": "orders",
+      "accepted": 2, "quarantine": [{"line": 3, "reason": "duplicate_key"}], "fatal": null,
+      "why": "ORD900001 twice in one delivery: the first is kept, the second set aside."
+    },
+    {
+      "file": "orders_required_empty.csv", "table": "orders",
+      "accepted": 1, "quarantine": [{"line": 3, "reason": "required_empty:order_status"}], "fatal": null,
+      "why": "order_status is required by the contract."
+    },
+    {
+      "file": "orders_empty.csv", "table": "orders",
+      "accepted": 0, "quarantine": [], "fatal": "no_rows",
+      "why": "The contract says every delivery has rows (rowCount > 0)."
+    }
+  ],
+  "orphans": {
+    "child": "order_items_orphan.csv", "parent": "orders_clean.csv",
+    "accepted": 1, "quarantine": [{"line": 3, "reason": "orphan:order_id"}],
+    "why": "A child row before its parent: OI9000009 points to ORD999999, which is not in the orders."
+  }
+}

@@ -1,0 +1,3 @@
+order_item_id,order_id,product_id,quantity,unit_price,discount_amount,line_net_amount,line_vat_amount,promotion_id
+OI9000001,ORD900001,P9001,2,5.0,0.0,10.0,1.0,
+OI9000009,ORD999999,P9001,1,5.0,0.0,5.0,0.5,

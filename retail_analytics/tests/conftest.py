@@ -4,18 +4,22 @@ import os, sys, pathlib
 from contextlib import contextmanager
 
 
+import json
+import csv
+
+import pytest
+
+# The pure Python tests (validation of a delivery) run without a cluster. Databricks Connect
+# is only needed by the tests that ask for the spark fixture.
 try:
     from databricks.connect import DatabricksSession
     from databricks.sdk import WorkspaceClient
     from pyspark.sql import SparkSession
-    import pytest
-    import json
-    import csv
-    import os
 except ImportError:
-    raise ImportError(
-        "Test dependencies not found.\n\nRun tests using 'uv run pytest'. See http://docs.astral.sh/uv to learn more about uv."
-    )
+    DatabricksSession = None
+    SparkSession = object
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
 
 
 @pytest.fixture()
@@ -27,6 +31,8 @@ def spark() -> SparkSession:
             df = spark.createDataFrame([(1,)], ["x"])
             assert df.count() == 1
     """
+    if DatabricksSession is None:
+        pytest.skip("Databricks Connect not installed: run 'uv sync --dev' in retail_analytics/")
     return DatabricksSession.builder.getOrCreate()
 
 
@@ -82,6 +88,8 @@ def _allow_stderr_output(config: pytest.Config):
 
 def pytest_configure(config: pytest.Config):
     """Configure pytest session."""
+    if DatabricksSession is None:
+        return
     with _allow_stderr_output(config):
         _enable_fallback_compute()
 

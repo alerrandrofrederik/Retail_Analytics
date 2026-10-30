@@ -24,3 +24,13 @@ resources:
             base_parameters:
               secret_scope: retail_analytics
               bucket: rystore
+        - task_key: build_silver
+          depends_on:
+            - task_key: ingest_bronze
+          notebook_task:
+            notebook_path: ../src/build_silver.py
+        - task_key: build_gold
+          depends_on:
+            - task_key: build_silver
+          notebook_task:
+            notebook_path: ../src/build_gold.py

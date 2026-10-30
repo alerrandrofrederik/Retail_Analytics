@@ -39,3 +39,31 @@ Origem das respostas:
 | 17 | Inteiros como decimal | As colunas inteiras chegam sem `.0` (conferido pelo script da metadata). Decimais podem ter número variável de casas (`3.0`, `18.5`) | Delegada (confirmado nos dados) |
 | 18 | Total com diferença de 0,01 | Aceito: tolerância de 0,01 por arredondamento | Delegada |
 | 19 | Dados pessoais | Tratados como reais (`restricted`), mascarados fora da bronze, embora a fonte diga que são fictícios | Delegada |
+
+## Em aberto (desde 2026-10-30)
+
+Perguntas novas para o dono da fonte, abertas depois do contrato 1.0.0. Uma resposta pode mudar o contrato (nova versão, com o aviso de 7 dias).
+
+| # | Pergunta | Por quê | Origem |
+|---|---|---|---|
+| 20 | A fonte pode entregar o histórico do custo dos produtos (`unit_cost` com data de vigência)? | A margem da gold usa o custo atual: se um custo mudar, a margem de todo o histórico muda junto ([produto fato_vendas](../docs/data-products/fato_vendas/README.md), problema conhecido 1) | Engenheiro de dados (produto de dados, 2026-10-30) |
+| 21 | Quais são as descrições reais das 77 colunas? | O dicionário da fonte traz textos genéricos ("Categorical or descriptive attribute."); o ponto 16 adiou a resposta, e o catálogo e os produtos de dados precisam delas | Engenheiro de dados (knowledge-refresh, 2026-10-30) |
+
+### Rascunho de issue (não publicado)
+
+O canal de suporte do contrato são as issues do repositório no GitHub. O engenheiro de dados abre a issue quando quiser:
+
+> **Título:** RYStore: histórico de custo dos produtos e descrições das colunas (pontos 20 e 21 do contrato)
+>
+> Olá,
+>
+> Duas perguntas sobre a entrega da RYStore, abertas depois do contrato 1.0.0:
+>
+> 1. **Histórico de custo.** A fonte pode entregar o `unit_cost` dos produtos com data de vigência, ou uma tabela com o histórico de custos? Hoje a margem das vendas usa o custo atual do produto, então uma mudança de custo altera a margem de todo o passado.
+> 2. **Descrições das colunas.** O `data_dictionary.csv` traz textos genéricos para as 77 colunas. Pode enviar uma descrição de negócio para cada uma? Elas entram no catálogo e nos produtos de dados.
+>
+> Qualquer resposta que mude o formato entra como uma nova versão do contrato, com o aviso de 7 dias combinado.
+>
+> Obrigado,
+> Engenharia de dados
+

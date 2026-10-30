@@ -23,10 +23,10 @@ resources:
         - environment_key: default
           spec:
             environment_version: "4"
+            # Only what the serverless environment lacks: it already has pyarrow and boto3, and
+            # installing them again cost most of the ~220 s of setup (review 07-09, finding 11).
             dependencies:
               - duckdb==2.0.0
-              - pyarrow==26.0.0
-              - boto3==1.43.122
       tasks:
         - task_key: ingest_bronze
           environment_key: default

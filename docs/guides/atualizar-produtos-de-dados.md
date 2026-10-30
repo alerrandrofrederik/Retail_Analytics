@@ -8,5 +8,4 @@ A página [`docs/data-products/index.html`](../data-products/index.html) é gera
    ```bash
    uv run --no-project --with markdown --with pyyaml python docs/data-products/build_index.py
    ```
-   O script não tem `--help`: ele sempre reescreve o `index.html`.
 4. Um produto novo é uma pasta nova em `docs/data-products/<produto>/`, com `README.md` e `<produto>.odcs.yaml`. A skill `data-product` ([`llm/prompt_14.md`](../../llm/prompt_14.md)) faz o plano e o conteúdo.

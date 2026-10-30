@@ -1,0 +1,10 @@
+order_id,order_datetime,store_id,customer_id,order_channel,payment_method,order_status,subtotal,discount_total,vat_total,delivery_fee,total_amount
+ORD900010,2025-06-04 10:00:00,ST901,CUST90001,In-store,Card,Completed,10.0,0.0,0.0,0.0,12.0
+ORD900011,2025-06-04 10:05:00,ST901,CUST90001,In-store,Card,Cancelled,5.0,0.0,0.0,0.0,5.0
+ORD900012,2025-06-04 10:10:00,ST901,CUST90001,In-store,Card,Completed,9.0,0.0,0.0,0.0,9.0
+ORD900013,2025-06-04 10:15:00,ST901,CUST90001,Online,Card,Completed,20.0,0.0,0.0,0.0,20.0
+ORD900014,2025-06-04 10:20:00,ST901,CUST90001,Phone,Card,Completed,5.0,0.0,0.0,0.0,5.0
+ORD900015,2025-06-04 10:25:00,ST901,CUST90001,In-store,Card,Pending,5.0,0.0,0.0,0.0,5.0
+ORD900016,2025-06-04 10:30:00,ST901,CUST90001,In-store,Cheque,Completed,5.0,0.0,0.0,0.0,5.0
+ORD900017,2025-06-04 10:35:00,ST901,CUST90001,In-store,Card,Completed,5.0,0.0,0.0,0.0,5.0
+ORD900018,2025-06-04 10:40:00,ST901,CUST90001,In-store,Card,Completed,0.0,0.0,0.0,0.0,0.0

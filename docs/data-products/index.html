@@ -45,9 +45,9 @@ pre code{color:inherit;font-size:inherit;}
 <section class="view on" id="v-hub">
   <h1>Produtos de dados</h1>
   <div class="sub">O que a plataforma serve da camada gold de <span class="mono">lh_retail_analytics</span>, cada produto com o guia, as métricas e o contrato.</div>
-  <div class="cards"><div class="pcard" data-go="v-fato_vendas"><div class="nm">Vendas RYStore<span class="cert">1.0.0 · active</span></div><div class="desc">One row per order item of the RYStore supermarket, with the store, the customer, the product, the supplier, the promotion, the channel and the status of its order, and the amounts of the line. For sales, margin and mix analysis, in the Genie or in SQL.</div><div class="tl">lh_retail_analytics.gold.fato_vendas</div><div class="foot"><span>one order item (order_item_id)</span><span>pronta até 08:00 UTC</span></div></div></div>
+  <div class="cards"><div class="pcard" data-go="v-fato_vendas"><div class="nm">Vendas RYStore<span class="cert">1.1.0 · active</span></div><div class="desc">One row per order item of the RYStore supermarket, with the store, the customer, the product, the supplier, the promotion, the channel and the status of its order, and the amounts of the line. For sales, margin and mix analysis, in the Genie or in SQL.</div><div class="tl">lh_retail_analytics.gold.fato_vendas</div><div class="foot"><span>one order item (order_item_id)</span><span>pronta até 08:00 UTC</span></div></div></div>
 </section>
-<section class="view" id="v-fato_vendas"><div class="crumbs"><a data-go="v-hub">Produtos de dados</a> / fato_vendas</div><h1>Vendas RYStore<span class="cert">1.0.0 · active</span></h1><div class="sub">One row per order item of the RYStore supermarket, with the store, the customer, the product, the supplier, the promotion, the channel and the status of its order, and the amounts of the line. For sales, margin and mix analysis, in the Genie or in SQL.</div><div class="tabs"><div class="tab on" data-pt="t0">Visão geral</div><div class="tab" data-pt="t1">Guia</div><div class="tab" data-pt="t2">Modelo de dados</div><div class="tab" data-pt="t3">Métricas</div><div class="tab" data-pt="t4">Consultas iniciais</div><div class="tab" data-pt="t5">Qualidade</div><div class="tab" data-pt="t6">Versões</div><div class="tab" data-pt="t7">Pontos em aberto</div><div class="tab" data-pt="t8">Contrato</div></div><div class="pp on" data-pp="t0"><table>
+<section class="view" id="v-fato_vendas"><div class="crumbs"><a data-go="v-hub">Produtos de dados</a> / fato_vendas</div><h1>Vendas RYStore<span class="cert">1.1.0 · active</span></h1><div class="sub">One row per order item of the RYStore supermarket, with the store, the customer, the product, the supplier, the promotion, the channel and the status of its order, and the amounts of the line. For sales, margin and mix analysis, in the Genie or in SQL.</div><div class="tabs"><div class="tab on" data-pt="t0">Visão geral</div><div class="tab" data-pt="t1">Guia</div><div class="tab" data-pt="t2">Modelo de dados</div><div class="tab" data-pt="t3">Métricas</div><div class="tab" data-pt="t4">Consultas iniciais</div><div class="tab" data-pt="t5">Qualidade</div><div class="tab" data-pt="t6">Versões</div><div class="tab" data-pt="t7">Pontos em aberto</div><div class="tab" data-pt="t8">Contrato</div></div><div class="pp on" data-pp="t0"><table>
 <thead>
 <tr>
 <th></th>
@@ -96,7 +96,7 @@ pre code{color:inherit;font-size:inherit;}
 1. <strong>Margem com o custo de hoje.</strong> <code>cost_amount</code> e <code>margin_amount</code> usam o <code>unit_cost</code> atual do produto, e não o custo no dia da venda. Se um custo mudar, a margem de todo o histórico muda junto. A fonte não guarda o histórico de custos.
 2. <strong>Itens × total do pedido.</strong> A soma de <code>net_amount + vat_amount</code> de um pedido não inclui a taxa de entrega, que é cobrada por pedido. Nos pedidos Completed, os itens somam £244.156,27; com as taxas de entrega (£5.364,13), chegam a £249.520,40, contra os £249.520,30 de receita da <code>fato_pedidos</code>. A diferença de £0,10 vem de 82 pedidos com ±0,01, que é o arredondamento da fonte, dentro da tolerância do contrato. Para a receita do pedido, use <code>gold.fato_pedidos.revenue_amount</code>.
 3. <strong>Desconto por item × desconto do pedido.</strong> Em 22 pedidos, a soma de <code>discount_amount</code> difere de <code>discount_total</code> do pedido em ±0,01, também por arredondamento da fonte.
-4. <strong>Promoção sem dimensão.</strong> <code>promotion_id</code> existe, mas a gold ainda não tem <code>dim_promocao</code>. Há 6 promoções em 1.990 linhas, e só elas têm desconto.
+4. <strong>Promoção.</strong> Desde a versão 1.1.0, <code>promotion_id</code> junta com <code>gold.dim_promocao</code>. Há 6 promoções em 1.990 linhas, e só elas têm desconto.
 5. <strong>Atualização.</strong> No dev, o agendamento está pausado; em 2026-10-30, a tabela foi reconstruída à mão às 18:22 UTC, depois do SLA.
 6. <strong>Dia e mês.</strong> Use sempre <code>date_key</code>, que é a data local do Reino Unido. Agrupar por um horário em UTC muda 247 pedidos de dia e 6 de mês (<a href="../../../knowledge/business/glossary.md">glossário</a>).</p>
 <p><strong>Por onde começar:</strong> pela consulta 1 (receita e margem por mês), sempre com <code>WHERE is_revenue</code>.</p></div><div class="pp" data-pp="t2"><table>
@@ -140,8 +140,8 @@ pre code{color:inherit;font-size:inherit;}
 </tr>
 <tr>
 <td><code>promotion_id</code></td>
-<td>—</td>
-<td>sem dimensão na gold (problema conhecido 4)</td>
+<td><code>gold.dim_promocao.promotion_id</code></td>
+<td>opcional: vazio quando a linha não tem promoção (use LEFT JOIN)</td>
 </tr>
 </tbody>
 </table>
@@ -245,6 +245,14 @@ WHERE v.order_status IN ('Cancelled', 'Refunded')
 GROUP BY d.month, v.order_status
 ORDER BY d.month, v.order_status;
 
+-- 5b. Receita líquida por promoção (LEFT JOIN: a maioria das linhas não tem promoção)
+SELECT coalesce(pr.promotion_name, '(sem promoção)') AS promocao, count(*) AS itens, sum(v.discount_amount) AS desconto, sum(v.net_amount) AS receita_liquida
+FROM lh_retail_analytics.gold.fato_vendas v
+LEFT JOIN lh_retail_analytics.gold.dim_promocao pr ON pr.promotion_id = v.promotion_id
+WHERE v.is_revenue
+GROUP BY 1
+ORDER BY receita_liquida DESC;
+
 -- 5. Linhas com e sem promoção
 SELECT v.promotion_id IS NOT NULL AS com_promocao, count(*) AS itens, sum(v.discount_amount) AS desconto, sum(v.net_amount) AS receita_liquida
 FROM lh_retail_analytics.gold.fato_vendas v
@@ -303,19 +311,29 @@ ORDER BY receita_liquida DESC;
 </thead>
 <tbody>
 <tr>
+<td>1.1.0</td>
+<td>2026-10-30</td>
+<td>Nova dimensão <code>gold.dim_promocao</code> (nome, vigência, tipo e valor do desconto, categoria); <code>promotion_id</code> passa a juntar com ela. Nenhuma coluna da <code>fato_vendas</code> mudou.</td>
+</tr>
+<tr>
 <td>1.0.0</td>
 <td>2026-10-30</td>
 <td>Primeira versão: 47.512 itens, 2025. Nenhuma correção reportada por consumidores.</td>
 </tr>
 </tbody>
-</table></div><div class="pp" data-pp="t7"><p>Nada foi alterado na tabela nem no SQL.</p>
+</table>
+<h3>Nota de versão 1.1.0 (rascunho, não enviado)</h3>
+<blockquote>
+<p><strong>Para:</strong> os consumidores de <code>gold.fato_vendas</code> · <strong>Assunto:</strong> Vendas RYStore 1.1.0: nova dimensão de promoções</p>
+<p>A gold ganhou a tabela <code>gold.dim_promocao</code>, uma linha por promoção, com o nome, a vigência, o tipo e o valor do desconto e a categoria. Junte com <code>fato_vendas.promotion_id</code> usando LEFT JOIN, porque a maioria das linhas não tem promoção. Nenhuma coluna e nenhum número da <code>fato_vendas</code> mudou, então nenhuma consulta existente quebra.</p>
+</blockquote></div><div class="pp" data-pp="t7"><p>Nada foi alterado na tabela nem no SQL.</p>
 <ol>
-<li>Criar uma <code>dim_promocao</code> na gold, a partir de <code>silver.promotions</code>.</li>
-<li>Decidir se a margem deve usar o custo histórico. Isso depende de a fonte entregar o histórico de <code>unit_cost</code>, então é uma pergunta para o dono da fonte.</li>
+<li>~~Criar uma <code>dim_promocao</code> na gold~~: feito na versão 1.1.0.</li>
+<li>Decidir se a margem deve usar o custo histórico. Isso depende de a fonte entregar o histórico de <code>unit_cost</code>, e a pergunta está no ponto 20 da <a href="../../../contracts/rystore_open_points.md">pauta do contrato</a>.</li>
 <li>Reativar o agendamento no prod, para cumprir o SLA de 08:00 UTC.</li>
 </ol></div><div class="pp" data-pp="t8"><p>Contrato com o consumidor, <code>fato_vendas.odcs.yaml</code> (ODCS v3.1.0, validado contra o JSON Schema).</p><pre><code># The data contract between the data platform and the consumers of gold.fato_vendas (skill data-product).
 # Open Data Contract Standard (ODCS) v3.1.0, validated against its JSON Schema.
-# Version 1.0.0, 2026-10-30: written from the table (gold/files/fato_vendas, run 498752805931100), its SQL
+# Version 1.1.0, 2026-10-30 (1.0.0 the same day; 1.1.0 adds gold.dim_promocao): written from the table (gold/files/fato_vendas, run 498752805931100), its SQL
 # (retail_analytics/src/retail_analytics/gold.py) and the reconciliation (reports/reconcile/). Types are the
 # types of the published table, never retyped.
 
@@ -323,7 +341,7 @@ kind: DataContract
 apiVersion: v3.1.0
 id: rystore-fato-vendas
 name: fato_vendas
-version: 1.0.0
+version: 1.1.0
 status: active
 domain: retail
 dataProduct: Vendas RYStore
@@ -335,7 +353,7 @@ description:
     The order-level total, with the delivery fee, is in gold.fato_pedidos.&#x27;
   limitations: &#x27;cost_amount and margin_amount use the current unit_cost of the product, not the cost on the day of the sale.
     The sum of net_amount + vat_amount of an order differs from its total_amount by the delivery fee and, in 82 orders, by
-    0.01 (rounding of the source). promotion_id has no dimension in gold yet. The data covers 2025-01-01 to 2025-12-31.&#x27;
+    0.01 (rounding of the source). The data covers 2025-01-01 to 2025-12-31.&#x27;
 servers:
   - server: databricks-gold
     type: databricks
@@ -443,7 +461,7 @@ schema:
         logicalType: string
         physicalType: STRING
         required: false
-        description: The promotion of the line, empty when there is none. No dimension in gold yet.
+        description: The promotion of the line, empty when there is none; joins gold.dim_promocao (LEFT JOIN).
       - name: order_channel
         logicalType: string
         physicalType: STRING

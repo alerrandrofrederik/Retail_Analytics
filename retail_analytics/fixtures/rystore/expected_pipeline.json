@@ -90,6 +90,7 @@
       "dim_fornecedor": 1,
       "dim_produto": 3,
       "dim_cliente": 3,
+      "dim_promocao": 1,
       "fato_pedidos": 5,
       "fato_vendas": 5,
       "fato_estoque": 2
@@ -111,7 +112,8 @@
       ]
     ],
     "why": "Revenue only from Completed: ORD900001 (11.00) + ORD900004 (4.00); ORD900002 is now Refunded.",
-    "calendar_why": "dim_data covers the years of the orders (2025) and of the stock snapshot (ingested 2026-01-01): 2025-01-01..2026-12-31. Every date key of a fact exists in dim_data."
+    "calendar_why": "dim_data covers the years of the orders (2025) and of the stock snapshot (ingested 2026-01-01): 2025-01-01..2026-12-31. Every date key of a fact exists in dim_data.",
+    "promotion_why": "dim_promocao has one row per promotion of silver.promotions (1 in the fixture), and every promotion_id of fato_vendas exists in it."
   },
   "layout": {
     "keys": {
@@ -159,5 +161,159 @@
       "customers": 1,
       "orders": 2
     }
+  },
+  "checks_bad": {
+    "source": "source_bad/: source/ plus one bad row per rule and per closed list (orders and order_items of dt=2025-06-04, and one row in products, inventory, promotions, customers, employees, stores)",
+    "not_pass": [
+      {
+        "table_name": "orders",
+        "check_name": "total_formula",
+        "status": "fail",
+        "failed_rows": 1
+      },
+      {
+        "table_name": "orders",
+        "check_name": "cancelled_total_zero",
+        "status": "fail",
+        "failed_rows": 1
+      },
+      {
+        "table_name": "orders",
+        "check_name": "subtotal_is_gross",
+        "status": "fail",
+        "failed_rows": 1
+      },
+      {
+        "table_name": "orders",
+        "check_name": "delivery_fee_rule",
+        "status": "warn",
+        "failed_rows": 1
+      },
+      {
+        "table_name": "order_items",
+        "check_name": "line_net_formula",
+        "status": "fail",
+        "failed_rows": 1
+      },
+      {
+        "table_name": "order_items",
+        "check_name": "amounts_not_negative",
+        "status": "fail",
+        "failed_rows": 1
+      },
+      {
+        "table_name": "products",
+        "check_name": "price_positive",
+        "status": "fail",
+        "failed_rows": 1
+      },
+      {
+        "table_name": "inventory",
+        "check_name": "stock_not_negative",
+        "status": "fail",
+        "failed_rows": 1
+      },
+      {
+        "table_name": "promotions",
+        "check_name": "dates_in_order",
+        "status": "fail",
+        "failed_rows": 1
+      },
+      {
+        "table_name": "customers",
+        "check_name": "valid_values:customer_segment",
+        "status": "warn",
+        "failed_rows": 1
+      },
+      {
+        "table_name": "customers",
+        "check_name": "valid_values:loyalty_tier",
+        "status": "warn",
+        "failed_rows": 1
+      },
+      {
+        "table_name": "employees",
+        "check_name": "valid_values:contract_type",
+        "status": "warn",
+        "failed_rows": 1
+      },
+      {
+        "table_name": "employees",
+        "check_name": "valid_values:role",
+        "status": "warn",
+        "failed_rows": 1
+      },
+      {
+        "table_name": "orders",
+        "check_name": "valid_values:order_channel",
+        "status": "warn",
+        "failed_rows": 1
+      },
+      {
+        "table_name": "orders",
+        "check_name": "valid_values:order_status",
+        "status": "warn",
+        "failed_rows": 1
+      },
+      {
+        "table_name": "orders",
+        "check_name": "valid_values:payment_method",
+        "status": "warn",
+        "failed_rows": 1
+      },
+      {
+        "table_name": "products",
+        "check_name": "valid_values:category",
+        "status": "warn",
+        "failed_rows": 1
+      },
+      {
+        "table_name": "promotions",
+        "check_name": "valid_values:category",
+        "status": "warn",
+        "failed_rows": 1
+      },
+      {
+        "table_name": "promotions",
+        "check_name": "valid_values:discount_type",
+        "status": "warn",
+        "failed_rows": 1
+      },
+      {
+        "table_name": "stores",
+        "check_name": "valid_values:store_format",
+        "status": "warn",
+        "failed_rows": 1
+      },
+      {
+        "table_name": "customers",
+        "check_name": "quarantined_rows",
+        "status": "warn",
+        "failed_rows": 1
+      },
+      {
+        "table_name": "employees",
+        "check_name": "quarantined_rows",
+        "status": "warn",
+        "failed_rows": 1
+      },
+      {
+        "table_name": "order_items",
+        "check_name": "quarantined_rows",
+        "status": "warn",
+        "failed_rows": 4
+      }
+    ],
+    "every_other_check": "pass",
+    "row_count_case": {
+      "employees_file": "only EMP904 with hire_date not-a-date",
+      "expected": {
+        "table_name": "employees",
+        "check_name": "row_count",
+        "status": "fail",
+        "failed_rows": 1
+      }
+    },
+    "why": "Every check is proven to catch its bad row: the 9 business rules fail (delivery_fee_rule warns), the 11 closed lists warn, quarantined_rows warns where silver quarantined rows, and row_count fails when every row of a table is quarantined (bronze never lets an empty file through)."
   }
 }

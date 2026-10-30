@@ -1,0 +1,4 @@
+store_id,store_name,city,region,postcode,store_format,opening_date,staff_count
+ST901,Test Store One,Leeds,Yorkshire,LS1 1AB,Convenience,2021-01-01,10
+ST902,Test Store Two,York,Yorkshire,YO1 1AB,Large Supermarket,2022-01-01,20
+ST903,Test Store Three,Hull,Yorkshire,HU1 1AA,Hypermarket,2023-01-01,30

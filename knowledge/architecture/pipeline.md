@@ -21,7 +21,7 @@ CSVs RYStore ──▶ Supabase Storage (bucket rystore) ──▶ Databricks: b
   - Uma entrega por dia, até 06:00 UTC.
   - A carga dos CSVs no bucket é feita por [`scripts/load_rystore_to_supabase.py`](../../scripts/load_rystore_to_supabase.py) (`uv run python scripts/load_rystore_to_supabase.py`; `--check` só confere). Em 2026-10-30 ela gravou 737 arquivos (365 dias × 2 tabelas incrementais + 7 tabelas completas), com 59.052 linhas iguais às da fonte.
 - **Motor:** Python puro, sem PySpark. As transformações usam DuckDB e pyarrow sobre Parquet nos volumes `<camada>.files` (decisão de 2026-10-30, no [registro de decisões](../decisions/decision-log.md)). O código fica em [`retail_analytics/src/retail_analytics/`](../../retail_analytics/src/retail_analytics/) (`bronze.py`, `silver.py`, `gold.py`). O mesmo código roda no job e nesta máquina ([`scripts/run_pipeline_local.py`](../../scripts/run_pipeline_local.py)).
-- **Job `rystore_pipeline`:** serverless, com 4 tarefas `spark_python_task` que não usam o Spark.
+- **Job `rystore_pipeline`:** serverless, com 4 tarefas `spark_python_task` que não usam o Spark. O ambiente instala só o `duckdb`, porque o serverless já traz pyarrow e boto3. Mesmo assim, a montagem leva cerca de 225 s (rodada `378577967050301`), o que indica que o tempo vem de subir o ambiente, e não das dependências [med].
   - `ingest_bronze`, `build_silver` e `build_gold` gravam Parquet nos volumes.
   - `publish` transforma cada pasta de `/Volumes/lh_retail_analytics/<camada>/files/` na tabela Delta `<camada>.<pasta>`, pelo SQL warehouse ("Serverless Starter Warehouse"). O Parquet é a verdade, e a tabela é a vitrine para os consumidores.
 - **Ingestão:** a tarefa `ingest_bronze` lê o bucket com `boto3`, usando 8 downloads em paralelo. Copia cada arquivo como chegou para o volume `bronze.raw`, valida contra o contrato e grava as linhas como texto em `bronze/files/<tabela>/<carimbo>.parquet`.
@@ -38,7 +38,8 @@ CSVs RYStore ──▶ Supabase Storage (bucket rystore) ──▶ Databricks: b
 - **silver:** dados limpos, tipados e integrados, com as regras do [glossário](../business/glossary.md) e do contrato.
 - **gold:** modelo dimensional para consumo:
   - dimensões `dim_produto`, `dim_cliente`, `dim_loja`, `dim_fornecedor` e `dim_data`;
-  - fatos `fato_vendas`, `fato_estoque` e `fato_pedidos`.
+  - fatos `fato_vendas`, `fato_estoque` e `fato_pedidos`;
+  - `dim_promocao`, que junta com `fato_vendas.promotion_id` (desde 2026-10-30).
 - **Consumo:** análise sobre a camada gold (o README cita o Chat Genie).
 
 ## Lições da primeira execução sem Spark (2026-10-30)

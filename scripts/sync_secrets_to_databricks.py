@@ -7,6 +7,7 @@ Uso, na raiz do repositório:
     uv run python scripts/sync_secrets_to_databricks.py
 """
 
+import argparse
 import os
 import subprocess
 import sys
@@ -21,10 +22,11 @@ KEYS = ["S3_ENDPOINT", "AWS_DEFAULT_REGION", "AWS_ACCESS_KEY_ID", "AWS_SECRET_AC
 
 
 def databricks(*args, value=None):
-    return subprocess.run(["databricks", *args, "-p", PROFILE], input=value, capture_output=True, text=True)
+    return subprocess.run(["databricks", *args, "-p", PROFILE], input=value, capture_output=True, text=True, check=False)
 
 
 def main():
+    argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter).parse_args()
     load_dotenv(ROOT / ".env")
     missing = [k for k in KEYS if not os.getenv(k)]
     if missing:

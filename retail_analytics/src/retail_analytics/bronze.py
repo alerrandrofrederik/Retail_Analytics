@@ -135,8 +135,8 @@ def ingest(source, lake, ingested_at: datetime, raw_dir=None, threads=8) -> Summ
         match = LAYOUT.fullmatch(key)
         if not match or match["table"] not in COLUMNS:
             summary.fatal.append(f"{key}: fora do layout do contrato")
-            log.append(dict(source_file=key, etag=etag, table_name=key.split("/")[0], rows=0, quarantined=0,
-                            status="unknown_key", ingested_at=ingested_at))
+            log.append({"source_file": key, "etag": etag, "table_name": key.split("/")[0], "rows": 0, "quarantined": 0,
+                            "status": "unknown_key", "ingested_at": ingested_at})
             continue
         if raw_dir is not None:
             target = Path(raw_dir) / key
@@ -150,10 +150,10 @@ def ingest(source, lake, ingested_at: datetime, raw_dir=None, threads=8) -> Summ
             row["_source_file"] = key
             row["_ingested_at"] = ingested_at
         rows_by_table[table] += result.rows
-        quarantine += [dict(table_name=table, source_file=key, line=q.line, reason=q.reason, raw=q.raw,
-                            ingested_at=ingested_at) for q in result.quarantine]
-        log.append(dict(source_file=key, etag=etag, table_name=table, rows=len(result.rows),
-                        quarantined=len(result.quarantine), status=result.fatal or "ok", ingested_at=ingested_at))
+        quarantine += [{"table_name": table, "source_file": key, "line": q.line, "reason": q.reason, "raw": q.raw,
+                            "ingested_at": ingested_at} for q in result.quarantine]
+        log.append({"source_file": key, "etag": etag, "table_name": table, "rows": len(result.rows),
+                        "quarantined": len(result.quarantine), "status": result.fatal or "ok", "ingested_at": ingested_at})
 
     for table, rows in rows_by_table.items():
         if rows:

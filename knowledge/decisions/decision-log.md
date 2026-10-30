@@ -29,12 +29,15 @@ Uma linha por decisão. Uma decisão em aberto passa para "tomada" quando o enge
 | 2026-10-30 | A bronze (tabelas e volume `bronze.raw`) fica sem restrição de acesso, porque o workspace é pessoal e tem um usuário só. A PII é mascarada a partir da silver, inclusive no JSON da quarentena. Rever se outra pessoa ganhar acesso ao workspace | Engenheiro de dados ([revisão 07 a 09](../../reports/pr-review/pr_review_pipeline_07_09.html), achado 2, parte recusada) |
 | 2026-10-30 | Os CSVs ficam no git byte a byte (`.gitattributes`: `*.csv -text`), com CRLF como no contrato | Revisão 07 a 09, achado 4 |
 | 2026-10-30 | SLA da gold: as tabelas gold ficam prontas até 08:00 UTC, 1h depois do início do job (07:00 UTC) | Engenheiro de dados, ao aprovar o plano do prompt 11 |
+| 2026-10-30 | Criar a `gold.dim_promocao` (de `silver.promotions`), que junta com `fato_vendas.promotion_id`; o produto `fato_vendas` passa para a versão 1.1.0 | Engenheiro de dados |
+| 2026-10-30 | O job ainda não vai para o prod: fica só o dev, pausado, sem custo recorrente. O SLA de 08:00 UTC segue sem ser cumprido até o deploy no prod | Engenheiro de dados |
+| 2026-10-30 | `rystore_schema.py` é gerado do contrato por `scripts/generate_rystore_schema.py` e nunca editado à mão; o teste confere | Engenheiro de dados (correção dos pontos em aberto) |
+| 2026-10-30 | Todas as 38 checagens da silver são testadas com dado ruim (`fixtures/rystore/source_bad/`) | Engenheiro de dados (correção dos pontos em aberto) |
 
 ## Em aberto
 
 | Desde | Pergunta | Para quem | Origem |
 |---|---|---|---|
-| 2026-10-30 | Descrições reais das 77 colunas, para a próxima versão do contrato | Dono da fonte | [Pauta do contrato](../../contracts/rystore_open_points.md), ponto 16 |
-| 2026-10-30 | Criar uma `dim_promocao` na gold (hoje `fato_vendas.promotion_id` não tem dimensão) | Engenheiro de dados | [Produto fato_vendas](../../docs/data-products/fato_vendas/README.md), ponto 1 |
-| 2026-10-30 | A margem deve usar o custo do dia da venda? A fonte não entrega o histórico de `unit_cost` | Dono da fonte | [Produto fato_vendas](../../docs/data-products/fato_vendas/README.md), ponto 2 |
+| 2026-10-30 | Descrições reais das 77 colunas, para a próxima versão do contrato | Dono da fonte | [Pauta do contrato](../../contracts/rystore_open_points.md), pontos 16 e 21 |
+| 2026-10-30 | A margem deve usar o custo do dia da venda? A fonte não entrega o histórico de `unit_cost` | Dono da fonte | [Pauta do contrato](../../contracts/rystore_open_points.md), ponto 20 |
 | 2026-10-30 | Reativar o agendamento do job no prod, para cumprir o SLA de 08:00 UTC | Engenheiro de dados | [Qualidade 2026-10](../../reports/quality/rystore_quality_2026-10.html) |

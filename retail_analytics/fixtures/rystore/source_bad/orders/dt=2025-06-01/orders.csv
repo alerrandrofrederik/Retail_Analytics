@@ -1,0 +1,6 @@
+order_id,order_datetime,store_id,customer_id,order_channel,payment_method,order_status,subtotal,discount_total,vat_total,delivery_fee,total_amount
+ORD900001,2025-06-01 10:15:00,ST901,CUST90001,In-store,Card,Completed,10.0,0.0,1.0,0.0,11.0
+ORD900002,2025-06-01 18:40:00,ST901,,Online,Mobile Wallet,Completed,20.0,1.0,2.0,3.49,24.49
+ORD900003,2025-06-01 21:05:00,ST902,CUST90002,Click & Collect,Cash,Cancelled,5.0,0.0,0.5,0.0,0.0
+ORD900004,2025-03-30 01:30:00,ST901,CUST90001,In-store,Card,Completed,4.0,0.0,0.0,0.0,4.0
+ORD900005,2025-10-26 01:30:00,ST902,,In-store,Gift Card,Refunded,6.0,0.0,1.2,0.0,7.2

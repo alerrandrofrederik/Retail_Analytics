@@ -11,14 +11,13 @@ Reads the bronze lake (retail_analytics.bronze) and writes <silver>/<table>/part
 on every run. Contract: contracts/rystore.odcs.yaml. Glossary: knowledge/business/glossary.md.
 """
 
-import shutil
-import tempfile
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 
 import duckdb
 
+from retail_analytics.lake import copy, write
 from retail_analytics.rystore_schema import COLUMNS, FOREIGN_KEYS, LOAD, PRIMARY_KEYS, VALID_VALUES
 
 TZ = "Europe/London"
@@ -32,12 +31,12 @@ PARENTS_FIRST = ["suppliers", "stores", "promotions", "customers", "products", "
                  "orders", "order_items"]
 RULES = [
     ("orders", "total_formula", "fail",
-     "SELECT count(*) FROM orders WHERE order_status <> 'Cancelled' AND "
-     "abs(total_amount - (subtotal - discount_total + vat_total + delivery_fee)) > 0.01"),
+     ("SELECT count(*) FROM orders WHERE order_status <> 'Cancelled' AND "
+     "abs(total_amount - (subtotal - discount_total + vat_total + delivery_fee)) > 0.01")),
     ("orders", "cancelled_total_zero", "fail", "SELECT count(*) FROM orders WHERE order_status = 'Cancelled' AND total_amount <> 0"),
     ("orders", "subtotal_is_gross", "fail",
-     "SELECT count(*) FROM orders o JOIN (SELECT order_id, sum(quantity * unit_price) g FROM order_items GROUP BY order_id) i "
-     "USING (order_id) WHERE abs(o.subtotal - i.g) > 0.01"),
+     ("SELECT count(*) FROM orders o JOIN (SELECT order_id, sum(quantity * unit_price) g FROM order_items GROUP BY order_id) i "
+     "USING (order_id) WHERE abs(o.subtotal - i.g) > 0.01")),
     ("orders", "delivery_fee_rule", "warn",
      "SELECT count(*) FROM orders WHERE delivery_fee <> CASE WHEN order_channel = 'Online' AND subtotal < 40 THEN 3.49 ELSE 0 END"),
     ("order_items", "line_net_formula", "fail",
@@ -101,22 +100,6 @@ def _utc(local):
     return f"CASE WHEN timezone('{TZ}', {earlier}) = {local} THEN {earlier} ELSE {first} END"
 
 
-def _copy(con, sql, target):
-    """Write the result of `sql` as one Parquet file. DuckDB writes out of order, which the /Volumes mount
-    refuses at times (IO error, 2026-10-30): it writes to a local temporary file, copied in one go."""
-    with tempfile.TemporaryDirectory() as tmp:
-        local = Path(tmp) / "part.parquet"
-        con.execute(f"COPY ({sql}) TO '{local.as_posix()}' (FORMAT parquet)")
-        shutil.copyfile(local, target)
-
-
-def _write(con, sql, folder):
-    if folder.exists():
-        shutil.rmtree(folder)
-    folder.mkdir(parents=True)
-    _copy(con, sql, folder / "part-0.parquet")
-
-
 def build(bronze_dir, silver_dir, built_at: datetime) -> list[Check]:
     """Build every silver table from the bronze lake; return the checks (the caller fails on a 'fail')."""
     bronze_dir, silver_dir = Path(bronze_dir), Path(silver_dir)
@@ -159,9 +142,9 @@ def build(bronze_dir, silver_dir, built_at: datetime) -> list[Check]:
 
     built = f"timezone('UTC', TIMESTAMP '{built_at:%Y-%m-%d %H:%M:%S.%f}')"
     for table in COLUMNS:
-        _write(con, f"SELECT * EXCLUDE (_line, _raw) RENAME (_ingested_at AS _bronze_ingested_at), {built} AS _silver_built_at "
+        write(con, f"SELECT * EXCLUDE (_line, _raw) RENAME (_ingested_at AS _bronze_ingested_at), {built} AS _silver_built_at "
                     f"FROM {table}", silver_dir / table)
-    _write(con, f"SELECT *, {built} AS built_at FROM quarantine", silver_dir / "_quarantine")
+    write(con, f"SELECT *, {built} AS built_at FROM quarantine", silver_dir / "_quarantine")
 
     checks = list(RULES)
     for (table, column), values in VALID_VALUES.items():
@@ -180,5 +163,5 @@ def build(bronze_dir, silver_dir, built_at: datetime) -> list[Check]:
     con.execute("CREATE TABLE checks (run_at TIMESTAMPTZ, table_name VARCHAR, check_name VARCHAR, status VARCHAR, failed_rows INTEGER)")
     con.executemany(f"INSERT INTO checks VALUES ({built}, ?, ?, ?, ?)",
                     [(c.table_name, c.check_name, c.status, c.failed_rows) for c in results])
-    _copy(con, "SELECT * FROM checks", folder / f"{built_at:%Y%m%dT%H%M%S%f}.parquet")
+    copy(con, "SELECT * FROM checks", folder / f"{built_at:%Y%m%dT%H%M%S%f}.parquet")
     return results

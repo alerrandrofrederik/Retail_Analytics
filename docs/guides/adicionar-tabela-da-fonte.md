@@ -3,14 +3,7 @@
 Quando a RYStore passar a entregar uma tabela nova, por exemplo `returns`. Os nomes e os caminhos abaixo são os do código em 2026-10-30.
 
 1. **Contrato primeiro.** Combine a tabela com o dono da fonte e acrescente-a em [`contracts/rystore.odcs.yaml`](../../contracts/rystore.odcs.yaml), com colunas, tipos, chave, carga (`full` ou `changes`) e regras de qualidade. Suba a versão do contrato; uma tabela nova é uma mudança aditiva (skill `contract`).
-2. **Esquema do código.** Em [`rystore_schema.py`](../../retail_analytics/src/retail_analytics/rystore_schema.py), acrescente a tabela em:
-   - `COLUMNS` e `PRIMARY_KEYS`;
-   - `FOREIGN_KEYS`, se a tabela tiver chaves estrangeiras;
-   - `LOAD`;
-   - `VALID_VALUES`, se tiver listas fechadas;
-   - `CONTRACT_VERSION`.
-
-   O gerador desse arquivo não está no repositório: edite à mão. O `tests/test_schema.py` confere `COLUMNS`, as chaves e as listas contra o contrato; `FOREIGN_KEYS` e `LOAD` não são conferidos.
+2. **Esquema do código.** Gere [`rystore_schema.py`](../../retail_analytics/src/retail_analytics/rystore_schema.py) a partir do contrato, com `uv run --with pyyaml python scripts/generate_rystore_schema.py`. O gerador lê `COLUMNS`, as chaves, as chaves estrangeiras, a carga e as listas fechadas. Nunca edite o arquivo à mão: o `tests/test_schema.py` confere que ele é a saída do gerador.
 3. **Silver.** Em [`silver.py`](../../retail_analytics/src/retail_analytics/silver.py):
    - acrescente a tabela em `PARENTS_FIRST`, depois dos pais dela;
    - acrescente em `PERSONAL` as colunas com `classification: restricted`;

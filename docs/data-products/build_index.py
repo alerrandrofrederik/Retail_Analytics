@@ -7,6 +7,7 @@ Uso, na raiz do repositório:
     uv run --no-project --with markdown --with pyyaml python docs/data-products/build_index.py
 """
 
+import argparse
 import html
 from pathlib import Path
 
@@ -128,6 +129,7 @@ def render(products):
 
 
 def main():
+    argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter).parse_args()
     products = [product(f) for f in sorted(HERE.iterdir()) if f.is_dir() and (f / "README.md").exists()]
     (HERE / "index.html").write_text(render(products), encoding="utf-8")
     print(f"index.html: {len(products)} produto(s)")

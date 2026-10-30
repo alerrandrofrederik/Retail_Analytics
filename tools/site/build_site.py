@@ -30,7 +30,7 @@ OUT = ROOT / "docs" / "site"
 SNAPSHOT = OUT / "data" / "snapshot.json"
 sys.path.insert(0, str(ROOT / "retail_analytics" / "src"))
 
-from retail_analytics import gold, rystore_schema, silver  # noqa: E402
+from retail_analytics import gold, rystore_schema, silver
 
 CATALOG, PROFILE, JOB_NAME = "lh_retail_analytics", "pessoal", "rystore_pipeline"
 PAGES = [("index.html", "Visão geral"), ("architecture.html", "Arquitetura"), ("lineage.html", "Linhagem"),
@@ -128,7 +128,7 @@ def call_graph():
 # ---------------------------------------------------------------- the Databricks snapshot (read only)
 
 def cli(*args):
-    out = subprocess.run(["databricks", *args, "-p", PROFILE, "-o", "json"], capture_output=True, text=True, stdin=subprocess.DEVNULL)
+    out = subprocess.run(["databricks", *args, "-p", PROFILE, "-o", "json"], capture_output=True, text=True, stdin=subprocess.DEVNULL, check=False)
     if out.returncode:
         raise RuntimeError(f"databricks {' '.join(args)}: {out.stderr.strip()[:300]}")
     return json.loads(out.stdout)
@@ -344,7 +344,7 @@ def build(facts, snap, defs, calls):
     arch_wires = [("bucket", "ingest_bronze"), ("ingest_bronze", "v_raw"), ("ingest_bronze", "v_bronze"), ("v_bronze", "build_silver"),
                   ("build_silver", "v_silver"), ("v_silver", "build_gold"), ("build_gold", "v_gold"), ("v_bronze", "publish"), ("v_silver", "publish"),
                   ("v_gold", "publish"), ("publish", "uc_bronze"), ("publish", "uc_silver"), ("publish", "uc_gold"), ("uc_gold", "genie")]
-    arch_wires = [(a, b) for a, b in arch_wires if a in dict((k, 1) for k, *_ in arch_nodes) and b in dict((k, 1) for k, *_ in arch_nodes)]
+    arch_wires = [(a, b) for a, b in arch_wires if a in {k: 1 for k, *_ in arch_nodes} and b in {k: 1 for k, *_ in arch_nodes}]
     body = section("O desenho", f"Lido de resources/rystore_pipeline.job.yml: {len(facts['job']['tasks'])} tarefas serverless em Python puro (DuckDB e pyarrow, sem Spark). Clique numa caixa.",
                    graph(["origem", "tarefas do job", "volumes (Parquet)", "Unity Catalog", "consumo"], arch_nodes, arch_wires))
     body += section("As tarefas", f'Agendamento <span class="id">{e(sched["quartz_cron_expression"])}</span> ({sched["timezone_id"]}); ambiente com {e(deps)}.',
@@ -392,7 +392,7 @@ def build(facts, snap, defs, calls):
     fk_rows = [[f'<span class="id">{t}.{c}</span>', f'<span class="id">{target}</span>'] for t, fks in rystore_schema.FOREIGN_KEYS.items() for c, target in fks]
     ent_rows = [[f'<span class="id">{t}</span>', ", ".join(rystore_schema.PRIMARY_KEYS[t]), rystore_schema.LOAD[t], e(facts["table_desc"].get(t, ""))] for t in tables]
     star = [[f'<span class="id">gold.{g}</span>', "fato" if g.startswith("fato") else "dimensão",
-             ", ".join(c for c, _ in snap.get("types", {}).get(f"gold.{g}", []) if c.endswith("_id") or c.endswith("_key"))] for g in gold.TABLES]
+             ", ".join(c for c, _ in snap.get("types", {}).get(f"gold.{g}", []) if c.endswith(("_id", "_key")))] for g in gold.TABLES]
     star_nodes = [(f"d_{g}", 0, g) for g in gold.TABLES if g.startswith("dim")] + [(f"f_{g}", 1, g) for g in gold.TABLES if g.startswith("fato")]
     # a dimension joins a fact when the fact has the key column of the dimension (its first column)
     types = snap.get("types", {})

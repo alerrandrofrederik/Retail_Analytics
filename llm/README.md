@@ -30,12 +30,15 @@ A skill `migration` não tem prompt: o projeto não tem ambiente legado (ver o [
 
 ## Onde paramos (2026-10-30, noite)
 
-- **Prompts 01 a 18:** concluídos.
-- **Prompt 17 (knowledge-refresh):** as [6 propostas](../reports/knowledge-refresh/knowledge_refresh_2026-10-30.html) foram aplicadas depois do sim.
-- **Prompt 18 (incident):** aplicado à rodada `966981410696310` ([página](../reports/incident/incident_2026-10-30_rystore_pipeline.html)). A entrada no incident-log foi escrita depois do sim.
-- **Prompt 19 (big-review e cost-review):** fica para quando houver histórico.
-  - Hoje há 1 dia de `system.query.history`, e o `system.billing.usage` ainda não traz as rodadas do job.
-  - Rodar depois de 1 a 3 meses do job agendado no prod.
-- **Pendências:**
-  - os pontos em aberto do [decision-log](../knowledge/decisions/decision-log.md): `dim_promocao`, custo histórico, agendamento no prod e as descrições das colunas;
-  - os achados abertos da [revisão 07 a 09](../reports/pr-review/pr_review_pipeline_07_09.html): o 11 e os de 12 a 16.
+- **Prompts 01 a 18:** concluídos. O 19 fica para quando houver 1 a 3 meses de histórico.
+- **Pontos em aberto corrigidos (rodada `378577967050301`):**
+  - as 38 checagens são testadas com dado ruim (35 testes);
+  - o `rystore_schema.py` é gerado do contrato;
+  - o `--help` funciona em todos os scripts;
+  - o módulo `lake.py` foi criado e o ruff está sem avisos;
+  - a `gold.dim_promocao` existe, e o produto `fato_vendas` está na versão 1.1.0;
+  - as páginas HTML têm fundo preto e nenhum texto sobreposto.
+- **Ainda em aberto:**
+  - o deploy no prod (decisão: ainda não);
+  - os pontos 20 e 21 da [pauta](../contracts/rystore_open_points.md), para o dono da fonte (custo histórico e descrições das colunas);
+  - o achado 11: a montagem do serverless leva cerca de 225 s mesmo só com o duckdb.

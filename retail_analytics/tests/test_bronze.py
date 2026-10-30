@@ -16,7 +16,7 @@ SOURCE = Path(__file__).resolve().parents[1] / "fixtures" / "rystore" / "source"
 
 pytest.importorskip("duckdb")
 pytest.importorskip("pyarrow")
-from retail_analytics import bronze  # noqa: E402
+from retail_analytics import bronze
 
 
 class DictSource:

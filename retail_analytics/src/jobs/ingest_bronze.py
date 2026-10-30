@@ -4,11 +4,10 @@ Credentials from the secret scope; the files as they came go to the volume bronz
 Parquet to bronze.files. A delivery outside the contract fails the task at the end, after the rest landed.
 """
 
-from datetime import datetime, timezone
-
-from _setup import arguments, lake
+from datetime import UTC, datetime
 
 import boto3
+from _setup import arguments, lake
 from databricks.sdk import WorkspaceClient
 
 from retail_analytics import bronze
@@ -24,7 +23,7 @@ s3 = boto3.client(
 )
 
 summary = bronze.ingest(bronze.S3Source(s3, args.bucket), lake(args.catalog, "bronze"),
-                        datetime.now(timezone.utc).replace(tzinfo=None), raw_dir=lake(args.catalog, "bronze", "raw"))
+                        datetime.now(UTC).replace(tzinfo=None), raw_dir=lake(args.catalog, "bronze", "raw"))
 print(f"Arquivos novos ou alterados: {summary.files}")
 for table, rows in sorted(summary.rows.items()):
     print(f"bronze.{table}: +{rows} linhas")

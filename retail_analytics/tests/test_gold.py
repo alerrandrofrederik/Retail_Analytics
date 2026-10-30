@@ -44,3 +44,10 @@ def test_every_date_key_of_a_fact_is_in_the_calendar(lake):
             UNION ALL SELECT snapshot_date_key FROM gold.fato_estoque)
         WHERE k NOT IN (SELECT date_key FROM gold.dim_data)""")
     assert missing == [(0,)]
+
+
+def test_every_promotion_of_a_sale_is_in_dim_promocao(lake):
+    missing = lake["sql"]("""SELECT count(*) FROM gold.fato_vendas WHERE promotion_id IS NOT NULL
+                             AND promotion_id NOT IN (SELECT promotion_id FROM gold.dim_promocao)""")
+    assert missing == [(0,)]
+    assert lake["sql"]("SELECT count(*) FROM gold.fato_vendas WHERE promotion_id IS NOT NULL")[0][0] > 0

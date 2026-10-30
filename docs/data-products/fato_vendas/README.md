@@ -1,6 +1,6 @@
 # Produto de dados: Vendas RYStore (`gold.fato_vendas`)
 
-Versão 1.0.0, 2026-10-30, criada pela skill `data-product`. O contrato com o consumidor está em [`fato_vendas.odcs.yaml`](fato_vendas.odcs.yaml) (ODCS v3.1.0, validado contra o JSON Schema). A página navegável de todos os produtos é [`../index.html`](../index.html).
+Versão 1.1.0, 2026-10-30, criada pela skill `data-product`. O contrato com o consumidor está em [`fato_vendas.odcs.yaml`](fato_vendas.odcs.yaml) (ODCS v3.1.0, validado contra o JSON Schema). A página navegável de todos os produtos é [`../index.html`](../index.html).
 
 ## Visão geral
 
@@ -26,7 +26,7 @@ Versão 1.0.0, 2026-10-30, criada pela skill `data-product`. O contrato com o co
 1. **Margem com o custo de hoje.** `cost_amount` e `margin_amount` usam o `unit_cost` atual do produto, e não o custo no dia da venda. Se um custo mudar, a margem de todo o histórico muda junto. A fonte não guarda o histórico de custos.
 2. **Itens × total do pedido.** A soma de `net_amount + vat_amount` de um pedido não inclui a taxa de entrega, que é cobrada por pedido. Nos pedidos Completed, os itens somam £244.156,27; com as taxas de entrega (£5.364,13), chegam a £249.520,40, contra os £249.520,30 de receita da `fato_pedidos`. A diferença de £0,10 vem de 82 pedidos com ±0,01, que é o arredondamento da fonte, dentro da tolerância do contrato. Para a receita do pedido, use `gold.fato_pedidos.revenue_amount`.
 3. **Desconto por item × desconto do pedido.** Em 22 pedidos, a soma de `discount_amount` difere de `discount_total` do pedido em ±0,01, também por arredondamento da fonte.
-4. **Promoção sem dimensão.** `promotion_id` existe, mas a gold ainda não tem `dim_promocao`. Há 6 promoções em 1.990 linhas, e só elas têm desconto.
+4. **Promoção.** Desde a versão 1.1.0, `promotion_id` junta com `gold.dim_promocao`. Há 6 promoções em 1.990 linhas, e só elas têm desconto.
 5. **Atualização.** No dev, o agendamento está pausado; em 2026-10-30, a tabela foi reconstruída à mão às 18:22 UTC, depois do SLA.
 6. **Dia e mês.** Use sempre `date_key`, que é a data local do Reino Unido. Agrupar por um horário em UTC muda 247 pedidos de dia e 6 de mês ([glossário](../../../knowledge/business/glossary.md)).
 
@@ -42,7 +42,7 @@ Versão 1.0.0, 2026-10-30, criada pela skill `data-product`. O contrato com o co
 | `product_id` | `gold.dim_produto.product_id` | inclui o nome do fornecedor |
 | `supplier_id` | `gold.dim_fornecedor.supplier_id` | o fornecedor do produto |
 | `order_id` | `gold.fato_pedidos.order_id` | o pedido (total, taxa de entrega, receita do pedido) |
-| `promotion_id` | — | sem dimensão na gold (problema conhecido 4) |
+| `promotion_id` | `gold.dim_promocao.promotion_id` | opcional: vazio quando a linha não tem promoção (use LEFT JOIN) |
 
 É um esquema estrela: os joins são N:1 e não multiplicam linhas.
 
@@ -102,6 +102,14 @@ WHERE v.order_status IN ('Cancelled', 'Refunded')
 GROUP BY d.month, v.order_status
 ORDER BY d.month, v.order_status;
 
+-- 5b. Receita líquida por promoção (LEFT JOIN: a maioria das linhas não tem promoção)
+SELECT coalesce(pr.promotion_name, '(sem promoção)') AS promocao, count(*) AS itens, sum(v.discount_amount) AS desconto, sum(v.net_amount) AS receita_liquida
+FROM lh_retail_analytics.gold.fato_vendas v
+LEFT JOIN lh_retail_analytics.gold.dim_promocao pr ON pr.promotion_id = v.promotion_id
+WHERE v.is_revenue
+GROUP BY 1
+ORDER BY receita_liquida DESC;
+
 -- 5. Linhas com e sem promoção
 SELECT v.promotion_id IS NOT NULL AS com_promocao, count(*) AS itens, sum(v.discount_amount) AS desconto, sum(v.net_amount) AS receita_liquida
 FROM lh_retail_analytics.gold.fato_vendas v
@@ -131,12 +139,19 @@ ORDER BY receita_liquida DESC;
 
 | Versão | Data | O que mudou |
 |---|---|---|
+| 1.1.0 | 2026-10-30 | Nova dimensão `gold.dim_promocao` (nome, vigência, tipo e valor do desconto, categoria); `promotion_id` passa a juntar com ela. Nenhuma coluna da `fato_vendas` mudou. |
 | 1.0.0 | 2026-10-30 | Primeira versão: 47.512 itens, 2025. Nenhuma correção reportada por consumidores. |
+
+### Nota de versão 1.1.0 (rascunho, não enviado)
+
+> **Para:** os consumidores de `gold.fato_vendas` · **Assunto:** Vendas RYStore 1.1.0: nova dimensão de promoções
+>
+> A gold ganhou a tabela `gold.dim_promocao`, uma linha por promoção, com o nome, a vigência, o tipo e o valor do desconto e a categoria. Junte com `fato_vendas.promotion_id` usando LEFT JOIN, porque a maioria das linhas não tem promoção. Nenhuma coluna e nenhum número da `fato_vendas` mudou, então nenhuma consulta existente quebra.
 
 ## Pontos em aberto para o engenheiro de dados
 
 Nada foi alterado na tabela nem no SQL.
 
-1. Criar uma `dim_promocao` na gold, a partir de `silver.promotions`.
-2. Decidir se a margem deve usar o custo histórico. Isso depende de a fonte entregar o histórico de `unit_cost`, então é uma pergunta para o dono da fonte.
+1. ~~Criar uma `dim_promocao` na gold~~: feito na versão 1.1.0.
+2. Decidir se a margem deve usar o custo histórico. Isso depende de a fonte entregar o histórico de `unit_cost`, e a pergunta está no ponto 20 da [pauta do contrato](../../../contracts/rystore_open_points.md).
 3. Reativar o agendamento no prod, para cumprir o SLA de 08:00 UTC.

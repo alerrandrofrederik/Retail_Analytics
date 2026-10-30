@@ -28,3 +28,17 @@ def test_valid_values_match_contract():
              for t in contract["schema"] for p in t["properties"] for q in p.get("quality") or []
              if (q.get("arguments") or {}).get("validValues")}
     assert rystore_schema.VALID_VALUES == lists
+
+
+GENERATOR = Path(__file__).resolve().parents[2] / "scripts" / "generate_rystore_schema.py"
+
+
+@pytest.mark.skipif(not GENERATOR.exists(), reason="generator not available (outside the repository)")
+def test_schema_file_is_the_generator_output():
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("generate_rystore_schema", GENERATOR)
+    generator = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(generator)
+    expected = generator.render(yaml.safe_load(CONTRACT.read_text(encoding="utf-8")))
+    assert Path(rystore_schema.__file__).read_text(encoding="utf-8") == expected

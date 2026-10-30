@@ -11,17 +11,18 @@ Uso, na raiz do repositório:
 
 import argparse
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "retail_analytics" / "src"))
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from retail_analytics import bronze, gold, silver  # noqa: E402
+from retail_analytics import bronze, gold, silver
 
 
 def main():
+    sys.stdout.reconfigure(encoding="utf-8")  # the help has non-ASCII text; a Windows console is cp1252
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--out", required=True, type=Path, help="pasta do lago (fora do repositório)")
     parser.add_argument("--source", type=Path, help="pasta no layout do bucket; sem ela, lê o Supabase")
@@ -33,7 +34,7 @@ def main():
         from load_rystore_to_supabase import BUCKET, client
         source = bronze.S3Source(client(), BUCKET)
 
-    now = datetime.now(timezone.utc).replace(tzinfo=None)
+    now = datetime.now(UTC).replace(tzinfo=None)
     summary = bronze.ingest(source, args.out / "bronze", now, raw_dir=args.out / "raw")
     print(f"bronze: {summary.files} arquivos novos, {sum(summary.rows.values())} linhas, {summary.quarantined} em quarentena")
     for table, rows in sorted(summary.rows.items()):

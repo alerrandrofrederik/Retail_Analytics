@@ -20,7 +20,7 @@ O desenho do pipeline está em [`knowledge/architecture/pipeline.md`](../knowled
 | Conferir as credenciais | `databricks secrets list-secrets retail_analytics -p pessoal` | não; mostra só os nomes |
 | Volumes do lago | `databricks volumes create lh_retail_analytics <bronze\|silver\|gold> files MANAGED -p pessoal` | **sim**: já criados em 2026-10-30 |
 
-> `sync_secrets_to_databricks.py` não tem `--help`: qualquer execução grava as credenciais.
+> `sync_secrets_to_databricks.py --help` só mostra a ajuda; sem `--help`, o script grava as credenciais.
 
 ## 1. Carregar a origem no Supabase
 
@@ -37,12 +37,12 @@ Esperado no `--check`: as 9 tabelas com `ok`, 737 arquivos e 59.052 linhas.
 | Passo | Comando | Grava? |
 |---|---|---|
 | Testes (dentro de `retail_analytics/`) | `uv run --no-project --with pytest --with pyyaml --with duckdb --with pyarrow pytest tests -q -p no:cacheprovider` | não |
-| Pipeline local contra o Supabase | `uv run python -X utf8 scripts/run_pipeline_local.py --out <pasta fora do repo>` | só a pasta indicada |
-| Pipeline local contra uma pasta | `uv run python -X utf8 scripts/run_pipeline_local.py --out <pasta> --source retail_analytics/fixtures/rystore/source` | só a pasta indicada |
+| Pipeline local contra o Supabase | `uv run python scripts/run_pipeline_local.py --out <pasta fora do repo>` | só a pasta indicada |
+| Pipeline local contra uma pasta | `uv run python scripts/run_pipeline_local.py --out <pasta> --source retail_analytics/fixtures/rystore/source` | só a pasta indicada |
+| Esquema do código a partir do contrato | `uv run --with pyyaml python scripts/generate_rystore_schema.py` (ou `--check`, que só confere) | só `rystore_schema.py` |
 
-Esperado: 31 testes aprovados. Contra o Supabase, 59.052 linhas na bronze, as 38 checagens aprovadas e 10.000 pedidos na gold.
+Esperado: 35 testes aprovados, incluindo um dado ruim para cada uma das 38 checagens da silver (`tests/test_checks.py`). Contra o Supabase, 59.052 linhas na bronze, as 38 checagens aprovadas e 10.000 pedidos na gold.
 
-> O `-X utf8` é necessário no Windows: sem ele, o `--help` do script quebra com `UnicodeEncodeError` (o "→" do texto de ajuda não existe no cp1252).
 
 ## 3. Deploy e execução no Databricks (dentro de `retail_analytics/`)
 
@@ -105,6 +105,7 @@ Uma entrega fora do contrato (coluna nova, arquivo vazio ou chave fora do layout
 
 ## Pontos em aberto achados ao escrever este runbook
 
-- `scripts/run_pipeline_local.py --help` quebra no console do Windows sem `-X utf8`.
-- `scripts/sync_secrets_to_databricks.py` e `docs/data-products/build_index.py` não tratam `--help`: rodam direto. O primeiro grava segredos.
-- `rystore_schema.py` diz que é gerado do contrato, mas o gerador não está no repositório. Hoje ele é editado à mão, e o `test_schema.py` confere o resultado.
+Os três pontos foram resolvidos em 2026-10-30:
+- o `--help` do `run_pipeline_local.py` funciona no console do Windows;
+- `sync_secrets_to_databricks.py` e `build_index.py` tratam `--help` sem gravar nada;
+- `rystore_schema.py` é gerado por `scripts/generate_rystore_schema.py`.

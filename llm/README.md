@@ -15,7 +15,7 @@ Antes do 05: preparação do ambiente (skills da Databricks em `.claude/skills/`
 | [07](prompt_07.md) | Ingestão boto3 e camada bronze | — | 04, 05, 06 | Concluído (Python puro com DuckDB, sem PySpark; rodada 173663739566769 no dev) |
 | [08](prompt_08.md) | Camada silver | — | 07 | Concluído (Python puro com DuckDB, sem PySpark; rodada 173663739566769 no dev) |
 | [09](prompt_09.md) | Camada gold (modelo dimensional) | — | 08 | Concluído (Python puro com DuckDB, sem PySpark; rodada 173663739566769 no dev) |
-| [10](prompt_10.md) | Revisão do código do pipeline | pr-review | 09 | Pendente |
+| [10](prompt_10.md) | Revisão do código do pipeline | pr-review | 09 | Concluído ([revisão](../reports/pr-review/pr_review_pipeline_07_09.html): mudanças pedidas, 16 achados) |
 | [11](prompt_11.md) | Qualidade das tabelas | quality | 09 rodando | Pendente |
 | [12](prompt_12.md) | Reconciliação fonte x lakehouse | reconcile | 09 | Pendente |
 | [13](prompt_13.md) | Impacto de uma mudança (ex.: fuso) | impact | 09 | Pendente |
@@ -38,4 +38,4 @@ O pipeline roda no dev em Python puro, sem PySpark: DuckDB e pyarrow sobre Parqu
 - **Executar localmente:** `uv run python scripts/run_pipeline_local.py --out <pasta>`. Roda o mesmo código em cerca de 23 s.
 - **Testes:** dentro de `retail_analytics/`, `uv run --no-project --with pytest --with pyyaml --with duckdb --with pyarrow pytest tests -q`, com 24 testes.
 
-Próximo passo: prompts 10 a 19.
+Próximo passo: o engenheiro de dados decide quais achados da [revisão](../reports/pr-review/pr_review_pipeline_07_09.html) corrigir; depois, os prompts 11 a 19.

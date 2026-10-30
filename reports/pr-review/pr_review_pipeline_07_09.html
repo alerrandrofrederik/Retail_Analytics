@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Revisão · pipeline RYStore 07 a 09</title>
+<style>
+@font-face{font-family:'Bricolage Grotesque';font-weight:600;font-display:block;src:url('fonts/BricolageGrotesque-600.woff2') format('woff2');}
+@font-face{font-family:'Bricolage Grotesque';font-weight:700;font-display:block;src:url('fonts/BricolageGrotesque-700.woff2') format('woff2');}
+@font-face{font-family:'Bricolage Grotesque';font-weight:800;font-display:block;src:url('fonts/BricolageGrotesque-800.woff2') format('woff2');}
+@font-face{font-family:'JetBrains Mono';font-weight:500;font-display:block;src:url('fonts/JetBrainsMono-500.woff2') format('woff2');}
+@font-face{font-family:'JetBrains Mono';font-weight:600;font-display:block;src:url('fonts/JetBrainsMono-600.woff2') format('woff2');}
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#0f0a1e;--ink:#ece7f8;--ink-2:rgba(236,231,248,.7);--ink-3:rgba(236,231,248,.55);--ink-4:rgba(236,231,248,.4);--line:rgba(236,231,248,.14);--purple:#8a63f2;--purple-soft:#c9b8ff;--red:#ff8a73;--orange:#ffa657;--green:#5fe3a1;
+  --gh-bg:#0d1117;--gh-head:#161b22;--gh-line:#30363d;--gh-text:#e6edf3;--gh-kw:#ff7b72;--gh-str:#a5d6ff;--gh-fn:#d2a8ff;--gh-num:#79c0ff;--gh-cm:#8b949e;--gh-gutter:#6e7681;--gh-del:rgba(255,138,115,.18);--gh-add:rgba(63,185,80,.18);--gh-delink:#ffa198;--gh-addink:#7ee787;}
+html{background:var(--bg);}
+body{font-family:'Bricolage Grotesque',sans-serif;color:var(--ink);background:var(--bg);font-size:20px;line-height:1.5;-webkit-font-smoothing:antialiased;}
+main{position:relative;z-index:1;max-width:1380px;margin:0 auto;padding:56px 40px 96px;}
+.mono{font-family:'JetBrains Mono',monospace;}
+.nowrap{white-space:nowrap;}
+a{color:var(--purple-soft);text-decoration:none;}
+button{font:inherit;color:inherit;background:transparent;border:0;}
+.pill{display:inline-flex;align-items:center;padding:4px 9px;line-height:1;border-radius:6px;border:1px solid rgba(201,184,255,.45);font-family:'JetBrains Mono',monospace;font-weight:500;font-size:18px;letter-spacing:0;text-transform:none;color:var(--purple-soft);white-space:nowrap;}
+.pill.state{color:var(--red);border-color:rgba(255,138,115,.6);}
+.status{display:flex;align-items:center;gap:12px;font-family:'JetBrains Mono',monospace;font-weight:600;font-size:17px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);}
+h1{margin-top:14px;font-size:44px;font-weight:700;letter-spacing:-.02em;line-height:1.05;}
+.strip{margin-top:26px;display:grid;grid-template-columns:1.3fr 1fr .9fr 1fr;border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+.cell{padding:16px 18px 16px 0;}
+.cell + .cell{border-left:1px solid var(--line);padding-left:18px;}
+.cell .l{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:17px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);}
+.cell .v{margin-top:6px;font-size:20px;font-weight:700;line-height:1.25;color:var(--ink);}
+.cell .v a{font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:600;}
+.cell .v.sevs{display:flex;gap:18px;align-items:center;}
+.cell .v.sevs > span{display:inline-flex;align-items:center;gap:8px;font-size:20px;} .cell .v.sevs .high{color:var(--red);} .cell .v.sevs .medium{color:var(--orange);} .cell .v.sevs .low{color:var(--ink-2);}
+.meter{display:inline-flex;align-items:flex-end;gap:3px;height:22px;flex:none;}
+.meter i{display:block;width:6px;border-radius:2px;background:rgba(236,231,248,.16);}
+.meter i:nth-child(1){height:9px;} .meter i:nth-child(2){height:15px;} .meter i:nth-child(3){height:22px;}
+.meter.high i{background:var(--red);}
+.meter.medium i:nth-child(-n+2){background:var(--orange);}
+.meter.low i:nth-child(1){background:var(--green);}
+h2 .meter{height:26px;gap:4px;} h2 .meter i{width:7px;} h2 .meter i:nth-child(1){height:11px;} h2 .meter i:nth-child(2){height:18px;} h2 .meter i:nth-child(3){height:26px;}
+h2{margin-top:46px;font-size:28px;font-weight:700;letter-spacing:-.01em;line-height:1.1;padding-bottom:10px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;cursor:pointer;}
+h2 .count{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:18px;letter-spacing:.1em;color:var(--ink-2);}
+h2 .chev{margin-right:4px;}
+.group.closed .list{display:none;}
+.item{border-bottom:1px solid var(--line);}
+.item .head{display:grid;grid-template-columns:28px minmax(0,1fr) 260px;align-items:center;column-gap:14px;padding:14px 0;cursor:pointer;}
+.item.small .head{cursor:default;}
+.item.small .chev{visibility:hidden;}
+.done{width:24px;height:24px;border-radius:7px;border:1.5px solid rgba(236,231,248,.45);cursor:pointer;position:relative;}
+.done:hover{border-color:var(--ink);}
+.item.is-done .done{background:var(--purple);border-color:var(--purple);}
+.item.is-done .done::after{content:'';position:absolute;left:8px;top:3px;width:6px;height:12px;border:solid var(--bg);border-width:0 2.5px 2.5px 0;transform:rotate(45deg);}
+.item.is-done .title{color:var(--ink-3);text-decoration:line-through;}
+.item .no{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:18px;color:var(--purple-soft);text-align:right;}
+.item .title{font-size:22px;font-weight:600;line-height:1.25;}
+.sev{display:inline-flex;align-items:center;gap:9px;justify-self:start;font-family:'JetBrains Mono',monospace;font-weight:600;font-size:17px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);white-space:nowrap;}
+.chev{display:inline-block;width:24px;height:24px;cursor:pointer;position:relative;flex:none;}
+.chev::after{content:'';position:absolute;left:6px;top:4px;width:11px;height:11px;border:solid var(--ink-2);border-width:0 2px 2px 0;transform:rotate(45deg);transition:transform .2s;}
+.item.open .chev::after,.group:not(.closed) h2 .chev::after{transform:rotate(-135deg);top:10px;}
+.item .body{display:none;padding:2px 0 24px 42px;}
+.item.open .body{display:block;}
+.code,.fix{background:var(--gh-bg);border:1px solid var(--gh-line);border-radius:8px;padding:0 0 8px;font-family:'JetBrains Mono',monospace;font-variant-ligatures:none;font-weight:500;font-size:18px;line-height:1.7;color:var(--gh-text);overflow-x:auto;}
+.cap a{color:var(--gh-cm);}
+.cap a:hover{color:var(--gh-text);text-decoration:underline;}
+.cap{font-size:18px;color:var(--gh-cm);padding:7px 14px;border-bottom:1px solid var(--gh-line);margin-bottom:6px;background:var(--gh-head);border-radius:8px 8px 0 0;}
+.ln,.fix .d{display:grid;grid-template-columns:56px minmax(0,1fr);}
+.ln .num,.fix .d .g{text-align:right;padding-right:16px;color:var(--gh-gutter);user-select:none;}
+.ln .src,.fix .d .t{white-space:pre-wrap;overflow-wrap:anywhere;padding-right:16px;padding-left:calc(var(--i,0)*1ch + 4ch);text-indent:calc(-1*(var(--i,0)*1ch + 4ch));}
+.ln.dots .src,.fix .d.dots .t{color:var(--gh-cm);font-style:italic;}
+.ln:has(mark){background:rgba(255,138,115,.06);} .ln:has(mark) .num{color:var(--red);}
+.kw{color:var(--gh-kw);} .st{color:var(--gh-str);} .fn{color:var(--gh-fn);} .nu{color:var(--gh-num);} .cm{color:var(--gh-cm);}
+mark{display:inline-block;text-indent:0;line-height:1.2;background:rgba(255,138,115,.22);color:inherit;border-radius:3px;padding:0 5px;margin:0 2px;box-shadow:0 0 0 1.5px rgba(255,138,115,.9);}
+.fix{margin-top:12px;padding-bottom:0;overflow:hidden;}
+.fix .cap{margin-bottom:0;}
+.fix .d.minus{background:var(--gh-del);} .fix .d.minus .g{color:var(--gh-delink);}
+.fix .d.plus{background:var(--gh-add);} .fix .d.plus .g{color:var(--gh-addink);}
+.comment{margin-top:14px;font-size:19px;line-height:1.5;color:var(--ink);max-width:1020px;text-wrap:pretty;}
+.comment .mono{font-size:.92em;}
+.comment .rule{display:block;margin-top:4px;color:var(--ink-2);}
+.comment .rule a{font-family:'JetBrains Mono',monospace;font-size:18px;margin-left:8px;}
+.thread{margin-top:22px;display:grid;row-gap:8px;}
+.msg{display:grid;grid-template-columns:170px minmax(0,1fr);column-gap:14px;align-items:baseline;}
+.msg .who{font-family:'JetBrains Mono',monospace;font-size:17px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);}
+.msg .txt{font-size:19px;color:var(--ink);text-wrap:pretty;}
+
+/* the ground, from the insight series: a radial purple ground, a faint grid, plates with a purple edge */
+:root{--ground:#080513;--plate:linear-gradient(160deg,#1b1436 0%,#110c24 100%);--plate-border:rgba(138,99,242,.28);--red:#ff8a73;}
+html{background:var(--ground);}
+body{background:var(--ground);}
+body{position:relative;min-height:100%;}
+body::before{content:'';position:absolute;left:0;right:0;top:0;height:min(1600px,100%);z-index:0;pointer-events:none;
+  background:radial-gradient(1500px 900px at 50% 420px,#161033 0%,#0e0a1d 55%,rgba(8,5,19,0) 100%);}
+body::after{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(173,150,255,.05) 1.2px,transparent 1.2px),linear-gradient(90deg,rgba(173,150,255,.05) 1.2px,transparent 1.2px);
+  background-size:46px 46px;}
+main,nav{position:relative;z-index:1;}
+h2 .count{margin-left:0;font-family:inherit;font-size:inherit;letter-spacing:0;color:var(--ink-2);}
+.comment ul{margin:8px 0 8px 22px;} .comment li{margin:2px 0;}
+</style>
+</head>
+<body>
+<main>
+  <div class="status">revisão <span class="pill">7259063..5ed9235</span><span class="pill state">mudanças pedidas</span></div>
+  <h1>Pipeline RYStore: bronze, silver e gold em Python puro (prompts 07 a 09)</h1>
+  <div class="strip">
+    <div class="cell"><div class="l">Arquivos</div><div class="v"><a>retail_analytics/src/</a>, <a>resources/</a>, <a>tests/</a>, <a>scripts/</a></div></div>
+    <div class="cell"><div class="l">Diff</div><div class="v">+1149 −112, 31 arquivos, 4 commits</div></div>
+    <div class="cell"><div class="l">Autor</div><div class="v">Claude (engenheiro de dados IA)</div></div>
+    <div class="cell"><div class="l">Achados</div><div class="v sevs"><span class="high">4 altos</span><span class="medium">7 médios</span><span class="low">5 baixos</span></div></div>
+  </div>
+  <p class="comment" style="margin-top:22px">Revisado em 2026-10-30 contra o <a>CLAUDE.md</a>, o contrato <a>contracts/rystore.odcs.yaml</a> 1.0.0 e o <a>knowledge/</a>. Os 24 testes passam localmente, e a rodada <span class="mono">173663739566769</span> no dev terminou com SUCCESS e as contagens iguais às da fonte. Os achados abaixo não aparecem nesses dados porque a fonte é limpa: eles quebram com a primeira entrega fora do padrão, num clone fora do Windows ou numa consulta da gold. Nenhum código foi alterado por esta revisão.</p>
+
+  <div class="group" id="high">
+    <h2 class="high"><span class="chev"></span><span class="meter high"><i></i><i></i><i></i></span>Risco alto<span class="count">· 4</span></h2>
+    <div class="list">
+    <div class="item open" data-key="rounding" data-cat="correctness">
+      <div class="head">
+        <span class="no">1</span>
+        <span class="title">Inteiros e dinheiro são arredondados em silêncio, sem quarentena</span>
+        <span class="sev high"><span class="meter high"><i></i><i></i><i></i></span><span class="cat">correção</span></span>
+      </div>
+      <div class="body">
+        <div class="code"><div class="cap"><a>retail_analytics/src/retail_analytics/silver.py</a></div>
+          <div class="ln"><span class="num">78</span><span class="src" style="--i:4">    <span class="kw">if</span> logical == <span class="st">"integer"</span>:</span></div>
+          <div class="ln"><span class="num">79</span><span class="src" style="--i:8">        <span class="kw">return</span> f<span class="st">"<mark>TRY_CAST({column} AS INTEGER)</mark>"</span></span></div>
+          <div class="ln"><span class="num">80</span><span class="src" style="--i:4">    <span class="kw">if</span> logical == <span class="st">"number"</span>:</span></div>
+          <div class="ln"><span class="num">81</span><span class="src" style="--i:8">        <span class="kw">return</span> f<span class="st">"<mark>TRY_CAST({column} AS DECIMAL(12,2))</mark>"</span></span></div>
+        </div>
+        <p class="comment">Testei com o DuckDB 2.0: <span class="mono">TRY_CAST('5.5' AS INTEGER)</span> devolve <span class="mono">6</span>, <span class="mono">'1e3'</span> devolve <span class="mono">1000</span> e <span class="mono">'10.005'</span> como DECIMAL(12,2) devolve <span class="mono">10.01</span>. Uma <span class="mono">quantity</span> de 5,5 entraria como 6 e um preço com três casas seria arredondado, sem nada em <span class="mono">_quarantine</span>. A quarentena de tipo só pega texto que não é número. <span class="rule">Contrato: inteiros chegam sem casas decimais (decisão delegada, pauta) e os valores têm 2 casas; o que foge disso é quarentena, nunca correção silenciosa. <a>contracts/rystore_open_points.md</a></span></p>
+        <div class="fix"><div class="cap">Mudança sugerida</div>
+            <div class="d minus"><span class="g">-</span><span class="t" style="--i:8">        <span class="kw">return</span> f<span class="st">"TRY_CAST({column} AS INTEGER)"</span></span></div>
+            <div class="d plus"><span class="g">+</span><span class="t" style="--i:8">        <span class="kw">return</span> f<span class="st">"CASE WHEN regexp_full_match({column}, '-?[0-9]+') THEN TRY_CAST({column} AS INTEGER) END"</span></span></div>
+            <div class="d minus"><span class="g">-</span><span class="t" style="--i:8">        <span class="kw">return</span> f<span class="st">"TRY_CAST({column} AS DECIMAL(12,2))"</span></span></div>
+            <div class="d plus"><span class="g">+</span><span class="t" style="--i:8">        <span class="kw">return</span> f<span class="st">"CASE WHEN regexp_full_match({column}, '-?[0-9]+(\.[0-9]{1,2})?') THEN TRY_CAST({column} AS DECIMAL(12,2)) END"</span></span></div>
+            <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># e um caso em fixtures/rystore/source: quantity "5.5" e unit_price "1.005" vão para cast:&lt;coluna&gt;</span></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="item" data-key="pii" data-cat="security">
+      <div class="head">
+        <span class="no">2</span>
+        <span class="title">PII aberta na bronze e no JSON de quarentena da silver</span>
+        <span class="sev high"><span class="meter high"><i></i><i></i><i></i></span><span class="cat">segurança</span></span>
+      </div>
+      <div class="body">
+        <div class="code"><div class="cap"><a>retail_analytics/src/retail_analytics/silver.py</a></div>
+          <div class="ln"><span class="num">134</span><span class="src" style="--i:24">                        <span class="fn">coalesce</span>({reason}) <span class="kw">AS</span> _reason, <mark><span class="kw">CAST</span>(<span class="fn">json_object</span>({raw}) <span class="kw">AS</span> VARCHAR) <span class="kw">AS</span> _raw</mark></span></div>
+          <div class="ln dots"><span class="num"></span><span class="src" style="--i:0">…</span></div>
+          <div class="ln"><span class="num">145</span><span class="src" style="--i:12">            con.<span class="fn">execute</span>(f<span class="st">"INSERT INTO quarantine SELECT '{table}', _source_file, _line, 'orphan:{column}', <mark>_raw</mark> FROM {table} WHERE {orphan}"</span>)</span></div>
+        </div>
+        <p class="comment">O <span class="mono">_raw</span> guarda o texto original da linha, então um cliente ou funcionário em quarentena leva nome, e-mail, postcode e <span class="mono">annual_salary</span> sem hash para <span class="mono">silver._quarantine</span>. O mascaramento da linha 154 só vale para as tabelas limpas. Além disso, a <span class="mono">publish</span> cria <span class="mono">bronze.customers</span>, <span class="mono">bronze.employees</span> (com salário) e <span class="mono">bronze._quarantine</span> como tabelas Delta legíveis por qualquer pessoa com SELECT no catálogo, e o volume <span class="mono">bronze.raw</span> guarda os CSVs inteiros, sem nenhum GRANT ou REVOKE no projeto. Hoje a quarentena tem 0 linhas, então nada vazou [high], mas basta uma linha ruim. <span class="rule">Contrato: as 8 colunas <span class="mono">classification: restricted</span> são PII tratada como real (decisão delegada), e a silver é a primeira camada para consumidores. <a>contracts/rystore.odcs.yaml:59</a></span></p>
+        <div class="fix"><div class="cap">Mudança sugerida</div>
+            <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># silver.py: _raw com as colunas restritas já em hash e annual_salary fora</span></span></div>
+            <div class="d minus"><span class="g">-</span><span class="t" style="--i:8">        raw = <span class="st">", "</span>.<span class="fn">join</span>(f<span class="st">"""'{name}', "{name}\""""</span> <span class="kw">for</span> name, _, _ <span class="kw">in</span> columns)</span></div>
+            <div class="d plus"><span class="g">+</span><span class="t" style="--i:8">        raw = <span class="st">", "</span>.<span class="fn">join</span>(f<span class="st">"'{name}', {_masked(table, name)}"</span> <span class="kw">for</span> name, _, _ <span class="kw">in</span> columns <span class="kw">if</span> name <span class="kw">not in</span> DROPPED.<span class="fn">get</span>(table, []))</span></div>
+            <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># publish.py / bundle: REVOKE SELECT ON SCHEMA bronze FROM `account users`; o volume bronze.raw só para o engenheiro de dados</span></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="item" data-key="calendar" data-cat="correctness">
+      <div class="head">
+        <span class="no">3</span>
+        <span class="title">fato_estoque aponta para datas que não existem em dim_data</span>
+        <span class="sev high"><span class="meter high"><i></i><i></i><i></i></span><span class="cat">correção</span></span>
+      </div>
+      <div class="body">
+        <div class="code"><div class="cap"><a>retail_analytics/src/retail_analytics/gold.py</a></div>
+          <div class="ln"><span class="num">25</span><span class="src" style="--i:8">        <span class="kw">WITH</span> bounds <span class="kw">AS</span> (<span class="kw">SELECT</span> <span class="fn">make_date</span>(<span class="fn">year</span>(<span class="fn">min</span>(order_date)), 1, 1) <span class="kw">AS</span> d0, <span class="fn">make_date</span>(<span class="fn">year</span>(<span class="fn">max</span>(order_date)), 12, 31) <span class="kw">AS</span> d1</span></div>
+          <div class="ln"><span class="num">26</span><span class="src" style="--i:24">                        <mark><span class="kw">FROM</span> orders</mark>),</span></div>
+          <div class="ln dots"><span class="num"></span><span class="src" style="--i:0">…</span></div>
+          <div class="ln"><span class="num">64</span><span class="src" style="--i:8">        <span class="kw">SELECT</span> <span class="kw">CAST</span>(<span class="fn">strftime</span>(<span class="kw">CAST</span>(<mark>v._bronze_ingested_at</mark> <span class="kw">AS</span> DATE), <span class="st">'%Y%m%d'</span>) <span class="kw">AS</span> INTEGER) <span class="kw">AS</span> snapshot_date_key,</span></div>
+        </div>
+        <p class="comment">A <span class="mono">dim_data</span> cobre só os anos dos pedidos (2025, 365 linhas), mas o <span class="mono">snapshot_date_key</span> do estoque é a data da ingestão (20261030). Um join de <span class="mono">fato_estoque</span> com <span class="mono">dim_data</span> devolve 0 linhas, e qualquer painel de estoque por mês fica vazio. A data também não vem da fonte, e sim do relógio do job: rodar de novo outro dia muda a data da mesma foto. <span class="rule">Modelo dimensional: toda chave de data de um fato existe na dimensão de data. <a>knowledge/architecture/pipeline.md</a></span></p>
+        <div class="fix"><div class="cap">Mudança sugerida</div>
+            <div class="d minus"><span class="g">-</span><span class="t" style="--i:8">        <span class="kw">WITH</span> bounds <span class="kw">AS</span> (<span class="kw">SELECT</span> <span class="fn">make_date</span>(<span class="fn">year</span>(<span class="fn">min</span>(order_date)), 1, 1) <span class="kw">AS</span> d0, <span class="fn">make_date</span>(<span class="fn">year</span>(<span class="fn">max</span>(order_date)), 12, 31) <span class="kw">AS</span> d1 <span class="kw">FROM</span> orders),</span></div>
+            <div class="d plus"><span class="g">+</span><span class="t" style="--i:8">        <span class="kw">WITH</span> dates <span class="kw">AS</span> (<span class="kw">SELECT</span> order_date <span class="kw">AS</span> d <span class="kw">FROM</span> orders <span class="kw">UNION ALL</span> <span class="kw">SELECT</span> <span class="kw">CAST</span>(_bronze_ingested_at <span class="kw">AS</span> DATE) <span class="kw">FROM</span> inventory),</span></div>
+            <div class="d plus"><span class="g">+</span><span class="t" style="--i:13">             bounds <span class="kw">AS</span> (<span class="kw">SELECT</span> <span class="fn">make_date</span>(<span class="fn">year</span>(<span class="fn">min</span>(d)), 1, 1) <span class="kw">AS</span> d0, <span class="fn">make_date</span>(<span class="fn">year</span>(<span class="fn">max</span>(d)), 12, 31) <span class="kw">AS</span> d1 <span class="kw">FROM</span> dates),</span></div>
+            <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># e um teste: todo date_key dos fatos existe em dim_data</span></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="item" data-key="crlf" data-cat="portability">
+      <div class="head">
+        <span class="no">4</span>
+        <span class="title">As fixtures e a fonte vão ao git com LF; os testes só passam no Windows</span>
+        <span class="sev high"><span class="meter high"><i></i><i></i><i></i></span><span class="cat">portabilidade</span></span>
+      </div>
+      <div class="body">
+        <div class="code"><div class="cap"><a>git ls-files --eol</a></div>
+          <div class="ln"><span class="num"></span><span class="src" style="--i:0"><mark>i/lf</mark>    w/crlf  attr/    retail_analytics/fixtures/rystore/orders_clean.csv</span></div>
+          <div class="ln"><span class="num"></span><span class="src" style="--i:0"><mark>i/lf</mark>    w/crlf  attr/    retail_analytics/fixtures/rystore/source/orders/dt=2025-06-01/orders.csv</span></div>
+          <div class="ln"><span class="num"></span><span class="src" style="--i:0"><mark>i/lf</mark>    w/crlf  attr/    RYStore-Retail-Dataset/orders.csv</span></div>
+        </div>
+        <p class="comment">A máquina usa <span class="mono">core.autocrlf=true</span> e o repositório não tem <span class="mono">.gitattributes</span>, então o git guarda os CSVs com LF e só os devolve com CRLF no Windows. Como o <span class="mono">validate_delivery</span> separa as linhas por <span class="mono">\r\n</span>, num clone em Linux ou macOS, numa CI ou numa pasta Git do Databricks, cada arquivo vira uma linha só. Aí todas as fixtures dão <span class="mono">schema_drift</span>, os 24 testes falham e o <span class="mono">load_rystore_to_supabase.py</span> sobe arquivos que a bronze rejeita. A fidelidade de bytes do contrato depende de uma configuração local. <span class="rule">O contrato diz CRLF e bytes intactos; nada pode rodar só numa máquina.</span></p>
+        <div class="fix"><div class="cap">Mudança sugerida</div>
+            <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># .gitattributes (novo, na raiz)</span></span></div>
+            <div class="d plus"><span class="g">+</span><span class="t" style="--i:0">*.csv -text</span></div>
+            <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># depois: git add --renormalize . e conferir com git ls-files --eol (i/crlf)</span></span></div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <div class="group" id="medium">
+    <h2 class="medium"><span class="chev"></span><span class="meter medium"><i></i><i></i><i></i></span>Risco médio<span class="count">· 7</span></h2>
+    <div class="list">
+    <div class="item" data-key="traversal" data-cat="security">
+      <div class="head">
+        <span class="no">5</span>
+        <span class="title">A chave do bucket vira caminho no volume sem validação</span>
+        <span class="sev medium"><span class="meter medium"><i></i><i></i><i></i></span><span class="cat">segurança</span></span>
+      </div>
+      <div class="body">
+        <div class="code"><div class="cap"><a>retail_analytics/src/retail_analytics/bronze.py</a></div>
+          <div class="ln"><span class="num">106</span><span class="src" style="--i:8">        <span class="kw">if</span> raw_dir <span class="kw">is not</span> <span class="kw">None</span>:</span></div>
+          <div class="ln"><span class="num">107</span><span class="src" style="--i:12">            target = <mark><span class="fn">Path</span>(raw_dir) / key</mark></span></div>
+          <div class="ln"><span class="num">108</span><span class="src" style="--i:12">            target.parent.<span class="fn">mkdir</span>(parents=<span class="kw">True</span>, exist_ok=<span class="kw">True</span>)</span></div>
+        </div>
+        <p class="comment">A chave vem de fora, do bucket da fonte, e é gravada antes de qualquer checagem, inclusive a de tabela fora do contrato. Uma chave como <span class="mono">orders/../../../silver/files/orders/part-0.parquet</span> sobrescreveria a silver dentro do volume. Arquivos de tabelas desconhecidas também vão para o <span class="mono">raw</span>. <span class="rule">Contrato: o layout do bucket é <span class="mono">&lt;tabela&gt;/dt=yyyy-MM-dd/&lt;tabela&gt;.csv</span> ou <span class="mono">&lt;tabela&gt;/&lt;tabela&gt;.csv</span>. <a>knowledge/architecture/pipeline.md</a></span></p>
+        <div class="fix"><div class="cap">Mudança sugerida</div>
+            <div class="d plus"><span class="g">+</span><span class="t" style="--i:0">LAYOUT = re.<span class="fn">compile</span>(<span class="st">r"(?P&lt;t&gt;[a-z_]+)/(dt=\d{4}-\d{2}-\d{2}/)?(?P=t)\.csv"</span>)</span></div>
+            <div class="d plus"><span class="g">+</span><span class="t" style="--i:4">    <span class="kw">if not</span> LAYOUT.<span class="fn">fullmatch</span>(key): summary.fatal.<span class="fn">append</span>(f<span class="st">"{key}: fora do layout"</span>); <span class="kw">continue</span>   <span class="cm"># antes de gravar no raw</span></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="item" data-key="publish" data-cat="correctness">
+      <div class="head">
+        <span class="no">6</span>
+        <span class="title">A publicação não é atômica: as camadas podem ficar desalinhadas</span>
+        <span class="sev medium"><span class="meter medium"><i></i><i></i><i></i></span><span class="cat">correção</span></span>
+      </div>
+      <div class="body">
+        <div class="code"><div class="cap"><a>retail_analytics/src/jobs/publish.py</a></div>
+          <div class="ln"><span class="num">28</span><span class="src" style="--i:0"><mark><span class="kw">for</span> layer <span class="kw">in</span> (<span class="st">"bronze"</span>, <span class="st">"silver"</span>, <span class="st">"gold"</span>):</mark></span></div>
+          <div class="ln"><span class="num">32</span><span class="src" style="--i:8">        <span class="fn">run</span>(f<span class="st">"CREATE OR REPLACE TABLE {table} … AS SELECT * FROM parquet.`…`"</span>)</span></div>
+        </div>
+        <p class="comment">Já aconteceu na rodada <span class="mono">966981410696310</span>: a publicação parou em <span class="mono">silver.orders</span> e deixou a bronze e metade da silver novas, com a outra metade e a gold antigas. Um consumidor que cruze a <span class="mono">silver.orders</span> com a <span class="mono">silver.order_items</span> nesse intervalo vê duas versões. São 30 comandos em série, sem ordem de dependência e sem nada que permita uma nova tentativa ou um rollback. <span class="rule">Mesmo resultado a cada nova execução; os consumidores nunca leem um estado intermediário.</span></p>
+        <div class="fix"><div class="cap">Mudança sugerida</div>
+            <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># 1. publicar cada tabela em &lt;camada&gt;.&lt;t&gt;__next e, no fim, trocar com ALTER TABLE … RENAME, numa transação de várias instruções</span></span></div>
+            <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># 2. ou publicar a gold só depois que a silver inteira tiver sido publicada, e registrar a versão publicada em _publish_log</span></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="item" data-key="crash" data-cat="correctness">
+      <div class="head">
+        <span class="no">7</span>
+        <span class="title">Uma falha entre a gravação das linhas e o log duplica a bronze</span>
+        <span class="sev medium"><span class="meter medium"><i></i><i></i><i></i></span><span class="cat">correção</span></span>
+      </div>
+      <div class="body">
+        <div class="code"><div class="cap"><a>retail_analytics/src/retail_analytics/bronze.py</a></div>
+          <div class="ln"><span class="num">132</span><span class="src" style="--i:12">            <span class="fn">_write</span>(rows, schema, lake / table, stamp)</span></div>
+          <div class="ln dots"><span class="num"></span><span class="src" style="--i:0">…</span></div>
+          <div class="ln"><span class="num">137</span><span class="src" style="--i:8">        <mark><span class="fn">_write</span>(log, LOG_SCHEMA, lake / <span class="st">"_ingested_files"</span>, stamp)</mark></span></div>
+        </div>
+        <p class="comment">O log é gravado por último. Se a tarefa cair depois das linhas e antes do log, como num erro de E/S do volume parecido com o de 2026-10-30, a próxima rodada reingere os mesmos arquivos. As linhas aparecem duas vezes na bronze, com <span class="mono">_ingested_at</span> diferentes. A silver não muda, porque pega a última versão, mas a reconciliação entre a bronze e a fonte (prompt 12) passa a divergir. <span class="rule">Mesmo resultado numa nova execução ou num backfill.</span></p>
+        <div class="fix"><div class="cap">Mudança sugerida</div>
+            <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># no início de ingest(): apagar os &lt;stamp&gt;.parquet das tabelas cujo carimbo não está em _ingested_files (sobra de uma rodada que caiu)</span></span></div>
+            <div class="d plus"><span class="g">+</span><span class="t" style="--i:0">orphans = [p <span class="kw">for</span> p <span class="kw">in</span> lake.<span class="fn">glob</span>(<span class="st">"*/*.parquet"</span>) <span class="kw">if</span> p.stem <span class="kw">not in</span> logged_stamps]</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="item" data-key="rules" data-cat="duplication">
+      <div class="head">
+        <span class="no">8</span>
+        <span class="title">As listas e as regras do contrato estão copiadas à mão na silver</span>
+        <span class="sev medium"><span class="meter medium"><i></i><i></i><i></i></span><span class="cat">duplicação</span></span>
+      </div>
+      <div class="body">
+        <div class="code"><div class="cap"><a>retail_analytics/src/retail_analytics/silver.py</a></div>
+          <div class="ln"><span class="num">33</span><span class="src" style="--i:0"><mark>VALID = {</mark></span></div>
+          <div class="ln"><span class="num">34</span><span class="src" style="--i:4">    (<span class="st">"orders"</span>, <span class="st">"order_status"</span>): [<span class="st">"Cancelled"</span>, <span class="st">"Completed"</span>, <span class="st">"Refunded"</span>],</span></div>
+          <div class="ln dots"><span class="num"></span><span class="src" style="--i:0">… e RULES, na linha 41</span></div>
+        </div>
+        <p class="comment">O <span class="mono">rystore_schema.py</span> é gerado do contrato, e o <span class="mono">test_schema.py</span> garante que os dois continuam iguais. Já as listas fechadas (<span class="mono">validValues</span>) e as regras de negócio foram copiadas à mão. Se o contrato ganhar um status novo, nenhum teste avisa, e a checagem passa a dar <span class="mono">warn</span> para dados válidos. <span class="rule">Um fato fica num lugar só; o contrato é a fonte das regras. <a>contracts/rystore.odcs.yaml</a></span></p>
+        <div class="fix"><div class="cap">Mudança sugerida</div>
+            <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># rystore_schema.py: VALID_VALUES gerado das métricas invalidValues/validValues do contrato</span></span></div>
+            <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># test_schema.py: assert silver.VALID == rystore_schema.VALID_VALUES</span></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="item" data-key="tests" data-cat="tests">
+      <div class="head">
+        <span class="no">9</span>
+        <span class="title">Faltam testes para as regras de carga do contrato</span>
+        <span class="sev medium"><span class="meter medium"><i></i><i></i><i></i></span><span class="cat">testes</span></span>
+      </div>
+      <div class="body">
+        <div class="code"><div class="cap"><a>retail_analytics/tests/conftest.py</a></div>
+          <div class="ln"><span class="num">31</span><span class="src" style="--i:4">    first = bronze.<span class="fn">ingest</span>(source, dirs[<span class="st">"bronze"</span>], <span class="fn">datetime</span>(2026, 1, 1, 7, 0), raw_dir=dirs[<span class="st">"raw"</span>])</span></div>
+          <div class="ln"><span class="num">32</span><span class="src" style="--i:4">    rerun = bronze.<span class="fn">ingest</span>(<mark>source</mark>, dirs[<span class="st">"bronze"</span>], <span class="fn">datetime</span>(2026, 1, 1, 8, 0))</span></div>
+        </div>
+        <div class="comment">A nova rodada usa a mesma fonte, então só prova que um ETag repetido é ignorado. Não há teste para quatro casos:
+          <ul>
+            <li>uma linha que some da foto de uma tabela completa (a exclusão do contrato);</li>
+            <li>um arquivo reenviado com ETag novo;</li>
+            <li>um arquivo com problema fatal passando pelo <span class="mono">ingest()</span>, que deveria ficar no log com o status certo;</li>
+            <li>a publicação.</li>
+          </ul>
+          Os casos 1, 3 e 4 do relatório também passariam despercebidos pelos testes. <span class="rule">Cada mudança vem com testes que cobrem os casos de borda; resultado esperado escrito antes (skill test-data).</span></div>
+        <div class="fix"><div class="cap">Mudança sugerida</div>
+            <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># fixtures/rystore/source_day2/: customers sem CUST90002, orders/dt=2025-06-01 com novo ETag, orders_x.csv com coluna nova</span></span></div>
+            <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># expected_pipeline.json: "day2" com as contagens e os status esperados</span></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="item" data-key="growth" data-cat="performance">
+      <div class="head">
+        <span class="no">10</span>
+        <span class="title">A bronze só cresce, e a publicação regrava o histórico inteiro todo dia</span>
+        <span class="sev medium"><span class="meter medium"><i></i><i></i><i></i></span><span class="cat">performance</span></span>
+      </div>
+      <div class="body">
+        <div class="code"><div class="cap"><a>retail_analytics/src/retail_analytics/silver.py</a></div>
+          <div class="ln"><span class="num">92</span><span class="src" style="--i:4">    <span class="kw">return</span> f<span class="st">"SELECT * FROM {source} WHERE _ingested_at = (SELECT max(_ingested_at) FROM <mark>{source}</mark>)"</span></span></div>
+        </div>
+        <p class="comment">As 7 tabelas completas chegam inteiras todo dia, e cada foto fica para sempre em <span class="mono">bronze/files</span>. Para pegar a última foto, a silver lê o histórico inteiro, e a <span class="mono">publish</span> recria todas as tabelas da bronze a partir de todos os Parquet. Hoje a <span class="mono">publish</span> leva 112 s de 402 s. Em um ano, as 7 tabelas completas acumulam cerca de 562 mil linhas só de fotos repetidas (1.540 × 365), e o tempo do warehouse cresce junto. <span class="rule">Ler só o que a tarefa precisa; o custo cresce com os dados novos, não com o histórico.</span></p>
+        <div class="fix"><div class="cap">Mudança sugerida</div>
+            <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># silver: ler só o arquivo do carimbo mais recente de cada tabela completa (pelo nome, sem abrir os outros)</span></span></div>
+            <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># publish: bronze com INSERT INTO … SELECT do carimbo novo, em vez de CREATE OR REPLACE do histórico</span></span></div>
+            <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># retenção das fotos em bronze/files: a definir com o engenheiro de dados (decisão)</span></span></div>
+        </div>
+      </div>
+    </div>
+    <div class="item" data-key="setup" data-cat="cost">
+      <div class="head">
+        <span class="no">11</span>
+        <span class="title">Montar o ambiente leva mais da metade da rodada</span>
+        <span class="sev medium"><span class="meter medium"><i></i><i></i><i></i></span><span class="cat">custo</span></span>
+      </div>
+      <div class="body">
+        <div class="code"><div class="cap"><a>retail_analytics/resources/rystore_pipeline.job.yml</a></div>
+          <div class="ln"><span class="num">25</span><span class="src" style="--i:12">            environment_version: <span class="st">"4"</span></span></div>
+          <div class="ln"><span class="num">26</span><span class="src" style="--i:12">            <mark>dependencies:</mark></span></div>
+          <div class="ln"><span class="num">27</span><span class="src" style="--i:14">              - duckdb==2.0.*</span></div>
+        </div>
+        <p class="comment">Na rodada <span class="mono">173663739566769</span>, a <span class="mono">ingest_bronze</span> passou 215 s montando o ambiente e só 27 s rodando. A soma das quatro tarefas é de 181 s de execução numa rodada de 402 s. O ambiente é montado a cada rodada, e os <span class="mono">==2.0.*</span> deixam a versão exata variar de um dia para outro. <span class="rule">Custo: pagar pelo trabalho, não pela instalação. <a>skills/cost-review/SKILL.md</a></span></p>
+        <div class="fix"><div class="cap">Mudança sugerida</div>
+            <div class="d minus"><span class="g">-</span><span class="t" style="--i:14">              - duckdb==2.0.*</span></div>
+            <div class="d plus"><span class="g">+</span><span class="t" style="--i:14">              - duckdb==2.0.0   <span class="cm"># versões exatas (iguais ao uv.lock), para o ambiente ir para o cache</span></span></div>
+            <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># medir de novo; se continuar alto, usar um ambiente base do workspace com essas dependências</span></span></div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <div class="group closed" id="low">
+    <h2 class="low"><span class="chev"></span><span class="meter low"><i></i><i></i><i></i></span>Risco baixo<span class="count">· 5</span></h2>
+    <div class="list">
+      <div class="item small" data-key="private" data-cat="duplication"><div class="head"><span class="no">12</span><span class="title">gold.py importa a função privada <span class="mono">silver._write</span>; o melhor é um módulo <span class="mono">lake.py</span> com <span class="mono">write</span> e <span class="mono">copy</span></span><span class="sev low"><span class="meter low"><i></i><i></i><i></i></span><span class="cat">duplicação</span></span></div></div>
+      <div class="item small" data-key="snapshot" data-cat="contract"><div class="head"><span class="no">13</span><span class="title">fato_estoque guarda só a última foto: sem histórico, não dá para ver a evolução do estoque. É uma decisão de modelo a confirmar</span><span class="sev low"><span class="meter low"><i></i><i></i><i></i></span><span class="cat">contrato</span></span></div></div>
+      <div class="item small" data-key="ruff" data-cat="style"><div class="head"><span class="no">14</span><span class="title">O ruff aponta 11 avisos (imports fora de ordem, <span class="mono">dict()</span>, <span class="mono">timezone.utc</span>), 6 corrigíveis com <span class="mono">--fix</span></span><span class="sev low"><span class="meter low"><i></i><i></i><i></i></span><span class="cat">estilo</span></span></div></div>
+      <div class="item small" data-key="stale" data-cat="docs"><div class="head"><span class="no">15</span><span class="title">O databricks.md (linha 60) ainda diz que o dev usa um schema com o nome do usuário; a variável <span class="mono">schema</span> saiu do bundle</span><span class="sev low"><span class="meter low"><i></i><i></i><i></i></span><span class="cat">documentação</span></span></div></div>
+      <div class="item small" data-key="runbook" data-cat="docs"><div class="head"><span class="no">16</span><span class="title">Não há runbook (como repetir uma tarefa, refazer um dia ou tratar uma entrega com erro fatal): fica para o prompt 15</span><span class="sev low"><span class="meter low"><i></i><i></i><i></i></span><span class="cat">documentação</span></span></div></div>
+    </div>
+  </div>
+
+</main>
+<script>
+(function () {
+  var KEY = 'review:rystore-pipeline-07-09';
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { state = {}; }
+  var items = Array.prototype.slice.call(document.querySelectorAll('.item'));
+  var groups = Array.prototype.slice.call(document.querySelectorAll('.group'));
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+  items.forEach(function (it) {
+    var key = it.getAttribute('data-key');
+    if (!it.classList.contains('small')) {
+      it.querySelector('.head').addEventListener('click', function (e) { if (e.target.closest('a')) return; it.classList.toggle('open'); });
+    }
+  });
+  groups.forEach(function (g) { g.querySelector('h2').addEventListener('click', function () { g.classList.toggle('closed'); }); });
+})();
+</script>
+</body>
+</html>

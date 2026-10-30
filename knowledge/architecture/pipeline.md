@@ -43,4 +43,8 @@ Origem: rodada `966981410696310` do job no dev.
 - **O DuckDB não grava direto em `/Volumes`.** O `COPY … TO '/Volumes/…'` falhou uma vez com "Async write failed … Input/output error", porque o DuckDB grava fora de ordem e o volume montado não aceita isso de forma confiável. Agora o DuckDB grava num arquivo temporário local, que é copiado inteiro para o volume (`silver._copy`). O pyarrow grava em sequência e não teve o problema na bronze.
 - **Hora local vira `TIMESTAMP_NTZ`.** As colunas `order_datetime_local` (silver.orders e gold.fato_pedidos) não têm fuso. A tabela Delta precisa do recurso `timestampNtz`, que a `publish` habilita no `CREATE OR REPLACE`. Sem isso, substituir uma tabela que já existia falha com `DELTA_FEATURES_REQUIRE_MANUAL_ENABLEMENT`.
 
+## Revisões
+
+- 2026-10-30: [revisão do código dos prompts 07 a 09](../../reports/pr-review/pr_review_pipeline_07_09.html) (skill `pr-review`). Veredito: mudanças pedidas, com 4 achados altos, 7 médios e 5 baixos. As correções aguardam o sim do engenheiro de dados.
+
 Os schemas e os volumes estão em [databricks.md](databricks.md).

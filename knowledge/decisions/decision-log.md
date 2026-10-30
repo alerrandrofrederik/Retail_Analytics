@@ -29,3 +29,5 @@ Uma linha por decisão. Uma decisão em aberto passa para "tomada" quando o enge
 | Desde | Pergunta | Para quem | Origem |
 |---|---|---|---|
 | 2026-10-30 | Descrições reais das 77 colunas, para a próxima versão do contrato | Dono da fonte | [Pauta do contrato](../../contracts/rystore_open_points.md), ponto 16 |
+| 2026-10-30 | Quanto tempo guardar as fotos diárias das tabelas completas em `bronze/files` (hoje ficam para sempre) | Engenheiro de dados | [Revisão 07 a 09](../../reports/pr-review/pr_review_pipeline_07_09.html), achado 10 |
+| 2026-10-30 | A `fato_estoque` deve guardar o histórico das fotos diárias, e não só a última? | Engenheiro de dados | [Revisão 07 a 09](../../reports/pr-review/pr_review_pipeline_07_09.html), achado 13 |

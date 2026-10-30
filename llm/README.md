@@ -8,8 +8,8 @@ Antes do 05: preparação do ambiente (skills da Databricks em `.claude/skills/`
 |---|---|---|---|---|
 | [01](prompt_01.md) | Perfil da fonte RYStore | profile | — | Concluído ([relatório](../reports/profile/rystore_profile.html)) |
 | [02](prompt_02.md) | Metadata da RYStore | metadata | 01 | Concluído ([metadata](../metadata/rystore.yaml)) |
-| [03](prompt_03.md) | Contrato de dados com a fonte | contract | 02 | Concluído, rascunho ([contrato](../contracts/rystore.odcs.yaml), [pauta](../contracts/rystore_open_points.md)) |
-| [04](prompt_04.md) | Decisões de arquitetura em aberto | — | 03 | Pendente |
+| [03](prompt_03.md) | Contrato de dados com a fonte | contract | 02 | Concluído, 1.0.0 ([contrato](../contracts/rystore.odcs.yaml), [pauta](../contracts/rystore_open_points.md)) |
+| [04](prompt_04.md) | Decisões de arquitetura em aberto | — | 03 | Concluído ([decisões](../knowledge/decisions/decision-log.md)) |
 | [05](prompt_05.md) | Carga dos CSVs no Supabase (origem) | — | 04 | Pendente |
 | [06](prompt_06.md) | Dados de teste da ingestão e da bronze | test-data | 02, 03 | Pendente |
 | [07](prompt_07.md) | Ingestão boto3 e camada bronze | — | 04, 05, 06 | Pendente |

@@ -16,17 +16,14 @@ Uma linha por decisão. Uma decisão em aberto passa para "tomada" quando o enge
 | 2026-10-30 | As tarefas do projeto viram prompts em ordem em `llm/prompt_NN.md`, com índice em [`llm/README.md`](../../llm/README.md); a skill `migration` fica de fora (não há ambiente legado) | Engenheiro de dados, ao aprovar o plano |
 | 2026-10-30 | Skills da Databricks instaladas só no projeto, sem plugin: `databricks aitools install --scope project --agents claude-code --skills-only` com 8 skills, em `.claude/skills/`. O plugin falhou porque outro marketplace do Claude Code não atualizava | Engenheiro de dados, em conversa |
 | 2026-10-30 | O código do pipeline fica em um Databricks Asset Bundle `default-python`, na subpasta `retail_analytics/`, com target dev | Engenheiro de dados, ao aprovar o plano |
+| 2026-10-30 | Contrato RYStore 1.0.0 `active`: as 19 respostas da pauta (fuso Europe/London, receita só `Completed`, `employees` amostra, `hire_date` de transferência, vendas de madrugada válidas, entrega diária…) | Engenheiro de dados e decisões delegadas; ver a [pauta](../../contracts/rystore_open_points.md) |
+| 2026-10-30 | A origem são arquivos CSV no Supabase Storage, bucket `rystore`: `orders` e `order_items` em `<tabela>/dt=yyyy-MM-dd/`, e as outras tabelas completas em `<tabela>/` | Engenheiro de dados (Storage); layout delegado |
+| 2026-10-30 | Entrega diária: `orders`/`order_items` incrementais (vale a última entrega do pedido) e as demais tabelas completas; exclusão = linha que some da foto | Engenheiro de dados; detalhe delegado |
+| 2026-10-30 | *Secret scope* `retail_analytics`, com as chaves `s3_endpoint`, `aws_default_region`, `aws_access_key_id` e `aws_secret_access_key` | Delegada (prompt_04) |
+| 2026-10-30 | O job de ingestão roda uma vez por dia às 07:00 UTC, 1h depois da entrega | Delegada (prompt_04) |
 
 ## Em aberto
 
 | Desde | Pergunta | Para quem | Origem |
 |---|---|---|---|
-| 2026-10-30 | Qual é o fuso de `orders.order_datetime` (Europe/London ou UTC)? | Dono da fonte | [Pauta do contrato](../../contracts/rystore_open_points.md) |
-| 2026-10-30 | Pedidos `Cancelled` (total 0) e `Refunded` (valores mantidos) entram na receita? Como? | Dono da fonte e consumidores | [Pauta do contrato](../../contracts/rystore_open_points.md) |
-| 2026-10-30 | O que `customers.signup_date` representa, se há pedidos anteriores a ela? | Dono da fonte | [Pauta do contrato](../../contracts/rystore_open_points.md) |
-| 2026-10-30 | `employees` é completo ou uma amostra (não bate com `stores.staff_count`)? | Dono da fonte | [Pauta do contrato](../../contracts/rystore_open_points.md) |
-| 2026-10-30 | As vendas na loja física entre 00h e 6h são reais ou efeito de fuso? | Dono da fonte | [Pauta do contrato](../../contracts/rystore_open_points.md) |
-| 2026-10-30 | Funcionários admitidos antes da abertura da loja: transferência ou data inválida? | Dono da fonte | [Pauta do contrato](../../contracts/rystore_open_points.md) |
-| 2026-10-30 | A carga é sempre completa? Como chega uma exclusão? | Dono da fonte | [Pauta do contrato](../../contracts/rystore_open_points.md) |
-| 2026-10-30 | Com que frequência roda a ingestão? Qual o nome do *secret scope*? | Engenheiro de dados | [pipeline.md](../architecture/pipeline.md) |
-| 2026-10-30 | Os dados ficam no Supabase Storage como arquivos (o `boto3` lê o bucket, não as tabelas do PostgreSQL)? | Engenheiro de dados | [pipeline.md](../architecture/pipeline.md) |
+| 2026-10-30 | Descrições reais das 77 colunas, para a próxima versão do contrato | Dono da fonte | [Pauta do contrato](../../contracts/rystore_open_points.md), ponto 16 |

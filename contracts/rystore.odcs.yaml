@@ -1,58 +1,68 @@
 # The data contract between the data platform and the RYStore source (skill contract).
 # Open Data Contract Standard (ODCS) v3.1.0, validated against its JSON Schema.
-# Draft: written from the profile (reports/profile/rystore_profile.html) and the metadata
-# (metadata/rystore.yaml), not yet agreed with the source owner. "a definir" = open point,
-# listed in contracts/rystore_open_points.md. Columns, types, keys and descriptions come from
-# the metadata, never retyped. It describes the data, never the pipeline.
+# Version 1.0.0, agreed on 2026-10-30: written from the profile (reports/profile/rystore_profile.html)
+# and the metadata (metadata/rystore.yaml); the answers to the open points are in
+# contracts/rystore_open_points.md. Columns, types, keys and descriptions come from the metadata,
+# never retyped. It describes the data, never the pipeline.
 
 kind: DataContract
 apiVersion: v3.1.0
 id: rystore
 name: rystore
-version: 0.1.0
-status: draft
+version: 1.0.0
+status: active
 description:
   purpose: The sales, stock and master data of the RYStore supermarket (the company's simulated OLTP in Supabase), delivered
     as one CSV per table to the data platform.
-  limitations: Draft from the profile and the metadata, not yet agreed with the source owner. Every 'a definir' is in contracts/rystore_open_points.md.
+  limitations: Agreed on 2026-10-30. The answers to every open point are in contracts/rystore_open_points.md. Column descriptions
+    are still the generic texts of the source dictionary.
 servers:
   - server: supabase-storage
-    type: custom
+    type: s3
+    location: s3://rystore/{table}/
     format: csv
-    description: 'Supabase Storage, read through its S3-compatible API. Bucket, path and whether the data comes from Storage
-      or PostgreSQL: a definir.'
+    description: 'Supabase Storage, read through its S3-compatible API: one CSV per table in the bucket rystore. orders and
+      order_items in one folder per delivery day (dt=yyyy-MM-dd); the other tables as one complete file per day. The endpoint
+      and the keys live in the secrets of the data platform, never here.'
 team:
   name: rystore
   members:
     - username: rystore-owner
       role: owner
-      description: 'Owns the RYStore data and answers for the delivery. Person: a definir.'
+      description: The data engineer of the project answers for the source and its delivery.
     - username: data-platform
       role: consumer
       description: Loads the files and runs the checks of this contract.
 support:
-  - channel: rystore-data
-    tool: other
-    description: 'Questions about a delivery and announcements of a change. Channel: a definir.'
+  - channel: github-issues
+    tool: ticket
+    url: https://github.com/alerrandrofrederik/Retail_Analytics/issues
+    description: Questions about a delivery and announcements of a change, as an issue of the project repository.
 slaProperties:
   - property: frequency
-    value: a definir
-    description: How often a delivery arrives.
+    value: 1
+    unit: d
+    description: One delivery every day.
   - property: timeOfAvailability
-    value: a definir
-    description: By what time a delivery is available.
+    value: 06:00+00:00
+    description: The delivery of the day is in the bucket by 06:00 UTC.
 customProperties:
   - property: changeNotice
-    value: a definir
-    description: How many days before a change of the schema or the format the source announces it, with a new version of
-      this contract.
+    value: 7 days
+    description: A change of the schema, the format or a closed list of values is announced 7 days before, with a new version
+      of this contract.
   - property: timezone
-    value: a definir
-    description: The zone of orders.order_datetime (Europe/London or UTC). The data has no offset.
+    value: Europe/London
+    description: orders.order_datetime is local UK time, without offset. In the hour that does not exist (spring change) the
+      time moves 1 hour forward; in the hour that repeats (autumn change) it is the first one, BST (+01:00).
   - property: personalData
     value: restricted
     description: Columns with classification restricted hold personal data. The source says all of it is fictional; the platform
-      treats it as real.
+      treats it as real and never serves it unmasked.
+  - property: revenue
+    value: Completed
+    description: Revenue counts Completed orders only. Cancelled and Refunded orders are delivered with their status and kept,
+      outside revenue.
 schema:
   - name: customers
     physicalName: customers.csv
@@ -75,10 +85,10 @@ schema:
         value: ''
       - property: load
         value: full
-        description: 'The whole table in every delivery: no change date in the source. Full or changes only is an open point.'
+        description: The whole table in every delivery (a snapshot).
       - property: deletes
-        value: a definir
-        description: 'No deletion flag: today a deleted row only disappears from the file.'
+        value: missing row
+        description: A row that is no longer in the snapshot was deleted in the source.
     properties:
       - name: customer_id
         physicalName: customer_id
@@ -202,7 +212,9 @@ schema:
                 - Silver
             mustBe: 0
             dimension: conformity
-            description: Closed list, as seen in the profile. A new value is a change of this contract.
+            description: Closed list, agreed with the source. A new value is a warning, and the source announces it as a change
+              of this contract.
+            severity: warning
       - name: customer_segment
         physicalName: customer_segment
         logicalType: string
@@ -227,7 +239,9 @@ schema:
                 - Student
             mustBe: 0
             dimension: conformity
-            description: Closed list, as seen in the profile. A new value is a change of this contract.
+            description: Closed list, agreed with the source. A new value is a warning, and the source announces it as a change
+              of this contract.
+            severity: warning
       - name: marketing_opt_in
         physicalName: marketing_opt_in
         logicalType: boolean
@@ -254,6 +268,10 @@ schema:
         mustBeGreaterThan: 0
         dimension: completeness
         description: Every delivery has rows.
+      - type: text
+        dimension: conformity
+        description: signup_date is the date of joining the loyalty programme. A customer can buy before it, and a sign-up
+          after the sales period is valid.
   - name: employees
     physicalName: employees.csv
     physicalType: file
@@ -275,10 +293,10 @@ schema:
         value: ''
       - property: load
         value: full
-        description: 'The whole table in every delivery: no change date in the source. Full or changes only is an open point.'
+        description: The whole table in every delivery (a snapshot).
       - property: deletes
-        value: a definir
-        description: 'No deletion flag: today a deleted row only disappears from the file.'
+        value: missing row
+        description: A row that is no longer in the snapshot was deleted in the source.
     properties:
       - name: employee_id
         physicalName: employee_id
@@ -368,7 +386,9 @@ schema:
                 - Supervisor
             mustBe: 0
             dimension: conformity
-            description: Closed list, as seen in the profile. A new value is a change of this contract.
+            description: Closed list, agreed with the source. A new value is a warning, and the source announces it as a change
+              of this contract.
+            severity: warning
       - name: hire_date
         physicalName: hire_date
         logicalType: date
@@ -403,7 +423,9 @@ schema:
                 - Part-time
             mustBe: 0
             dimension: conformity
-            description: Closed list, as seen in the profile. A new value is a change of this contract.
+            description: Closed list, agreed with the source. A new value is a warning, and the source announces it as a change
+              of this contract.
+            severity: warning
       - name: annual_salary
         physicalName: annual_salary
         logicalType: integer
@@ -431,6 +453,13 @@ schema:
         mustBeGreaterThan: 0
         dimension: completeness
         description: Every delivery has rows.
+      - type: text
+        dimension: conformity
+        description: employees is a sample of the staff; stores.staff_count is the official headcount and the two are not
+          compared.
+      - type: text
+        dimension: conformity
+        description: hire_date is the hiring date in the company and can be before the opening of the store (transfers).
   - name: inventory
     physicalName: inventory.csv
     physicalType: file
@@ -452,10 +481,10 @@ schema:
         value: ''
       - property: load
         value: full
-        description: 'The whole table in every delivery: no change date in the source. Full or changes only is an open point.'
+        description: The whole table in every delivery (a snapshot).
       - property: deletes
-        value: a definir
-        description: 'No deletion flag: today a deleted row only disappears from the file.'
+        value: missing row
+        description: A row that is no longer in the snapshot was deleted in the source.
     properties:
       - name: store_id
         physicalName: store_id
@@ -559,6 +588,9 @@ schema:
       - type: text
         dimension: accuracy
         description: stock_on_hand and stock_on_order are 0 or more.
+      - type: text
+        dimension: conformity
+        description: 'aisle_location is free text: an aisle (Aisle N) or a section (Bakery, Frozen...). Both are valid.'
   - name: order_items
     physicalName: order_items.csv
     physicalType: file
@@ -579,11 +611,12 @@ schema:
       - property: nullToken
         value: ''
       - property: load
-        value: full
-        description: 'The whole table in every delivery: no change date in the source. Full or changes only is an open point.'
+        value: changes
+        description: 'One file per day with the orders of that day (order_datetime, Europe/London). An older order that changes
+          (a refund) is delivered again, whole, in the file of the day it changed: the latest delivery of an order wins.'
       - property: deletes
-        value: a definir
-        description: 'No deletion flag: today a deleted row only disappears from the file.'
+        value: none
+        description: 'No order or item is deleted: a cancelled or refunded order changes status.'
     properties:
       - name: order_item_id
         physicalName: order_item_id
@@ -747,11 +780,12 @@ schema:
       - property: nullToken
         value: ''
       - property: load
-        value: full
-        description: 'The whole table in every delivery: no change date in the source. Full or changes only is an open point.'
+        value: changes
+        description: 'One file per day with the orders of that day (order_datetime, Europe/London). An older order that changes
+          (a refund) is delivered again, whole, in the file of the day it changed: the latest delivery of an order wins.'
       - property: deletes
-        value: a definir
-        description: 'No deletion flag: today a deleted row only disappears from the file.'
+        value: none
+        description: 'No order or item is deleted: a cancelled or refunded order changes status.'
     properties:
       - name: order_id
         physicalName: order_id
@@ -781,6 +815,7 @@ schema:
         physicalType: TIMESTAMP
         logicalTypeOptions:
           format: yyyy-MM-dd HH:mm:ss
+          defaultTimezone: Europe/London
         required: true
         description: Date/time value in ISO-style format.
         quality:
@@ -834,7 +869,9 @@ schema:
                 - Online
             mustBe: 0
             dimension: conformity
-            description: Closed list, as seen in the profile. A new value is a change of this contract.
+            description: Closed list, agreed with the source. A new value is a warning, and the source announces it as a change
+              of this contract.
+            severity: warning
       - name: payment_method
         physicalName: payment_method
         logicalType: string
@@ -857,7 +894,9 @@ schema:
                 - Mobile Wallet
             mustBe: 0
             dimension: conformity
-            description: Closed list, as seen in the profile. A new value is a change of this contract.
+            description: Closed list, agreed with the source. A new value is a warning, and the source announces it as a change
+              of this contract.
+            severity: warning
       - name: order_status
         physicalName: order_status
         logicalType: string
@@ -879,7 +918,9 @@ schema:
                 - Refunded
             mustBe: 0
             dimension: conformity
-            description: Closed list, as seen in the profile. A new value is a change of this contract.
+            description: Closed list, agreed with the source. A new value is a warning, and the source announces it as a change
+              of this contract.
+            severity: warning
       - name: subtotal
         physicalName: subtotal
         logicalType: number
@@ -963,14 +1004,17 @@ schema:
         description: 'subtotal is gross: the sum of quantity x unit_price of the order''s items, before discounts.'
       - type: text
         dimension: consistency
-        description: A Cancelled order arrives with total_amount 0 and keeps subtotal, VAT and items. Its meaning for revenue
-          is an open point.
+        description: A Cancelled order arrives with total_amount 0 and keeps subtotal, VAT and items. Revenue counts Completed
+          orders only.
       - type: text
         dimension: accuracy
         description: delivery_fee is 0 for In-store and Click & Collect; Online pays 3.49, and 0 when subtotal >= 40.00.
       - type: text
         dimension: conformity
-        description: order_datetime has no time zone; the zone is an open point of this contract.
+        description: order_datetime is local UK time (Europe/London), without offset.
+      - type: text
+        dimension: conformity
+        description: In-store orders at night (00:00 to 05:59) are real sales and valid.
   - name: products
     physicalName: products.csv
     physicalType: file
@@ -992,10 +1036,10 @@ schema:
         value: ''
       - property: load
         value: full
-        description: 'The whole table in every delivery: no change date in the source. Full or changes only is an open point.'
+        description: The whole table in every delivery (a snapshot).
       - property: deletes
-        value: a definir
-        description: 'No deletion flag: today a deleted row only disappears from the file.'
+        value: missing row
+        description: A row that is no longer in the snapshot was deleted in the source.
     properties:
       - name: product_id
         physicalName: product_id
@@ -1059,7 +1103,9 @@ schema:
                 - Snacks
             mustBe: 0
             dimension: conformity
-            description: Closed list, as seen in the profile. A new value is a change of this contract.
+            description: Closed list, agreed with the source. A new value is a warning, and the source announces it as a change
+              of this contract.
+            severity: warning
       - name: brand
         physicalName: brand
         logicalType: string
@@ -1185,10 +1231,10 @@ schema:
         value: ''
       - property: load
         value: full
-        description: 'The whole table in every delivery: no change date in the source. Full or changes only is an open point.'
+        description: The whole table in every delivery (a snapshot).
       - property: deletes
-        value: a definir
-        description: 'No deletion flag: today a deleted row only disappears from the file.'
+        value: missing row
+        description: A row that is no longer in the snapshot was deleted in the source.
     properties:
       - name: promotion_id
         physicalName: promotion_id
@@ -1272,7 +1318,9 @@ schema:
                 - Percentage
             mustBe: 0
             dimension: conformity
-            description: Closed list, as seen in the profile. A new value is a change of this contract.
+            description: Closed list, agreed with the source. A new value is a warning, and the source announces it as a change
+              of this contract.
+            severity: warning
       - name: discount_value
         physicalName: discount_value
         logicalType: number
@@ -1309,7 +1357,9 @@ schema:
                 - Snacks
             mustBe: 0
             dimension: conformity
-            description: Closed list, as seen in the profile. A new value is a change of this contract.
+            description: Closed list, agreed with the source. A new value is a warning, and the source announces it as a change
+              of this contract.
+            severity: warning
     quality:
       - type: library
         metric: duplicateValues
@@ -1349,10 +1399,10 @@ schema:
         value: ''
       - property: load
         value: full
-        description: 'The whole table in every delivery: no change date in the source. Full or changes only is an open point.'
+        description: The whole table in every delivery (a snapshot).
       - property: deletes
-        value: a definir
-        description: 'No deletion flag: today a deleted row only disappears from the file.'
+        value: missing row
+        description: A row that is no longer in the snapshot was deleted in the source.
     properties:
       - name: store_id
         physicalName: store_id
@@ -1445,7 +1495,9 @@ schema:
                 - Medium Supermarket
             mustBe: 0
             dimension: conformity
-            description: Closed list, as seen in the profile. A new value is a change of this contract.
+            description: Closed list, agreed with the source. A new value is a warning, and the source announces it as a change
+              of this contract.
+            severity: warning
       - name: opening_date
         physicalName: opening_date
         logicalType: date
@@ -1507,10 +1559,10 @@ schema:
         value: ''
       - property: load
         value: full
-        description: 'The whole table in every delivery: no change date in the source. Full or changes only is an open point.'
+        description: The whole table in every delivery (a snapshot).
       - property: deletes
-        value: a definir
-        description: 'No deletion flag: today a deleted row only disappears from the file.'
+        value: missing row
+        description: A row that is no longer in the snapshot was deleted in the source.
     properties:
       - name: supplier_id
         physicalName: supplier_id

@@ -1,0 +1,4 @@
+product_id,product_name,category,brand,supplier_id,unit_cost,unit_price,vat_rate,reorder_level,active
+P9001,Test Apples,Fresh Produce,Test Brand,SUP901,3.0,5.0,0.0,10,True
+P9002,Test Juice,Beverages,Test Brand,SUP901,2.5,5.0,0.2,10,True
+P9003,Test Bread,Bakery,Test Brand,SUP901,2.0,4.0,0.0,10,False

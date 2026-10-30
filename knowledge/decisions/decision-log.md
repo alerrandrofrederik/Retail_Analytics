@@ -21,6 +21,8 @@ Uma linha por decisão. Uma decisão em aberto passa para "tomada" quando o enge
 | 2026-10-30 | Entrega diária: `orders`/`order_items` incrementais (vale a última entrega do pedido) e as demais tabelas completas; exclusão = linha que some da foto | Engenheiro de dados; detalhe delegado |
 | 2026-10-30 | *Secret scope* `retail_analytics`, com as chaves `s3_endpoint`, `aws_default_region`, `aws_access_key_id` e `aws_secret_access_key` | Delegada (prompt_04) |
 | 2026-10-30 | O job de ingestão roda uma vez por dia às 07:00 UTC, 1h depois da entrega | Delegada (prompt_04) |
+| 2026-10-30 | Pipeline sem PySpark: Python puro com DuckDB e pyarrow, Parquet nos volumes `<camada>.files` e publicação no Unity Catalog pelo SQL warehouse. O mesmo código roda localmente, nos testes e no job serverless. Motivo: a primeira execução com Spark passou de 10 min só na bronze e foi abortada; com DuckDB, o pipeline inteiro roda em cerca de 23 s localmente | Engenheiro de dados (sem PySpark, no Databricks, com DuckDB); [incidente de 2026-10-30](../incidents/incident-log.md) |
+| 2026-10-30 | Os volumes `bronze.files`, `silver.files` e `gold.files` são criados pelo CLI, como o `bronze.raw`, e não pelo bundle, para que o modo de desenvolvimento não mude os nomes | Delegada (refatoração sem PySpark) |
 
 ## Em aberto
 

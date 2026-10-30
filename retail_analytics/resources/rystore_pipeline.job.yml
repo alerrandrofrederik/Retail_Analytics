@@ -1,5 +1,7 @@
-# The daily pipeline of the RYStore source: bronze, then silver, then gold.
-# Serverless (no cluster settings); STANDARD: a daily batch with no tight deadline.
+# The daily pipeline of the RYStore source: bronze, silver, gold, then the Unity Catalog tables.
+# Plain Python (DuckDB and pyarrow, no Spark) on serverless; the lake is Parquet in the volumes
+# <layer>.files. The last task publishes it as Delta tables through the SQL warehouse.
+# STANDARD: a daily batch with no tight deadline.
 # The source delivers by 06:00 UTC (contracts/rystore.odcs.yaml); the job runs at 07:00 UTC.
 # In the dev target the schedule is paused (mode: development).
 resources:
@@ -17,20 +19,38 @@ resources:
       parameters:
         - name: catalog
           default: ${var.catalog}
+      environments:
+        - environment_key: default
+          spec:
+            environment_version: "4"
+            dependencies:
+              - duckdb==2.0.*
+              - pyarrow==26.*
+              - boto3==1.43.*
       tasks:
         - task_key: ingest_bronze
-          notebook_task:
-            notebook_path: ../src/ingest_bronze.py
-            base_parameters:
-              secret_scope: retail_analytics
-              bucket: rystore
+          environment_key: default
+          spark_python_task:
+            python_file: ../src/jobs/ingest_bronze.py
+            parameters: ["--catalog", "{{job.parameters.catalog}}", "--secret_scope", "retail_analytics", "--bucket", "rystore"]
         - task_key: build_silver
           depends_on:
             - task_key: ingest_bronze
-          notebook_task:
-            notebook_path: ../src/build_silver.py
+          environment_key: default
+          spark_python_task:
+            python_file: ../src/jobs/build_silver.py
+            parameters: ["--catalog", "{{job.parameters.catalog}}"]
         - task_key: build_gold
           depends_on:
             - task_key: build_silver
-          notebook_task:
-            notebook_path: ../src/build_gold.py
+          environment_key: default
+          spark_python_task:
+            python_file: ../src/jobs/build_gold.py
+            parameters: ["--catalog", "{{job.parameters.catalog}}"]
+        - task_key: publish
+          depends_on:
+            - task_key: build_gold
+          environment_key: default
+          spark_python_task:
+            python_file: ../src/jobs/publish.py
+            parameters: ["--catalog", "{{job.parameters.catalog}}", "--warehouse_id", "${var.warehouse_id}"]

@@ -12,6 +12,10 @@ include:
 variables:
   catalog:
     description: The catalog to use. The layers are its schemas bronze, silver and gold.
+  warehouse_id:
+    description: The SQL warehouse that publishes the Parquet of the lake as Unity Catalog tables.
+    lookup:
+      warehouse: Serverless Starter Warehouse
 
 targets:
   dev:

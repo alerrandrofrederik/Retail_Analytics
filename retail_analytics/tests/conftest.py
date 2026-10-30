@@ -1,102 +1,42 @@
-"""This file configures pytest, initializes Databricks Connect, and provides fixtures for Spark and loading test data."""
+"""Pytest setup: the package in src/ and the whole pipeline run once on the synthetic source.
 
-import os, sys, pathlib
-from contextlib import contextmanager
+Everything runs locally, without Databricks: the pipeline is plain Python and DuckDB.
+"""
 
-
-import json
-import csv
+import sys
+from datetime import datetime
+from pathlib import Path
 
 import pytest
 
-# The pure Python tests (validation of a delivery) run without a cluster. Databricks Connect
-# is only needed by the tests that ask for the spark fixture.
-try:
-    from databricks.connect import DatabricksSession
-    from databricks.sdk import WorkspaceClient
-    from pyspark.sql import SparkSession
-except ImportError:
-    DatabricksSession = None
-    SparkSession = object
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "src"))
+FIXTURES = Path(__file__).resolve().parents[1] / "fixtures" / "rystore"
 
 
-@pytest.fixture()
-def spark() -> SparkSession:
-    """Provide a SparkSession fixture for tests.
+@pytest.fixture(scope="session")
+def lake(tmp_path_factory):
+    """Run bronze (twice), silver and gold on fixtures/rystore/source/ into a temporary lake.
 
-    Minimal example:
-        def test_uses_spark(spark):
-            df = spark.createDataFrame([(1,)], ["x"])
-            assert df.count() == 1
+    Returns the run summaries and `sql`, which runs a query where every lake table is a view
+    named <layer>.<table> (for example silver.orders, bronze._quarantine).
     """
-    if DatabricksSession is None:
-        pytest.skip("Databricks Connect not installed: run 'uv sync --dev' in retail_analytics/")
-    return DatabricksSession.builder.getOrCreate()
+    duckdb = pytest.importorskip("duckdb")
+    pytest.importorskip("pyarrow")
+    from retail_analytics import bronze, gold, silver
 
+    root = tmp_path_factory.mktemp("lake")
+    dirs = {layer: root / layer for layer in ("raw", "bronze", "silver", "gold")}
+    source = bronze.LocalSource(FIXTURES / "source")
+    first = bronze.ingest(source, dirs["bronze"], datetime(2026, 1, 1, 7, 0), raw_dir=dirs["raw"])
+    rerun = bronze.ingest(source, dirs["bronze"], datetime(2026, 1, 1, 8, 0))
+    checks = silver.build(dirs["bronze"], dirs["silver"], datetime(2026, 1, 1, 7, 5))
+    gold.build(dirs["silver"], dirs["gold"])
 
-@pytest.fixture()
-def load_fixture(spark: SparkSession):
-    """Provide a callable to load JSON or CSV from fixtures/ directory.
-
-    Example usage:
-
-        def test_using_fixture(load_fixture):
-            data = load_fixture("my_data.json")
-            assert data.count() >= 1
-    """
-
-    def _loader(filename: str):
-        path = pathlib.Path(__file__).parent.parent / "fixtures" / filename
-        suffix = path.suffix.lower()
-        if suffix == ".json":
-            rows = json.loads(path.read_text())
-            return spark.createDataFrame(rows)
-        if suffix == ".csv":
-            with path.open(newline="") as f:
-                rows = list(csv.DictReader(f))
-            return spark.createDataFrame(rows)
-        raise ValueError(f"Unsupported fixture type for: {filename}")
-
-    return _loader
-
-
-def _enable_fallback_compute():
-    """Enable serverless compute if no compute is specified."""
-    conf = WorkspaceClient().config
-    if conf.serverless_compute_id or conf.cluster_id or os.environ.get("SPARK_REMOTE"):
-        return
-
-    url = "https://docs.databricks.com/dev-tools/databricks-connect/cluster-config"
-    print("☁️ no compute specified, falling back to serverless compute", file=sys.stderr)
-    print(f"  see {url} for manual configuration", file=sys.stdout)
-
-    os.environ["DATABRICKS_SERVERLESS_COMPUTE_ID"] = "auto"
-
-
-@contextmanager
-def _allow_stderr_output(config: pytest.Config):
-    """Temporarily disable pytest output capture."""
-    capman = config.pluginmanager.get_plugin("capturemanager")
-    if capman:
-        with capman.global_and_fixture_disabled():
-            yield
-    else:
-        yield
-
-
-def pytest_configure(config: pytest.Config):
-    """Configure pytest session."""
-    if DatabricksSession is None:
-        return
-    with _allow_stderr_output(config):
-        _enable_fallback_compute()
-
-        # Initialize Spark session eagerly, so it is available even when
-        # SparkSession.builder.getOrCreate() is used. For DB Connect 15+,
-        # we validate version compatibility with the remote cluster.
-        if hasattr(DatabricksSession.builder, "validateSession"):
-            DatabricksSession.builder.validateSession().getOrCreate()
-        else:
-            DatabricksSession.builder.getOrCreate()
+    con = duckdb.connect()
+    con.execute("SET TimeZone = 'UTC'")
+    for layer in ("bronze", "silver", "gold"):
+        con.execute(f"CREATE SCHEMA {layer}")
+        for folder in sorted(p for p in dirs[layer].iterdir() if p.is_dir()):
+            con.execute(f'CREATE VIEW {layer}."{folder.name}" AS SELECT * FROM read_parquet(\'{folder.as_posix()}/*.parquet\')')
+    return {"dirs": dirs, "first": first, "rerun": rerun, "checks": checks, "sql": lambda q: con.execute(q).fetchall()}

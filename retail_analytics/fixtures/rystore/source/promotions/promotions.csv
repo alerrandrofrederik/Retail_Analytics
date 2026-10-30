@@ -1,0 +1,2 @@
+promotion_id,promotion_name,start_date,end_date,discount_type,discount_value,category
+PROMO901,Test Promo,2025-06-01,2025-06-30,Percentage,10,Grocery

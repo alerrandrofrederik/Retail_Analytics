@@ -12,9 +12,9 @@ Antes do 05: preparação do ambiente (skills da Databricks em `.claude/skills/`
 | [04](prompt_04.md) | Decisões de arquitetura em aberto | — | 03 | Concluído ([decisões](../knowledge/decisions/decision-log.md)) |
 | [05](prompt_05.md) | Carga dos CSVs no Supabase (origem) | — | 04 | Concluído ([script](../scripts/load_rystore_to_supabase.py)) |
 | [06](prompt_06.md) | Dados de teste da ingestão e da bronze | test-data | 02, 03 | Concluído ([fixtures](../retail_analytics/fixtures/rystore/expected.json)) |
-| [07](prompt_07.md) | Ingestão boto3 e camada bronze | — | 04, 05, 06 | Código pronto e no dev, **sem execução** (falta o secret scope) |
-| [08](prompt_08.md) | Camada silver | — | 07 | Código pronto e no dev, **sem execução** (falta o secret scope) |
-| [09](prompt_09.md) | Camada gold (modelo dimensional) | — | 08 | Código pronto e no dev, **sem execução** (falta o secret scope) |
+| [07](prompt_07.md) | Ingestão boto3 e camada bronze | — | 04, 05, 06 | Concluído (Python puro com DuckDB, sem PySpark; rodada 173663739566769 no dev) |
+| [08](prompt_08.md) | Camada silver | — | 07 | Concluído (Python puro com DuckDB, sem PySpark; rodada 173663739566769 no dev) |
+| [09](prompt_09.md) | Camada gold (modelo dimensional) | — | 08 | Concluído (Python puro com DuckDB, sem PySpark; rodada 173663739566769 no dev) |
 | [10](prompt_10.md) | Revisão do código do pipeline | pr-review | 09 | Pendente |
 | [11](prompt_11.md) | Qualidade das tabelas | quality | 09 rodando | Pendente |
 | [12](prompt_12.md) | Reconciliação fonte x lakehouse | reconcile | 09 | Pendente |
@@ -30,10 +30,12 @@ A skill `migration` não tem prompt: o projeto não tem ambiente legado (ver o [
 
 ## Onde paramos (2026-10-30)
 
-O pipeline (job `rystore_pipeline`: `ingest_bronze` → `build_silver` → `build_gold`) está no dev, mas nunca rodou: falta gravar as credenciais no *secret scope* `retail_analytics`. Para destravar, rode na raiz do repositório:
+O pipeline roda no dev em Python puro, sem PySpark: DuckDB e pyarrow sobre Parquet nos volumes `<camada>.files`, publicado no Unity Catalog pelo SQL warehouse. Detalhes em [`knowledge/architecture/pipeline.md`](../knowledge/architecture/pipeline.md).
 
-```bash
-uv run python scripts/sync_secrets_to_databricks.py
-```
+- **Rodada `173663739566769`:** SUCCESS nas 4 tarefas.
+  - As contagens batem com a fonte: 59.052 linhas na bronze, 0 em quarentena e 33 de 33 checagens aprovadas.
+  - Foi a segunda carga, e a bronze ingeriu 0 arquivos, como esperado.
+- **Executar localmente:** `uv run python scripts/run_pipeline_local.py --out <pasta>`. Roda o mesmo código em cerca de 23 s.
+- **Testes:** dentro de `retail_analytics/`, `uv run --no-project --with pytest --with pyyaml --with duckdb --with pyarrow pytest tests -q`, com 24 testes.
 
-Depois: rodar o job no dev (`databricks bundle run rystore_pipeline -p pessoal`, dentro de `retail_analytics/`), corrigir o que falhar, conferir a bronze, a silver e a gold contra a fonte, e seguir do prompt 10 ao 19.
+Próximo passo: prompts 10 a 19.

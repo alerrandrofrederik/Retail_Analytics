@@ -23,7 +23,7 @@ O **Supabase** simula o sistema transacional (OLTP) da empresa e é a origem dos
 
 ```
 ┌──────────────┐   ┌───────────────────┐   ┌──────────────────────────── Databricks ─────────────────────────────┐   ┌──────────┐
-│ Arquivos CSV │──▶│ Supabase          │──▶│ notebook Python ──▶ bronze ──▶ silver ──▶ gold                      │──▶│ Consumo  │
+│ Arquivos CSV │──▶│ Supabase          │──▶│ Python+DuckDB ──▶ bronze ──▶ silver ──▶ gold                        │──▶│ Consumo  │
 │ RYStore      │   │ OLTP + Storage S3 │   │ (boto3)            brutos     limpos     modelo dimensional         │   │ (Genie)  │
 └──────────────┘   └───────────────────┘   └─────────────────────────────────────────────────────────────────────┘   └──────────┘
 ```
@@ -32,7 +32,7 @@ O **Supabase** simula o sistema transacional (OLTP) da empresa e é a origem dos
 |---|---|---|
 | **Fonte** | Arquivos CSV | Dados originais do RYStore |
 | **Origem (OLTP)** | Supabase | Banco transacional simulado da empresa; arquivos expostos pela API compatível com S3 do Supabase Storage |
-| **Ingestão** | Databricks, notebook Python | Lê o Supabase com `boto3`, com as credenciais do `.env` guardadas nos *secrets* do Databricks, e grava no volume `bronze.raw` |
+| **Ingestão e camadas** | Databricks, job serverless em Python puro (DuckDB, sem PySpark) | Lê o Supabase com `boto3`, usando as credenciais do `.env` guardadas nos *secrets* do Databricks. Grava os arquivos no volume `bronze.raw` e as camadas em Parquet nos volumes `<camada>.files`, que são publicados como tabelas |
 | **Bronze** | `lh_retail_analytics.bronze` | Dados como chegam da origem, sem regra de negócio |
 | **Silver** | `lh_retail_analytics.silver` | Dados limpos, tipados e integrados |
 | **Gold** | `lh_retail_analytics.gold` | Modelo dimensional pronto para indicadores |

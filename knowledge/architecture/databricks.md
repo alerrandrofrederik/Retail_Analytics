@@ -25,7 +25,17 @@ Todos os objetos do projeto ficam no catálogo **`lh_retail_analytics`** (Unity 
 
 | Volume | Tipo | Caminho |
 |---|---|---|
-| `bronze.raw` | Gerenciado | `/Volumes/lh_retail_analytics/bronze/raw` |
+| `bronze.raw` | Gerenciado | `/Volumes/lh_retail_analytics/bronze/raw`: os arquivos da fonte como chegaram |
+| `bronze.files` | Gerenciado | `/Volumes/lh_retail_analytics/bronze/files`: o lago da bronze em Parquet, mais `_ingested_files` e `_quarantine` |
+| `silver.files` | Gerenciado | `/Volumes/lh_retail_analytics/silver/files`: o lago da silver em Parquet, mais `_quarantine` e `_checks` |
+| `gold.files` | Gerenciado | `/Volumes/lh_retail_analytics/gold/files`: o lago da gold em Parquet |
+
+Os volumes `*.files` foram criados em 2026-10-30 com `databricks volumes create lh_retail_analytics <camada> files MANAGED -p pessoal`. As tabelas Delta de cada schema são publicadas a partir deles pelo job ([pipeline.md](pipeline.md)).
+
+## SQL warehouse
+
+- **Warehouse:** "Serverless Starter Warehouse" (2X-Small), usado pela tarefa `publish` do job.
+- **Configuração:** o bundle encontra o ID pela variável `warehouse_id` (`lookup` pelo nome), então nenhum ID fica no repositório.
 
 ## Ferramentas do agente (aitools)
 

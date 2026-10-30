@@ -1,0 +1,3 @@
+customer_id,first_name,last_name,email,city,postcode_area,signup_date,loyalty_tier,customer_segment,marketing_opt_in
+CUST90001,Ann,Test,ann.test@example.test,Leeds,LS1 2AA,2024-01-10,Gold,Family shopper,True
+CUST90002,Bob,Test,bob.test@example.test,York,YO1 2AA,2024-02-20,Bronze,Budget,False

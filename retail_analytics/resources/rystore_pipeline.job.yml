@@ -1,0 +1,26 @@
+# The daily pipeline of the RYStore source: bronze, then silver, then gold.
+# Serverless (no cluster settings); STANDARD: a daily batch with no tight deadline.
+# The source delivers by 06:00 UTC (contracts/rystore.odcs.yaml); the job runs at 07:00 UTC.
+# In the dev target the schedule is paused (mode: development).
+resources:
+  jobs:
+    rystore_pipeline:
+      name: rystore_pipeline
+      performance_target: STANDARD
+      tags:
+        project: retail_analytics
+        source: rystore
+      schedule:
+        quartz_cron_expression: "0 0 7 * * ?"
+        timezone_id: UTC
+      max_concurrent_runs: 1
+      parameters:
+        - name: catalog
+          default: ${var.catalog}
+      tasks:
+        - task_key: ingest_bronze
+          notebook_task:
+            notebook_path: ../src/ingest_bronze.py
+            base_parameters:
+              secret_scope: retail_analytics
+              bucket: rystore

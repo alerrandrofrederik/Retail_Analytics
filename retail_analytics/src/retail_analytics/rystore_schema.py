@@ -1,0 +1,139 @@
+"""The RYStore schema as agreed in contracts/rystore.odcs.yaml (v1.0.0).
+
+Generated from the contract; tests/test_schema.py checks that it still matches it.
+"""
+
+CONTRACT_VERSION = "1.0.0"
+
+# table -> columns in delivery order: (name, logical type, required)
+COLUMNS = {
+    "customers": [
+        ("customer_id", "string", True),
+        ("first_name", "string", True),
+        ("last_name", "string", True),
+        ("email", "string", True),
+        ("city", "string", True),
+        ("postcode_area", "string", True),
+        ("signup_date", "date", True),
+        ("loyalty_tier", "string", True),
+        ("customer_segment", "string", True),
+        ("marketing_opt_in", "boolean", True),
+    ],
+    "employees": [
+        ("employee_id", "string", True),
+        ("first_name", "string", True),
+        ("last_name", "string", True),
+        ("store_id", "string", True),
+        ("role", "string", True),
+        ("hire_date", "date", True),
+        ("contract_type", "string", True),
+        ("annual_salary", "integer", True),
+    ],
+    "inventory": [
+        ("store_id", "string", True),
+        ("product_id", "string", True),
+        ("stock_on_hand", "integer", True),
+        ("stock_on_order", "integer", True),
+        ("last_restock_date", "date", True),
+        ("aisle_location", "string", True),
+    ],
+    "order_items": [
+        ("order_item_id", "string", True),
+        ("order_id", "string", True),
+        ("product_id", "string", True),
+        ("quantity", "integer", True),
+        ("unit_price", "number", True),
+        ("discount_amount", "number", True),
+        ("line_net_amount", "number", True),
+        ("line_vat_amount", "number", True),
+        ("promotion_id", "string", False),
+    ],
+    "orders": [
+        ("order_id", "string", True),
+        ("order_datetime", "timestamp", True),
+        ("store_id", "string", True),
+        ("customer_id", "string", False),
+        ("order_channel", "string", True),
+        ("payment_method", "string", True),
+        ("order_status", "string", True),
+        ("subtotal", "number", True),
+        ("discount_total", "number", True),
+        ("vat_total", "number", True),
+        ("delivery_fee", "number", True),
+        ("total_amount", "number", True),
+    ],
+    "products": [
+        ("product_id", "string", True),
+        ("product_name", "string", True),
+        ("category", "string", True),
+        ("brand", "string", True),
+        ("supplier_id", "string", True),
+        ("unit_cost", "number", True),
+        ("unit_price", "number", True),
+        ("vat_rate", "number", True),
+        ("reorder_level", "integer", True),
+        ("active", "boolean", True),
+    ],
+    "promotions": [
+        ("promotion_id", "string", True),
+        ("promotion_name", "string", True),
+        ("start_date", "date", True),
+        ("end_date", "date", True),
+        ("discount_type", "string", True),
+        ("discount_value", "number", True),
+        ("category", "string", True),
+    ],
+    "stores": [
+        ("store_id", "string", True),
+        ("store_name", "string", True),
+        ("city", "string", True),
+        ("region", "string", True),
+        ("postcode", "string", True),
+        ("store_format", "string", True),
+        ("opening_date", "date", True),
+        ("staff_count", "integer", True),
+    ],
+    "suppliers": [
+        ("supplier_id", "string", True),
+        ("supplier_name", "string", True),
+        ("main_category", "string", True),
+        ("city", "string", True),
+        ("postcode", "string", True),
+        ("email", "string", True),
+        ("lead_time_days", "integer", True),
+    ],
+}
+
+PRIMARY_KEYS = {
+    "customers": ['customer_id'],
+    "employees": ['employee_id'],
+    "inventory": ['store_id', 'product_id'],
+    "order_items": ['order_item_id'],
+    "orders": ['order_id'],
+    "products": ['product_id'],
+    "promotions": ['promotion_id'],
+    "stores": ['store_id'],
+    "suppliers": ['supplier_id'],
+}
+
+# table -> [(column, "parent_table.parent_column")]
+FOREIGN_KEYS = {
+    "employees": [('store_id', 'stores.store_id')],
+    "inventory": [('store_id', 'stores.store_id'), ('product_id', 'products.product_id')],
+    "order_items": [('order_id', 'orders.order_id'), ('product_id', 'products.product_id'), ('promotion_id', 'promotions.promotion_id')],
+    "orders": [('store_id', 'stores.store_id'), ('customer_id', 'customers.customer_id')],
+    "products": [('supplier_id', 'suppliers.supplier_id')],
+}
+
+# "changes": one file per day (incremental); "full": the whole table every day
+LOAD = {
+    "customers": "full",
+    "employees": "full",
+    "inventory": "full",
+    "order_items": "changes",
+    "orders": "changes",
+    "products": "full",
+    "promotions": "full",
+    "stores": "full",
+    "suppliers": "full",
+}

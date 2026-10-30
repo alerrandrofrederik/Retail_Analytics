@@ -70,3 +70,13 @@ A metadata da fonte está em [`metadata/rystore.yaml`](../../metadata/rystore.ya
 - Traz 9 tabelas e 77 colunas, com o tipo inferido dos dados, as chaves do perfil e as descrições do dicionário e do README da fonte.
 - As descrições são genéricas e, nas 2 colunas acima, ficaram vazias: não foram inventadas. Descrições reais são uma pergunta para o dono da fonte (contrato).
 - Para atualizar, rode o script de novo; não edite o YAML à mão.
+
+## Reconciliação
+
+Origem: [reconciliação de 2026-10-30](../../reports/reconcile/rystore_reconcile_2026-10-30.html) (skill `reconcile`), depois da rodada `498752805931100`. Os números estão na página.
+
+- **CSVs, bucket e bronze:** as linhas batem por tabela e por arquivo (os 737 arquivos estão no log da bronze).
+- **Bronze e silver:** a versão vigente da bronze é igual à silver mais a quarentena, nas 9 tabelas.
+- **Silver, gold e fonte:** receita, pedidos e itens batem por status, mês e loja, e também nas fatias status × mês × loja.
+- **Nenhuma causa de diferença foi encontrada.** A única armadilha é de quem consome os dados: agrupar pela data em UTC muda o dia e o mês de vendas feitas logo depois da meia-noite em BST ([glossário](../business/glossary.md)).
+

@@ -53,6 +53,7 @@ Origem: rodada `966981410696310` do job no dev.
 - **SLA da gold:** pronta até 08:00 UTC ([registro de decisões](../decisions/decision-log.md)).
 - **Página de qualidade de 2026-10:** [`reports/quality/rystore_quality_2026-10.html`](../../reports/quality/rystore_quality_2026-10.html) (skill `quality`), com os números.
 - **Fato novo** (origem: a página de qualidade e `tests/`): nenhuma das 38 checagens da silver tem um teste que confira o status com dado ruim. As regras de negócio, as listas fechadas e os `row_count` nunca receberam dado ruim; só a quarentena de tipo, a de chave estrangeira e as checagens da bronze são testadas. Proposta pendente: um caso por checagem nas fixtures.
+- **Reconciliação de 2026-10-30:** [`reports/reconcile/rystore_reconcile_2026-10-30.html`](../../reports/reconcile/rystore_reconcile_2026-10-30.html). Fonte, bucket, bronze, silver e gold batem, com diferença zero em todos os pares.
 - **Checagens antigas:** os resultados da rodada em PySpark (2026-10-30 16:56) não estão em `silver._checks`, porque a tabela é recriada a partir dos Parquet [med].
 
 ## Revisões

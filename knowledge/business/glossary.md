@@ -46,3 +46,5 @@ Origem: perfil da fonte RYStore em [`reports/profile/rystore_profile.html`](../.
 ## Data e hora
 
 `orders.order_datetime` é hora local do Reino Unido (Europe/London), sem offset. Na hora que não existe (troca de primavera) avança 1h; na hora repetida (troca de outono) vale a primeira (BST, +01:00). Vendas na loja física de madrugada são reais.
+
+**Dia e mês de uma venda** são os da data local (`order_date` na silver, `date_key` na gold), nunca os de `order_datetime_utc`. Em UTC, as vendas entre 00:00 e 00:59 nos meses de horário de verão caem no dia anterior. Na fonte de 2025, 247 pedidos mudam de dia e 6 mudam de mês ([reconciliação de 2026-10-30](../../reports/reconcile/rystore_reconcile_2026-10-30.html)). Use `order_datetime_utc` só para ordenar ou cruzar com sistemas em UTC.

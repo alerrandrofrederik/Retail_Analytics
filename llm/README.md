@@ -18,7 +18,7 @@ Antes do 05: preparação do ambiente (skills da Databricks em `.claude/skills/`
 | [10](prompt_10.md) | Revisão do código do pipeline | pr-review | 09 | Concluído ([revisão](../reports/pr-review/pr_review_pipeline_07_09.html): 16 achados; 1 a 9 corrigidos, 10 e 13 decididos; rodada 498752805931100) |
 | [11](prompt_11.md) | Qualidade das tabelas | quality | 09 rodando | Concluído ([qualidade 2026-10](../reports/quality/rystore_quality_2026-10.html)) |
 | [12](prompt_12.md) | Reconciliação fonte x lakehouse | reconcile | 09 | Concluído ([reconciliação](../reports/reconcile/rystore_reconcile_2026-10-30.html): diferença zero) |
-| [13](prompt_13.md) | Impacto de uma mudança (ex.: fuso) | impact | 09 | Pendente |
+| [13](prompt_13.md) | Impacto de uma mudança (ex.: fuso) | impact | 09 | Concluído ([impacto: order_datetime em UTC](../reports/impact/rystore_impact_order_datetime_utc.html)) |
 | [14](prompt_14.md) | Produto de dados `fato_vendas` | data-product | 11, 12 | Pendente |
 | [15](prompt_15.md) | Runbook e guias | docs | 07–09 | Pendente |
 | [16](prompt_16.md) | Site de documentação | toolkit | 15 | Pendente |

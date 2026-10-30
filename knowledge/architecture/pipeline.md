@@ -58,6 +58,8 @@ Origem: rodada `966981410696310` do job no dev.
 
 ## Revisões
 
+- 2026-10-30: [impacto de a fonte entregar `order_datetime` em UTC](../../reports/impact/rystore_impact_order_datetime_utc.html) (skill `impact`). Afetaria 3 colunas da silver, 3 tabelas da gold e 2 testes; 247 pedidos mudariam de dia se o código não mudar. Ordem segura: contrato 2.0.0 com um campo novo, a silver numa branch, a reconciliação com diferença zero e só depois o deploy.
+
 - 2026-10-30: [revisão do código dos prompts 07 a 09](../../reports/pr-review/pr_review_pipeline_07_09.html) (skill `pr-review`). Veredito: mudanças pedidas, com 4 achados altos, 7 médios e 5 baixos. As correções aguardam o sim do engenheiro de dados.
 
 Os schemas e os volumes estão em [databricks.md](databricks.md).

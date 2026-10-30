@@ -200,6 +200,7 @@ def n(x):
 
 def page(filename, title, lead, body, script=""):
     style = (Path(__file__).parent / "style.css").read_text(encoding="utf-8")
+    style += (Path(__file__).parent / "fix.css").read_text(encoding="utf-8")  # black ground, no overlapping text
     nav = "".join(f'<a class="p{" on" if f == filename else ""}" href="{f}">{label}</a>' for f, label in PAGES)
     return f"""<!DOCTYPE html>
 <html lang="pt-BR">
@@ -274,9 +275,13 @@ def graph(lanes, nodes, wires, node_w=230, lane_w=280, row_h=58, node_h=44):
                    f'<text class="grp hd3" x="{i * lane_w + 14}" y="30">{e(name)}</text>')
     for a, b in wires:
         (x1, y1), (x2, y2) = pos[a], pos[b]
-        mx = (x1 + node_w + x2) / 2
-        out.append(f'<g class="wire" data-a="{a}" data-b="{b}"><path d="M{x1 + node_w},{y1 + node_h / 2} C{mx},{y1 + node_h / 2} '
-                   f'{mx},{y2 + node_h / 2} {x2},{y2 + node_h / 2}"/></g>')
+        if x2 > x1:  # forward: right edge of a to left edge of b
+            sx, ex = x1 + node_w, x2
+        else:  # backward (a later lane feeds an earlier one): left edge of a to right edge of b
+            sx, ex = x1, x2 + node_w
+        mx = (sx + ex) / 2
+        out.append(f'<g class="wire" data-a="{a}" data-b="{b}"><path d="M{sx},{y1 + node_h / 2} C{mx},{y1 + node_h / 2} '
+                   f'{mx},{y2 + node_h / 2} {ex},{y2 + node_h / 2}"/></g>')
     for key, _, title in nodes:
         x, y = pos[key]
         out.append(f'<g class="node" data-k="{key}"><rect x="{x}" y="{y}" width="{node_w}" height="{node_h}"/>'

@@ -365,6 +365,28 @@ nav{position:sticky;z-index:10;}
 
 .layers .layer .cnt{font-size:36px;}
 .note2{margin-top:18px;font-size:19px;color:var(--ink-2);max-width:1200px;text-wrap:pretty;}
+
+/* fix 2026-10-30: fundo preto com o mesmo contraste, e nada de texto sobreposto ou cortado */
+:root{--bg:#000;--ground:#000;}
+html,body{background:#000 !important;}
+body::before{background:none !important;}
+body::after{background-image:linear-gradient(rgba(173,150,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(173,150,255,.04) 1px,transparent 1px) !important;}
+nav{background:#000 !important;}
+/* os indicadores quebram a linha em vez de invadir o vizinho */
+.kpi{min-width:0;}
+.kpi .sub,.kpi .l{white-space:normal !important;overflow-wrap:anywhere;}
+.kpi .v{white-space:nowrap !important;font-size:clamp(20px,1.9vw,44px) !important;}
+/* blocos largos cabem na página */
+.wide{width:auto !important;margin-left:0 !important;}
+.vis{overflow-x:auto;}
+/* desenhos encolhem para caber, sem cortar */
+.vis svg,.map0 svg{max-width:100%;height:auto;}
+.lin2 .node text,.lin .node text{font-size:12.5px !important;letter-spacing:-.01em;}
+/* tabelas: larguras como sugestão, texto quebra */
+table.t.fixed{table-layout:auto;}
+.t td,.t th{overflow-wrap:break-word;} .t td.num,.t td.st,.t td.m.dim{white-space:nowrap;}
+.strip .nm{min-width:0;overflow-wrap:anywhere;}
+@media (max-width:900px){main{padding-left:16px !important;padding-right:16px !important;}.kpis{grid-template-columns:repeat(2,minmax(0,1fr)) !important;}}
 </style>
 </head>
 <body>

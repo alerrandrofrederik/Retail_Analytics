@@ -20,11 +20,10 @@ STYLE = """
 @font-face{font-family:'Bricolage Grotesque';font-weight:200 800;font-display:block;src:url('../../reports/quality/fonts/BricolageGrotesque-700.woff2') format('woff2');}
 @font-face{font-family:'JetBrains Mono';font-weight:100 800;font-display:block;src:url('../../reports/quality/fonts/JetBrainsMono-500.woff2') format('woff2');}
 *{margin:0;padding:0;box-sizing:border-box;}
-:root{--bg:#080513;--plate:#1b1436;--ink:#ece7f8;--ink-2:rgba(236,231,248,.72);--line:rgba(236,231,248,.14);--line-2:rgba(236,231,248,.08);
+:root{--bg:#000;--plate:#1b1436;--ink:#ece7f8;--ink-2:rgba(236,231,248,.72);--line:rgba(236,231,248,.14);--line-2:rgba(236,231,248,.08);
   --purple:#8a63f2;--purple-soft:#c9b8ff;--orange:#ffa657;--green:#7ee0a8;}
 html,body{background:var(--bg);}
-body{font-family:'Bricolage Grotesque',sans-serif;color:var(--ink);font-size:19px;line-height:1.55;-webkit-font-smoothing:antialiased;
-  background:radial-gradient(1500px 900px at 50% 300px,#161033 0%,#0e0a1d 55%,#080513 100%) no-repeat;}
+body{font-family:'Bricolage Grotesque',sans-serif;color:var(--ink);font-size:19px;line-height:1.55;-webkit-font-smoothing:antialiased;}
 main{max-width:1320px;margin:0 auto;padding:48px 40px 120px;}
 code,pre,.mono{font-family:'JetBrains Mono',monospace;font-variant-ligatures:none;}
 a{color:var(--purple-soft);text-decoration:none;}
@@ -46,9 +45,9 @@ h1{font-size:44px;font-weight:800;letter-spacing:-.02em;line-height:1.1;}
 .pp p,.pp li{max-width:1100px;margin-top:10px;} .pp ol,.pp ul{padding-left:26px;}
 .pp table{width:100%;border-collapse:collapse;margin-top:14px;}
 .pp th{text-align:left;font-size:15px;color:var(--ink-2);font-weight:600;padding:8px 18px 8px 0;border-bottom:1px solid var(--line);}
-.pp td{padding:9px 18px 9px 0;border-bottom:1px solid var(--line-2);vertical-align:top;font-size:17px;}
+.pp td{overflow-wrap:anywhere;padding:9px 18px 9px 0;border-bottom:1px solid var(--line-2);vertical-align:top;font-size:17px;}
 .pp code{font-size:.9em;color:var(--purple-soft);}
-pre{margin-top:14px;background:#0d0919;border:1px solid var(--line);border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14.5px;line-height:1.6;color:#d6e0f5;}
+pre{margin-top:14px;background:#0b0b0f;border:1px solid var(--line);border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14.5px;line-height:1.6;color:#d6e0f5;}
 pre code{color:inherit;font-size:inherit;}
 @media (max-width:900px){.cards{grid-template-columns:1fr;} main{padding:24px 16px 80px;}}
 """

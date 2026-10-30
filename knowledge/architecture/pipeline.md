@@ -19,6 +19,7 @@ CSVs RYStore ──▶ Supabase Storage (bucket rystore) ──▶ Databricks: b
   - `orders` e `order_items` chegam em `<tabela>/dt=yyyy-MM-dd/<tabela>.csv`, um arquivo por dia com os pedidos do dia (incremental). Vale a última entrega de cada pedido.
   - As outras 7 tabelas chegam completas em `<tabela>/<tabela>.csv`. A linha que some da foto foi excluída.
   - Uma entrega por dia, até 06:00 UTC.
+  - A carga dos CSVs no bucket é feita por [`scripts/load_rystore_to_supabase.py`](../../scripts/load_rystore_to_supabase.py) (`uv run python scripts/load_rystore_to_supabase.py`; `--check` só confere). Em 2026-10-30 ela gravou 737 arquivos (365 dias × 2 tabelas incrementais + 7 tabelas completas), com 59.052 linhas iguais às da fonte.
 - **Ingestão:** um notebook Python no Databricks lê o bucket com `boto3` e grava os arquivos no volume `bronze.raw`.
   - As credenciais ficam no *secret scope* `retail_analytics`, nas chaves `s3_endpoint`, `aws_default_region`, `aws_access_key_id` e `aws_secret_access_key`. São as variáveis do `.env` (modelo em [`.env.example`](../../.env.example)) e nunca vão para o código.
   - O job roda uma vez por dia, às 07:00 UTC.

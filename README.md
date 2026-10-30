@@ -187,6 +187,7 @@ Retail_Analytics/
 ├── .python-version   # versão do Python usada pelo uv (3.12)
 ├── pyproject.toml    # metadados e dependências do projeto
 ├── main.py           # ponto de entrada
+├── scripts/          # scripts locais (ex.: carga dos CSVs no Supabase Storage)
 ├── CLAUDE.md         # instruções do projeto para o Claude Code
 ├── skills/           # skills do projeto (uma pasta por skill)
 │   └── <nome>/

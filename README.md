@@ -12,6 +12,7 @@ Projeto de análise de dados de varejo construído sobre o banco **RYStore**. O 
 - [Modelo de dados](#modelo-de-dados)
 - [Análises possíveis](#análises-possíveis)
 - [Como executar](#como-executar)
+- [Skills](#skills)
 - [Estrutura do repositório](#estrutura-do-repositório)
 
 ---
@@ -149,6 +150,31 @@ git clone https://github.com/ryanariefe/RYStore-Retail-Dataset.git
 
 ---
 
+## Skills
+
+As skills do projeto ficam na pasta [`skills/`](skills/), uma pasta por skill. Cada uma tem um `SKILL.md` com os passos, o que lê, o que escreve e o que nunca faz, e uma pasta `references/` com exemplos e modelos (quando houver).
+
+| Skill | Para que serve |
+|---|---|
+| `profile` | Perfilar uma nova fonte ou tabela antes de construir em cima dela |
+| `contract` | Contrato de dados com o sistema de origem |
+| `metadata` | Tabelas e colunas de uma fonte, a partir dos arquivos e documentos |
+| `incident` | Falha de job: causa raiz, opções, rascunhos de e-mail e registro |
+| `quality` | Checagens que falharam ou alertaram e se a tabela pode ser usada |
+| `reconcile` | Dois números que deveriam bater e onde divergem |
+| `impact` | O que depende de uma tabela, coluna ou função e o que quebra |
+| `toolkit` | Site de documentação do projeto, gerado a partir do repositório |
+| `data-product` | Lado do consumidor de uma tabela: guia e contrato |
+| `docs` | Runbook e guias, alinhados ao código |
+| `pr-review` | Revisão de uma mudança contra os padrões |
+| `big-review` | Revisão da plataforma inteira a partir dos logs e do repositório |
+| `cost-review` | Para onde vai o custo de computação e armazenamento |
+| `test-data` | Dados de teste com casos de borda e resultado esperado |
+| `knowledge-refresh` | Conhecimento do projeto comparado com o código e os dados |
+| `migration` | Inventário e plano em ondas de um ambiente legado |
+
+---
+
 ## Estrutura do repositório
 
 ```
@@ -157,6 +183,11 @@ Retail_Analytics/
 ├── .python-version   # versão do Python usada pelo uv (3.12)
 ├── pyproject.toml    # metadados e dependências do projeto
 ├── main.py           # ponto de entrada
+├── CLAUDE.md         # instruções do projeto para o Claude Code
+├── skills/           # skills do projeto (uma pasta por skill)
+│   └── <nome>/
+│       ├── SKILL.md      # passos, entradas, saídas e limites da skill
+│       └── references/   # exemplos e modelos usados pela skill
 └── README.md
 ```
 

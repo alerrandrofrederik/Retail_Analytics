@@ -57,7 +57,8 @@ O código do pipeline fica em um Declarative Automation Bundle (antigo Databrick
   - catálogo `lh_retail_analytics` nos dois targets, no lugar de `workspace`;
   - exemplos removidos (pipeline e job de táxi, notebook e teste de exemplo).
 - **Targets:**
-  - `dev` é o padrão, em `mode: development`: os agendamentos ficam pausados e o schema é o nome curto do usuário;
-  - `prod` usa o schema `prod`.
+  - `dev` é o padrão, em `mode: development`: o job ganha o prefixo `[dev usuário]` e o agendamento fica pausado;
+  - `prod` usa o caminho do usuário (`root_path`);
+  - os dois usam os schemas `bronze`, `silver` e `gold` de `lh_retail_analytics`. O `databricks.yml` só declara as variáveis `catalog` e `warehouse_id` (knowledge-refresh de 2026-10-30).
 - **Sem host no arquivo:** o `databricks.yml` não traz URL do workspace nem e-mail. O workspace vem do perfil (`-p pessoal`), e o caminho e a permissão do prod usam `${workspace.current_user.userName}`.
 - **Validação:** `databricks bundle validate -p pessoal`, dentro de `retail_analytics/`. Deploy e run só com o sim do engenheiro de dados.

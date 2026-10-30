@@ -20,7 +20,7 @@ Origem: perfil da fonte RYStore em [`reports/profile/rystore_profile.html`](../.
 - `total_amount` = `subtotal` − `discount_total` + `vat_total` + `delivery_fee` (exceto `Cancelled`, que tem total 0). A fórmula fecha com tolerância de 0,01: 98 pedidos diferem em ±0,01 por arredondamento (conferido por script em 2026-10-30, ao escrever o [contrato](../../contracts/rystore.odcs.yaml)).
 - `line_net_amount` é **líquido**: `quantity` × `unit_price` − `discount_amount`.
 - `line_vat_amount` = `line_net_amount` × `products.vat_rate`. O `vat_rate` é 0 ou 0,2 (IVA do Reino Unido).
-- `vat_total` e `discount_total` do pedido são a soma dos itens.
+- `vat_total` é a soma de `line_vat_amount` dos itens. `discount_total` é a soma de `discount_amount`, com tolerância de 0,01: 22 pedidos diferem em ±0,01 por arredondamento (medido nos CSVs da fonte em 2026-10-30).
 - `order_items.unit_price` é igual a `products.unit_price`: não há preço por loja nem por data.
 - Moeda: GBP.
 
@@ -48,3 +48,17 @@ Origem: perfil da fonte RYStore em [`reports/profile/rystore_profile.html`](../.
 `orders.order_datetime` é hora local do Reino Unido (Europe/London), sem offset. Na hora que não existe (troca de primavera) avança 1h; na hora repetida (troca de outono) vale a primeira (BST, +01:00). Vendas na loja física de madrugada são reais.
 
 **Dia e mês de uma venda** são os da data local (`order_date` na silver, `date_key` na gold), nunca os de `order_datetime_utc`. Em UTC, as vendas entre 00:00 e 00:59 nos meses de horário de verão caem no dia anterior. Na fonte de 2025, 247 pedidos mudam de dia e 6 mudam de mês ([reconciliação de 2026-10-30](../../reports/reconcile/rystore_reconcile_2026-10-30.html)). Use `order_datetime_utc` só para ordenar ou cruzar com sistemas em UTC.
+
+## Na plataforma
+
+Termos que a silver e a gold criam. As métricas completas estão no produto [`fato_vendas`](../../docs/data-products/fato_vendas/README.md).
+
+| Termo | Significado |
+|---|---|
+| `is_revenue` | Na `gold.fato_vendas`, verdadeiro quando o pedido é `Completed`: o filtro de toda medida de receita |
+| `ANON` | Cliente que representa as vendas anônimas na `gold.dim_cliente` e nos fatos |
+| Receita de itens | `net_amount` (sem IVA e sem a taxa de entrega), na `fato_vendas` |
+| Receita do pedido | `revenue_amount` = `total_amount` dos pedidos `Completed`, com IVA e taxa de entrega, na `fato_pedidos` |
+| Margem | `net_amount` − `quantity` × `unit_cost` **atual** do produto; a fonte não tem o histórico de custos |
+| PII na plataforma | Nomes, e-mails e postcode em SHA-256 na silver; `annual_salary` não sai da bronze; a gold não tem dados pessoais |
+

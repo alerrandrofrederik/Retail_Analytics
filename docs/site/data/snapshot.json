@@ -1,0 +1,2985 @@
+{
+ "taken_at": 1793388847166,
+ "job_id": "774085676329717",
+ "runs": [
+  {
+   "run_id": "498752805931100",
+   "start": 1793384005053,
+   "end": 1793384557304,
+   "result": "SUCCESS",
+   "message": "",
+   "tasks": [
+    {
+     "key": "ingest_bronze",
+     "start": 1793384005091,
+     "result": "SUCCESS",
+     "setup": 226,
+     "exec": 39
+    },
+    {
+     "key": "build_silver",
+     "start": 1793384271436,
+     "result": "SUCCESS",
+     "setup": 1,
+     "exec": 22
+    },
+    {
+     "key": "build_gold",
+     "start": 1793384295618,
+     "result": "SUCCESS",
+     "setup": 1,
+     "exec": 21
+    },
+    {
+     "key": "publish",
+     "start": 1793384318253,
+     "result": "SUCCESS",
+     "setup": 2,
+     "exec": 236
+    }
+   ]
+  },
+  {
+   "run_id": "173663739566769",
+   "start": 1793381748742,
+   "end": 1793382150961,
+   "result": "SUCCESS",
+   "message": "",
+   "tasks": [
+    {
+     "key": "ingest_bronze",
+     "start": 1793381748785,
+     "result": "SUCCESS",
+     "setup": 215,
+     "exec": 27
+    },
+    {
+     "key": "build_silver",
+     "start": 1793381991523,
+     "result": "SUCCESS",
+     "setup": 1,
+     "exec": 22
+    },
+    {
+     "key": "build_gold",
+     "start": 1793382015068,
+     "result": "SUCCESS",
+     "setup": 1,
+     "exec": 20
+    },
+    {
+     "key": "publish",
+     "start": 1793382036990,
+     "result": "SUCCESS",
+     "setup": 1,
+     "exec": 112
+    }
+   ]
+  },
+  {
+   "run_id": "966981410696310",
+   "start": 1793380971463,
+   "end": 1793381727395,
+   "result": "FAILED",
+   "message": "Task publish failed with message: Workload failed, see run output for details. This caused all downstream tasks to get skipped.",
+   "tasks": [
+    {
+     "key": "ingest_bronze",
+     "start": 1793380971509,
+     "result": "SUCCESS",
+     "setup": 205,
+     "exec": 142
+    },
+    {
+     "key": "build_silver",
+     "start": 1793381319649,
+     "result": "FAILED",
+     "setup": 1,
+     "exec": 21
+    },
+    {
+     "key": "build_silver",
+     "start": 1793381345477,
+     "result": "SUCCESS",
+     "setup": 2,
+     "exec": 20
+    },
+    {
+     "key": "build_gold",
+     "start": 1793381368918,
+     "result": "SUCCESS",
+     "setup": 1,
+     "exec": 21
+    },
+    {
+     "key": "publish",
+     "start": 1793381391392,
+     "result": "FAILED",
+     "setup": 1,
+     "exec": 99
+    },
+    {
+     "key": "publish",
+     "start": 1793381496602,
+     "result": "FAILED",
+     "setup": 145,
+     "exec": 85
+    }
+   ]
+  },
+  {
+   "run_id": "719373279280521",
+   "start": 1793379371156,
+   "end": 1793380076135,
+   "result": "CANCELED",
+   "message": "Run cancelled by user",
+   "tasks": [
+    {
+     "key": "build_gold",
+     "start": 0,
+     "result": "UPSTREAM_CANCELED",
+     "setup": 0,
+     "exec": 0
+    },
+    {
+     "key": "ingest_bronze",
+     "start": 1793379371188,
+     "result": "SUCCESS",
+     "setup": 195,
+     "exec": 386
+    },
+    {
+     "key": "build_silver",
+     "start": 1793379953412,
+     "result": "SUCCESS",
+     "setup": 2,
+     "exec": 120
+    }
+   ]
+  }
+ ],
+ "checks": [
+  [
+   "2026-10-30 17:29:19",
+   "customers",
+   "quarantined_rows",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "customers",
+   "row_count",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "customers",
+   "valid_values:loyalty_tier",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "employees",
+   "quarantined_rows",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "employees",
+   "row_count",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "inventory",
+   "quarantined_rows",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "inventory",
+   "row_count",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "inventory",
+   "stock_not_negative",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "order_items",
+   "amounts_not_negative",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "order_items",
+   "line_net_formula",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "order_items",
+   "quarantined_rows",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "order_items",
+   "row_count",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "orders",
+   "cancelled_total_zero",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "orders",
+   "delivery_fee_rule",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "orders",
+   "quarantined_rows",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "orders",
+   "row_count",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "orders",
+   "subtotal_is_gross",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "orders",
+   "total_formula",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "orders",
+   "valid_values:order_channel",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "orders",
+   "valid_values:order_status",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "orders",
+   "valid_values:payment_method",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "products",
+   "price_positive",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "products",
+   "quarantined_rows",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "products",
+   "row_count",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "promotions",
+   "dates_in_order",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "promotions",
+   "quarantined_rows",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "promotions",
+   "row_count",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "promotions",
+   "valid_values:discount_type",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "stores",
+   "quarantined_rows",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "stores",
+   "row_count",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "stores",
+   "valid_values:store_format",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "suppliers",
+   "quarantined_rows",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:29:19",
+   "suppliers",
+   "row_count",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "customers",
+   "quarantined_rows",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "customers",
+   "row_count",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "customers",
+   "valid_values:loyalty_tier",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "employees",
+   "quarantined_rows",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "employees",
+   "row_count",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "inventory",
+   "quarantined_rows",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "inventory",
+   "row_count",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "inventory",
+   "stock_not_negative",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "order_items",
+   "amounts_not_negative",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "order_items",
+   "line_net_formula",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "order_items",
+   "quarantined_rows",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "order_items",
+   "row_count",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "orders",
+   "cancelled_total_zero",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "orders",
+   "delivery_fee_rule",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "orders",
+   "quarantined_rows",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "orders",
+   "row_count",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "orders",
+   "subtotal_is_gross",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "orders",
+   "total_formula",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "orders",
+   "valid_values:order_channel",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "orders",
+   "valid_values:order_status",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "orders",
+   "valid_values:payment_method",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "products",
+   "price_positive",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "products",
+   "quarantined_rows",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "products",
+   "row_count",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "promotions",
+   "dates_in_order",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "promotions",
+   "quarantined_rows",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "promotions",
+   "row_count",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "promotions",
+   "valid_values:discount_type",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "stores",
+   "quarantined_rows",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "stores",
+   "row_count",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "stores",
+   "valid_values:store_format",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "suppliers",
+   "quarantined_rows",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 17:40:05",
+   "suppliers",
+   "row_count",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "customers",
+   "quarantined_rows",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "customers",
+   "row_count",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "customers",
+   "valid_values:customer_segment",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "customers",
+   "valid_values:loyalty_tier",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "employees",
+   "quarantined_rows",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "employees",
+   "row_count",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "employees",
+   "valid_values:contract_type",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "employees",
+   "valid_values:role",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "inventory",
+   "quarantined_rows",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "inventory",
+   "row_count",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "inventory",
+   "stock_not_negative",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "order_items",
+   "amounts_not_negative",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "order_items",
+   "line_net_formula",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "order_items",
+   "quarantined_rows",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "order_items",
+   "row_count",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "orders",
+   "cancelled_total_zero",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "orders",
+   "delivery_fee_rule",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "orders",
+   "quarantined_rows",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "orders",
+   "row_count",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "orders",
+   "subtotal_is_gross",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "orders",
+   "total_formula",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "orders",
+   "valid_values:order_channel",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "orders",
+   "valid_values:order_status",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "orders",
+   "valid_values:payment_method",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "products",
+   "price_positive",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "products",
+   "quarantined_rows",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "products",
+   "row_count",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "products",
+   "valid_values:category",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "promotions",
+   "dates_in_order",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "promotions",
+   "quarantined_rows",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "promotions",
+   "row_count",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "promotions",
+   "valid_values:category",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "promotions",
+   "valid_values:discount_type",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "stores",
+   "quarantined_rows",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "stores",
+   "row_count",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "stores",
+   "valid_values:store_format",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "suppliers",
+   "quarantined_rows",
+   "pass",
+   0
+  ],
+  [
+   "2026-10-30 18:18:05",
+   "suppliers",
+   "row_count",
+   "pass",
+   0
+  ]
+ ],
+ "counts": {
+  "bronze._ingested_files": 737,
+  "bronze._quarantine": 0,
+  "bronze.customers": 800,
+  "bronze.employees": 120,
+  "bronze.inventory": 528,
+  "bronze.order_items": 47512,
+  "bronze.orders": 10000,
+  "bronze.products": 66,
+  "bronze.promotions": 6,
+  "bronze.stores": 8,
+  "bronze.suppliers": 12,
+  "silver._checks": 104,
+  "silver._quarantine": 0,
+  "silver.customers": 800,
+  "silver.employees": 120,
+  "silver.inventory": 528,
+  "silver.order_items": 47512,
+  "silver.orders": 10000,
+  "silver.products": 66,
+  "silver.promotions": 6,
+  "silver.stores": 8,
+  "silver.suppliers": 12,
+  "gold.dim_cliente": 801,
+  "gold.dim_data": 730,
+  "gold.dim_fornecedor": 12,
+  "gold.dim_loja": 8,
+  "gold.dim_produto": 66,
+  "gold.fato_estoque": 528,
+  "gold.fato_pedidos": 10000,
+  "gold.fato_vendas": 47512
+ },
+ "samples": {
+  "silver.customers": {
+   "columns": [
+    "customer_id",
+    "first_name",
+    "last_name",
+    "email",
+    "city",
+    "postcode_area",
+    "signup_date",
+    "loyalty_tier",
+    "customer_segment",
+    "marketing_opt_in",
+    "_source_file",
+    "_bronze_ingested_at",
+    "_silver_built_at"
+   ],
+   "rows": [
+    [
+     "CUST00001",
+     "•••",
+     "•••",
+     "•••",
+     "York",
+     "•••",
+     "2024-06-02",
+     "Silver",
+     "Health-focused",
+     "false",
+     "customers/customers.csv",
+     "2026-10-30 17:26:41.735901+00",
+     "2026-10-30 18:18:05.350412+00"
+    ],
+    [
+     "CUST00002",
+     "•••",
+     "•••",
+     "•••",
+     "Newcastle",
+     "•••",
+     "2023-07-28",
+     "Bronze",
+     "Family shopper",
+     "true",
+     "customers/customers.csv",
+     "2026-10-30 17:26:41.735901+00",
+     "2026-10-30 18:18:05.350412+00"
+    ],
+    [
+     "CUST00003",
+     "•••",
+     "•••",
+     "•••",
+     "Liverpool",
+     "•••",
+     "2024-03-13",
+     "Bronze",
+     "Budget-conscious",
+     "true",
+     "customers/customers.csv",
+     "2026-10-30 17:26:41.735901+00",
+     "2026-10-30 18:18:05.350412+00"
+    ]
+   ],
+   "types": [
+    "('customer_id', VARCHAR, None, None, None, None, None)",
+    "('first_name', VARCHAR, None, None, None, None, None)",
+    "('last_name', VARCHAR, None, None, None, None, None)",
+    "('email', VARCHAR, None, None, None, None, None)",
+    "('city', VARCHAR, None, None, None, None, None)",
+    "('postcode_area', VARCHAR, None, None, None, None, None)",
+    "('signup_date', DATE, None, None, None, None, None)",
+    "('loyalty_tier', VARCHAR, None, None, None, None, None)",
+    "('customer_segment', VARCHAR, None, None, None, None, None)",
+    "('marketing_opt_in', BOOLEAN, None, None, None, None, None)",
+    "('_source_file', VARCHAR, None, None, None, None, None)",
+    "('_bronze_ingested_at', TIMESTAMP WITH TIME ZONE, None, None, None, None, None)",
+    "('_silver_built_at', TIMESTAMP WITH TIME ZONE, None, None, None, None, None)"
+   ]
+  },
+  "silver.employees": {
+   "columns": [
+    "employee_id",
+    "first_name",
+    "last_name",
+    "store_id",
+    "role",
+    "hire_date",
+    "contract_type",
+    "_source_file",
+    "_bronze_ingested_at",
+    "_silver_built_at"
+   ],
+   "rows": [
+    [
+     "EMP0001",
+     "•••",
+     "•••",
+     "ST005",
+     "Supervisor",
+     "2024-06-19",
+     "Full-time",
+     "employees/employees.csv",
+     "2026-10-30 17:26:41.735901+00",
+     "2026-10-30 18:18:05.350412+00"
+    ],
+    [
+     "EMP0002",
+     "•••",
+     "•••",
+     "ST002",
+     "Online Picker",
+     "2023-01-20",
+     "Part-time",
+     "employees/employees.csv",
+     "2026-10-30 17:26:41.735901+00",
+     "2026-10-30 18:18:05.350412+00"
+    ],
+    [
+     "EMP0003",
+     "•••",
+     "•••",
+     "ST002",
+     "Online Picker",
+     "2024-03-21",
+     "Part-time",
+     "employees/employees.csv",
+     "2026-10-30 17:26:41.735901+00",
+     "2026-10-30 18:18:05.350412+00"
+    ]
+   ],
+   "types": [
+    "('employee_id', VARCHAR, None, None, None, None, None)",
+    "('first_name', VARCHAR, None, None, None, None, None)",
+    "('last_name', VARCHAR, None, None, None, None, None)",
+    "('store_id', VARCHAR, None, None, None, None, None)",
+    "('role', VARCHAR, None, None, None, None, None)",
+    "('hire_date', DATE, None, None, None, None, None)",
+    "('contract_type', VARCHAR, None, None, None, None, None)",
+    "('_source_file', VARCHAR, None, None, None, None, None)",
+    "('_bronze_ingested_at', TIMESTAMP WITH TIME ZONE, None, None, None, None, None)",
+    "('_silver_built_at', TIMESTAMP WITH TIME ZONE, None, None, None, None, None)"
+   ]
+  },
+  "silver.inventory": {
+   "columns": [
+    "store_id",
+    "product_id",
+    "stock_on_hand",
+    "stock_on_order",
+    "last_restock_date",
+    "aisle_location",
+    "_source_file",
+    "_bronze_ingested_at",
+    "_silver_built_at"
+   ],
+   "rows": [
+    [
+     "ST001",
+     "P0001",
+     "185",
+     "20",
+     "2025-11-29",
+     "Aisle 1",
+     "inventory/inventory.csv",
+     "2026-10-30 17:26:41.735901+00",
+     "2026-10-30 18:18:05.350412+00"
+    ],
+    [
+     "ST001",
+     "P0002",
+     "42",
+     "40",
+     "2025-12-14",
+     "Produce",
+     "inventory/inventory.csv",
+     "2026-10-30 17:26:41.735901+00",
+     "2026-10-30 18:18:05.350412+00"
+    ],
+    [
+     "ST001",
+     "P0003",
+     "298",
+     "100",
+     "2025-11-22",
+     "Aisle 5",
+     "inventory/inventory.csv",
+     "2026-10-30 17:26:41.735901+00",
+     "2026-10-30 18:18:05.350412+00"
+    ]
+   ],
+   "types": [
+    "('store_id', VARCHAR, None, None, None, None, None)",
+    "('product_id', VARCHAR, None, None, None, None, None)",
+    "('stock_on_hand', INTEGER, None, None, None, None, None)",
+    "('stock_on_order', INTEGER, None, None, None, None, None)",
+    "('last_restock_date', DATE, None, None, None, None, None)",
+    "('aisle_location', VARCHAR, None, None, None, None, None)",
+    "('_source_file', VARCHAR, None, None, None, None, None)",
+    "('_bronze_ingested_at', TIMESTAMP WITH TIME ZONE, None, None, None, None, None)",
+    "('_silver_built_at', TIMESTAMP WITH TIME ZONE, None, None, None, None, None)"
+   ]
+  },
+  "silver.order_items": {
+   "columns": [
+    "order_item_id",
+    "order_id",
+    "product_id",
+    "quantity",
+    "unit_price",
+    "discount_amount",
+    "line_net_amount",
+    "line_vat_amount",
+    "promotion_id",
+    "_source_file",
+    "_bronze_ingested_at",
+    "_silver_built_at"
+   ],
+   "rows": [
+    [
+     "OI0000017",
+     "ORD000006",
+     "P0047",
+     "1",
+     "1.85",
+     "0.00",
+     "1.85",
+     "0.37",
+     null,
+     "order_items/dt=2025-05-20/order_items.csv",
+     "2026-10-30 17:26:41.735901+00",
+     "2026-10-30 18:18:05.350412+00"
+    ],
+    [
+     "OI0000030",
+     "ORD000009",
+     "P0019",
+     "2",
+     "3.20",
+     "0.00",
+     "6.40",
+     "0.00",
+     null,
+     "order_items/dt=2025-07-01/order_items.csv",
+     "2026-10-30 17:26:41.735901+00",
+     "2026-10-30 18:18:05.350412+00"
+    ],
+    [
+     "OI0000072",
+     "ORD000018",
+     "P0051",
+     "3",
+     "2.10",
+     "0.00",
+     "6.30",
+     "1.26",
+     null,
+     "order_items/dt=2025-08-01/order_items.csv",
+     "2026-10-30 17:26:41.735901+00",
+     "2026-10-30 18:18:05.350412+00"
+    ]
+   ],
+   "types": [
+    "('order_item_id', VARCHAR, None, None, None, None, None)",
+    "('order_id', VARCHAR, None, None, None, None, None)",
+    "('product_id', VARCHAR, None, None, None, None, None)",
+    "('quantity', INTEGER, None, None, None, None, None)",
+    "('unit_price', DECIMAL(12,2), None, None, None, None, None)",
+    "('discount_amount', DECIMAL(12,2), None, None, None, None, None)",
+    "('line_net_amount', DECIMAL(12,2), None, None, None, None, None)",
+    "('line_vat_amount', DECIMAL(12,2), None, None, None, None, None)",
+    "('promotion_id', VARCHAR, None, None, None, None, None)",
+    "('_source_file', VARCHAR, None, None, None, None, None)",
+    "('_bronze_ingested_at', TIMESTAMP WITH TIME ZONE, None, None, None, None, None)",
+    "('_silver_built_at', TIMESTAMP WITH TIME ZONE, None, None, None, None, None)"
+   ]
+  },
+  "silver.orders": {
+   "columns": [
+    "order_id",
+    "order_datetime_local",
+    "store_id",
+    "customer_id",
+    "order_channel",
+    "payment_method",
+    "order_status",
+    "subtotal",
+    "discount_total",
+    "vat_total",
+    "delivery_fee",
+    "total_amount",
+    "_source_file",
+    "_bronze_ingested_at",
+    "order_datetime_utc",
+    "order_date",
+    "_silver_built_at"
+   ],
+   "rows": [
+    [
+     "ORD000006",
+     "2025-05-20 10:18:17",
+     "ST007",
+     null,
+     "In-store",
+     "Card",
+     "Completed",
+     "18.75",
+     "0.00",
+     "1.65",
+     "0.00",
+     "20.40",
+     "orders/dt=2025-05-20/orders.csv",
+     "2026-10-30 17:26:41.735901+00",
+     "2025-05-20 09:18:17+00",
+     "2025-05-20",
+     "2026-10-30 18:18:05.350412+00"
+    ],
+    [
+     "ORD000011",
+     "2025-09-23 12:34:36",
+     "ST003",
+     "CUST00270",
+     "In-store",
+     "Card",
+     "Completed",
+     "26.20",
+     "0.00",
+     "1.28",
+     "0.00",
+     "27.48",
+     "orders/dt=2025-09-23/orders.csv",
+     "2026-10-30 17:26:41.735901+00",
+     "2025-09-23 11:34:36+00",
+     "2025-09-23",
+     "2026-10-30 18:18:05.350412+00"
+    ],
+    [
+     "ORD000057",
+     "2025-04-16 08:08:21",
+     "ST003",
+     "CUST00230",
+     "In-store",
+     "Mobile Wallet",
+     "Completed",
+     "20.60",
+     "0.00",
+     "3.20",
+     "0.00",
+     "23.80",
+     "orders/dt=2025-04-16/orders.csv",
+     "2026-10-30 17:26:41.735901+00",
+     "2025-04-16 07:08:21+00",
+     "2025-04-16",
+     "2026-10-30 18:18:05.350412+00"
+    ]
+   ],
+   "types": [
+    "('order_id', VARCHAR, None, None, None, None, None)",
+    "('order_datetime_local', TIMESTAMP, None, None, None, None, None)",
+    "('store_id', VARCHAR, None, None, None, None, None)",
+    "('customer_id', VARCHAR, None, None, None, None, None)",
+    "('order_channel', VARCHAR, None, None, None, None, None)",
+    "('payment_method', VARCHAR, None, None, None, None, None)",
+    "('order_status', VARCHAR, None, None, None, None, None)",
+    "('subtotal', DECIMAL(12,2), None, None, None, None, None)",
+    "('discount_total', DECIMAL(12,2), None, None, None, None, None)",
+    "('vat_total', DECIMAL(12,2), None, None, None, None, None)",
+    "('delivery_fee', DECIMAL(12,2), None, None, None, None, None)",
+    "('total_amount', DECIMAL(12,2), None, None, None, None, None)",
+    "('_source_file', VARCHAR, None, None, None, None, None)",
+    "('_bronze_ingested_at', TIMESTAMP WITH TIME ZONE, None, None, None, None, None)",
+    "('order_datetime_utc', TIMESTAMP WITH TIME ZONE, None, None, None, None, None)",
+    "('order_date', DATE, None, None, None, None, None)",
+    "('_silver_built_at', TIMESTAMP WITH TIME ZONE, None, None, None, None, None)"
+   ]
+  },
+  "silver.products": {
+   "columns": [
+    "product_id",
+    "product_name",
+    "category",
+    "brand",
+    "supplier_id",
+    "unit_cost",
+    "unit_price",
+    "vat_rate",
+    "reorder_level",
+    "active",
+    "_source_file",
+    "_bronze_ingested_at",
+    "_silver_built_at"
+   ],
+   "rows": [
+    [
+     "P0001",
+     "Bananas",
+     "Fresh Produce",
+     "RYStore Finest",
+     "SUP010",
+     "0.25",
+     "0.45",
+     "0.00",
+     "34",
+     "false",
+     "products/products.csv",
+     "2026-10-30 17:26:41.735901+00",
+     "2026-10-30 18:18:05.350412+00"
+    ],
+    [
+     "P0002",
+     "Apples 6 Pack",
+     "Fresh Produce",
+     "Nature Basket",
+     "SUP002",
+     "1.40",
+     "2.20",
+     "0.00",
+     "41",
+     "false",
+     "products/products.csv",
+     "2026-10-30 17:26:41.735901+00",
+     "2026-10-30 18:18:05.350412+00"
+    ],
+    [
+     "P0003",
+     "Mixed Salad Bag",
+     "Fresh Produce",
+     "Everyday Choice",
+     "SUP004",
+     "0.80",
+     "1.50",
+     "0.00",
+     "75",
+     "false",
+     "products/products.csv",
+     "2026-10-30 17:26:41.735901+00",
+     "2026-10-30 18:18:05.350412+00"
+    ]
+   ],
+   "types": [
+    "('product_id', VARCHAR, None, None, None, None, None)",
+    "('product_name', VARCHAR, None, None, None, None, None)",
+    "('category', VARCHAR, None, None, None, None, None)",
+    "('brand', VARCHAR, None, None, None, None, None)",
+    "('supplier_id', VARCHAR, None, None, None, None, None)",
+    "('unit_cost', DECIMAL(12,2), None, None, None, None, None)",
+    "('unit_price', DECIMAL(12,2), None, None, None, None, None)",
+    "('vat_rate', DECIMAL(12,2), None, None, None, None, None)",
+    "('reorder_level', INTEGER, None, None, None, None, None)",
+    "('active', BOOLEAN, None, None, None, None, None)",
+    "('_source_file', VARCHAR, None, None, None, None, None)",
+    "('_bronze_ingested_at', TIMESTAMP WITH TIME ZONE, None, None, None, None, None)",
+    "('_silver_built_at', TIMESTAMP WITH TIME ZONE, None, None, None, None, None)"
+   ]
+  },
+  "silver.promotions": {
+   "columns": [
+    "promotion_id",
+    "promotion_name",
+    "start_date",
+    "end_date",
+    "discount_type",
+    "discount_value",
+    "category",
+    "_source_file",
+    "_bronze_ingested_at",
+    "_silver_built_at"
+   ],
+   "rows": [
+    [
+     "PROMO001",
+     "January Value Deals",
+     "2025-01-01",
+     "2025-01-31",
+     "Percentage",
+     "10.00",
+     "Grocery",
+     "promotions/promotions.csv",
+     "2026-10-30 17:26:41.735901+00",
+     "2026-10-30 18:18:05.350412+00"
+    ],
+    [
+     "PROMO002",
+     "Fresh Start Healthy Eating",
+     "2025-02-01",
+     "2025-02-28",
+     "Percentage",
+     "15.00",
+     "Fresh Produce",
+     "promotions/promotions.csv",
+     "2026-10-30 17:26:41.735901+00",
+     "2026-10-30 18:18:05.350412+00"
+    ],
+    [
+     "PROMO003",
+     "Easter Bakery Offers",
+     "2025-04-01",
+     "2025-04-21",
+     "Percentage",
+     "12.00",
+     "Bakery",
+     "promotions/promotions.csv",
+     "2026-10-30 17:26:41.735901+00",
+     "2026-10-30 18:18:05.350412+00"
+    ]
+   ],
+   "types": [
+    "('promotion_id', VARCHAR, None, None, None, None, None)",
+    "('promotion_name', VARCHAR, None, None, None, None, None)",
+    "('start_date', DATE, None, None, None, None, None)",
+    "('end_date', DATE, None, None, None, None, None)",
+    "('discount_type', VARCHAR, None, None, None, None, None)",
+    "('discount_value', DECIMAL(12,2), None, None, None, None, None)",
+    "('category', VARCHAR, None, None, None, None, None)",
+    "('_source_file', VARCHAR, None, None, None, None, None)",
+    "('_bronze_ingested_at', TIMESTAMP WITH TIME ZONE, None, None, None, None, None)",
+    "('_silver_built_at', TIMESTAMP WITH TIME ZONE, None, None, None, None, None)"
+   ]
+  },
+  "silver.stores": {
+   "columns": [
+    "store_id",
+    "store_name",
+    "city",
+    "region",
+    "postcode",
+    "store_format",
+    "opening_date",
+    "staff_count",
+    "_source_file",
+    "_bronze_ingested_at",
+    "_silver_built_at"
+   ],
+   "rows": [
+    [
+     "ST001",
+     "RYStore Manchester Central",
+     "Manchester",
+     "Greater Manchester",
+     "M1 1AA",
+     "Large Supermarket",
+     "2021-03-15",
+     "58",
+     "stores/stores.csv",
+     "2026-10-30 17:26:41.735901+00",
+     "2026-10-30 18:18:05.350412+00"
+    ],
+    [
+     "ST002",
+     "RYStore Salford Quays",
+     "Salford",
+     "Greater Manchester",
+     "M5 3AB",
+     "Convenience",
+     "2022-07-04",
+     "24",
+     "stores/stores.csv",
+     "2026-10-30 17:26:41.735901+00",
+     "2026-10-30 18:18:05.350412+00"
+    ],
+    [
+     "ST003",
+     "RYStore Leeds Market",
+     "Leeds",
+     "West Yorkshire",
+     "LS1 4CD",
+     "Large Supermarket",
+     "2020-10-21",
+     "64",
+     "stores/stores.csv",
+     "2026-10-30 17:26:41.735901+00",
+     "2026-10-30 18:18:05.350412+00"
+    ]
+   ],
+   "types": [
+    "('store_id', VARCHAR, None, None, None, None, None)",
+    "('store_name', VARCHAR, None, None, None, None, None)",
+    "('city', VARCHAR, None, None, None, None, None)",
+    "('region', VARCHAR, None, None, None, None, None)",
+    "('postcode', VARCHAR, None, None, None, None, None)",
+    "('store_format', VARCHAR, None, None, None, None, None)",
+    "('opening_date', DATE, None, None, None, None, None)",
+    "('staff_count', INTEGER, None, None, None, None, None)",
+    "('_source_file', VARCHAR, None, None, None, None, None)",
+    "('_bronze_ingested_at', TIMESTAMP WITH TIME ZONE, None, None, None, None, None)",
+    "('_silver_built_at', TIMESTAMP WITH TIME ZONE, None, None, None, None, None)"
+   ]
+  },
+  "silver.suppliers": {
+   "columns": [
+    "supplier_id",
+    "supplier_name",
+    "main_category",
+    "city",
+    "postcode",
+    "email",
+    "lead_time_days",
+    "_source_file",
+    "_bronze_ingested_at",
+    "_silver_built_at"
+   ],
+   "rows": [
+    [
+     "SUP001",
+     "FreshFields Produce",
+     "Produce",
+     "Preston",
+     "PR1 7HK",
+     "•••",
+     "2",
+     "suppliers/suppliers.csv",
+     "2026-10-30 17:26:41.735901+00",
+     "2026-10-30 18:18:05.350412+00"
+    ],
+    [
+     "SUP002",
+     "Northern Dairy Co",
+     "Beverages",
+     "Liverpool",
+     "L1 8EL",
+     "•••",
+     "4",
+     "suppliers/suppliers.csv",
+     "2026-10-30 17:26:41.735901+00",
+     "2026-10-30 18:18:05.350412+00"
+    ],
+    [
+     "SUP003",
+     "OceanLine Seafood",
+     "Mixed",
+     "Manchester",
+     "M1 8FB",
+     "•••",
+     "5",
+     "suppliers/suppliers.csv",
+     "2026-10-30 17:26:41.735901+00",
+     "2026-10-30 18:18:05.350412+00"
+    ]
+   ],
+   "types": [
+    "('supplier_id', VARCHAR, None, None, None, None, None)",
+    "('supplier_name', VARCHAR, None, None, None, None, None)",
+    "('main_category', VARCHAR, None, None, None, None, None)",
+    "('city', VARCHAR, None, None, None, None, None)",
+    "('postcode', VARCHAR, None, None, None, None, None)",
+    "('email', VARCHAR, None, None, None, None, None)",
+    "('lead_time_days', INTEGER, None, None, None, None, None)",
+    "('_source_file', VARCHAR, None, None, None, None, None)",
+    "('_bronze_ingested_at', TIMESTAMP WITH TIME ZONE, None, None, None, None, None)",
+    "('_silver_built_at', TIMESTAMP WITH TIME ZONE, None, None, None, None, None)"
+   ]
+  },
+  "gold.dim_cliente": {
+   "columns": [
+    "customer_id",
+    "city",
+    "signup_date",
+    "loyalty_tier",
+    "customer_segment",
+    "marketing_opt_in",
+    "is_anonymous"
+   ],
+   "rows": [
+    [
+     "CUST00001",
+     "York",
+     "2024-06-02",
+     "Silver",
+     "Health-focused",
+     "false",
+     "false"
+    ],
+    [
+     "CUST00002",
+     "Newcastle",
+     "2023-07-28",
+     "Bronze",
+     "Family shopper",
+     "true",
+     "false"
+    ],
+    [
+     "CUST00003",
+     "Liverpool",
+     "2024-03-13",
+     "Bronze",
+     "Budget-conscious",
+     "true",
+     "false"
+    ]
+   ],
+   "types": [
+    "('customer_id', VARCHAR, None, None, None, None, None)",
+    "('city', VARCHAR, None, None, None, None, None)",
+    "('signup_date', DATE, None, None, None, None, None)",
+    "('loyalty_tier', VARCHAR, None, None, None, None, None)",
+    "('customer_segment', VARCHAR, None, None, None, None, None)",
+    "('marketing_opt_in', BOOLEAN, None, None, None, None, None)",
+    "('is_anonymous', BOOLEAN, None, None, None, None, None)"
+   ]
+  },
+  "gold.dim_data": {
+   "columns": [
+    "date_key",
+    "date",
+    "year",
+    "quarter",
+    "month",
+    "month_name",
+    "day",
+    "day_of_week",
+    "day_name",
+    "is_weekend"
+   ],
+   "rows": [
+    [
+     "20261231",
+     "2026-12-31",
+     "2026",
+     "4",
+     "12",
+     "December",
+     "31",
+     "5",
+     "Thursday",
+     "false"
+    ],
+    [
+     "20261230",
+     "2026-12-30",
+     "2026",
+     "4",
+     "12",
+     "December",
+     "30",
+     "4",
+     "Wednesday",
+     "false"
+    ],
+    [
+     "20261229",
+     "2026-12-29",
+     "2026",
+     "4",
+     "12",
+     "December",
+     "29",
+     "3",
+     "Tuesday",
+     "false"
+    ]
+   ],
+   "types": [
+    "('date_key', INTEGER, None, None, None, None, None)",
+    "('date', DATE, None, None, None, None, None)",
+    "('year', BIGINT, None, None, None, None, None)",
+    "('quarter', BIGINT, None, None, None, None, None)",
+    "('month', BIGINT, None, None, None, None, None)",
+    "('month_name', VARCHAR, None, None, None, None, None)",
+    "('day', BIGINT, None, None, None, None, None)",
+    "('day_of_week', BIGINT, None, None, None, None, None)",
+    "('day_name', VARCHAR, None, None, None, None, None)",
+    "('is_weekend', BOOLEAN, None, None, None, None, None)"
+   ]
+  },
+  "gold.dim_fornecedor": {
+   "columns": [
+    "supplier_id",
+    "supplier_name",
+    "main_category",
+    "city",
+    "postcode",
+    "lead_time_days"
+   ],
+   "rows": [
+    [
+     "SUP001",
+     "FreshFields Produce",
+     "Produce",
+     "Preston",
+     "PR1 7HK",
+     "2"
+    ],
+    [
+     "SUP002",
+     "Northern Dairy Co",
+     "Beverages",
+     "Liverpool",
+     "L1 8EL",
+     "4"
+    ],
+    [
+     "SUP003",
+     "OceanLine Seafood",
+     "Mixed",
+     "Manchester",
+     "M1 8FB",
+     "5"
+    ]
+   ],
+   "types": [
+    "('supplier_id', VARCHAR, None, None, None, None, None)",
+    "('supplier_name', VARCHAR, None, None, None, None, None)",
+    "('main_category', VARCHAR, None, None, None, None, None)",
+    "('city', VARCHAR, None, None, None, None, None)",
+    "('postcode', VARCHAR, None, None, None, None, None)",
+    "('lead_time_days', INTEGER, None, None, None, None, None)"
+   ]
+  },
+  "gold.dim_loja": {
+   "columns": [
+    "store_id",
+    "store_name",
+    "city",
+    "region",
+    "postcode",
+    "store_format",
+    "opening_date",
+    "staff_count"
+   ],
+   "rows": [
+    [
+     "ST001",
+     "RYStore Manchester Central",
+     "Manchester",
+     "Greater Manchester",
+     "M1 1AA",
+     "Large Supermarket",
+     "2021-03-15",
+     "58"
+    ],
+    [
+     "ST002",
+     "RYStore Salford Quays",
+     "Salford",
+     "Greater Manchester",
+     "M5 3AB",
+     "Convenience",
+     "2022-07-04",
+     "24"
+    ],
+    [
+     "ST003",
+     "RYStore Leeds Market",
+     "Leeds",
+     "West Yorkshire",
+     "LS1 4CD",
+     "Large Supermarket",
+     "2020-10-21",
+     "64"
+    ]
+   ],
+   "types": [
+    "('store_id', VARCHAR, None, None, None, None, None)",
+    "('store_name', VARCHAR, None, None, None, None, None)",
+    "('city', VARCHAR, None, None, None, None, None)",
+    "('region', VARCHAR, None, None, None, None, None)",
+    "('postcode', VARCHAR, None, None, None, None, None)",
+    "('store_format', VARCHAR, None, None, None, None, None)",
+    "('opening_date', DATE, None, None, None, None, None)",
+    "('staff_count', INTEGER, None, None, None, None, None)"
+   ]
+  },
+  "gold.dim_produto": {
+   "columns": [
+    "product_id",
+    "product_name",
+    "category",
+    "brand",
+    "supplier_id",
+    "supplier_name",
+    "unit_cost",
+    "unit_price",
+    "vat_rate",
+    "reorder_level",
+    "active"
+   ],
+   "rows": [
+    [
+     "P0001",
+     "Bananas",
+     "Fresh Produce",
+     "RYStore Finest",
+     "SUP010",
+     "Prime Meat Supply",
+     "0.25",
+     "0.45",
+     "0.00",
+     "34",
+     "false"
+    ],
+    [
+     "P0002",
+     "Apples 6 Pack",
+     "Fresh Produce",
+     "Nature Basket",
+     "SUP002",
+     "Northern Dairy Co",
+     "1.40",
+     "2.20",
+     "0.00",
+     "41",
+     "false"
+    ],
+    [
+     "P0003",
+     "Mixed Salad Bag",
+     "Fresh Produce",
+     "Everyday Choice",
+     "SUP004",
+     "Bakers Guild Ltd",
+     "0.80",
+     "1.50",
+     "0.00",
+     "75",
+     "false"
+    ]
+   ],
+   "types": [
+    "('product_id', VARCHAR, None, None, None, None, None)",
+    "('product_name', VARCHAR, None, None, None, None, None)",
+    "('category', VARCHAR, None, None, None, None, None)",
+    "('brand', VARCHAR, None, None, None, None, None)",
+    "('supplier_id', VARCHAR, None, None, None, None, None)",
+    "('supplier_name', VARCHAR, None, None, None, None, None)",
+    "('unit_cost', DECIMAL(12,2), None, None, None, None, None)",
+    "('unit_price', DECIMAL(12,2), None, None, None, None, None)",
+    "('vat_rate', DECIMAL(12,2), None, None, None, None, None)",
+    "('reorder_level', INTEGER, None, None, None, None, None)",
+    "('active', BOOLEAN, None, None, None, None, None)"
+   ]
+  },
+  "gold.fato_estoque": {
+   "columns": [
+    "snapshot_date_key",
+    "snapshot_date",
+    "store_id",
+    "product_id",
+    "stock_on_hand",
+    "stock_on_order",
+    "reorder_level",
+    "below_reorder",
+    "last_restock_date",
+    "aisle_location"
+   ],
+   "rows": [
+    [
+     "20261030",
+     "2026-10-30",
+     "ST001",
+     "P0001",
+     "185",
+     "20",
+     "34",
+     "false",
+     "2025-11-29",
+     "Aisle 1"
+    ],
+    [
+     "20261030",
+     "2026-10-30",
+     "ST001",
+     "P0002",
+     "42",
+     "40",
+     "41",
+     "false",
+     "2025-12-14",
+     "Produce"
+    ],
+    [
+     "20261030",
+     "2026-10-30",
+     "ST001",
+     "P0003",
+     "298",
+     "100",
+     "75",
+     "false",
+     "2025-11-22",
+     "Aisle 5"
+    ]
+   ],
+   "types": [
+    "('snapshot_date_key', INTEGER, None, None, None, None, None)",
+    "('snapshot_date', DATE, None, None, None, None, None)",
+    "('store_id', VARCHAR, None, None, None, None, None)",
+    "('product_id', VARCHAR, None, None, None, None, None)",
+    "('stock_on_hand', INTEGER, None, None, None, None, None)",
+    "('stock_on_order', INTEGER, None, None, None, None, None)",
+    "('reorder_level', INTEGER, None, None, None, None, None)",
+    "('below_reorder', BOOLEAN, None, None, None, None, None)",
+    "('last_restock_date', DATE, None, None, None, None, None)",
+    "('aisle_location', VARCHAR, None, None, None, None, None)"
+   ]
+  },
+  "gold.fato_pedidos": {
+   "columns": [
+    "order_id",
+    "date_key",
+    "order_datetime_local",
+    "order_datetime_utc",
+    "store_id",
+    "customer_id",
+    "order_channel",
+    "payment_method",
+    "order_status",
+    "item_count",
+    "subtotal",
+    "discount_total",
+    "vat_total",
+    "delivery_fee",
+    "total_amount",
+    "revenue_amount"
+   ],
+   "rows": [
+    [
+     "ORD000006",
+     "20250520",
+     "2025-05-20 10:18:17",
+     "2025-05-20 09:18:17+00",
+     "ST007",
+     "ANON",
+     "In-store",
+     "Card",
+     "Completed",
+     "5",
+     "18.75",
+     "0.00",
+     "1.65",
+     "0.00",
+     "20.40",
+     "20.40"
+    ],
+    [
+     "ORD000011",
+     "20250923",
+     "2025-09-23 12:34:36",
+     "2025-09-23 11:34:36+00",
+     "ST003",
+     "CUST00270",
+     "In-store",
+     "Card",
+     "Completed",
+     "5",
+     "26.20",
+     "0.00",
+     "1.28",
+     "0.00",
+     "27.48",
+     "27.48"
+    ],
+    [
+     "ORD000057",
+     "20250416",
+     "2025-04-16 08:08:21",
+     "2025-04-16 07:08:21+00",
+     "ST003",
+     "CUST00230",
+     "In-store",
+     "Mobile Wallet",
+     "Completed",
+     "3",
+     "20.60",
+     "0.00",
+     "3.20",
+     "0.00",
+     "23.80",
+     "23.80"
+    ]
+   ],
+   "types": [
+    "('order_id', VARCHAR, None, None, None, None, None)",
+    "('date_key', INTEGER, None, None, None, None, None)",
+    "('order_datetime_local', TIMESTAMP, None, None, None, None, None)",
+    "('order_datetime_utc', TIMESTAMP WITH TIME ZONE, None, None, None, None, None)",
+    "('store_id', VARCHAR, None, None, None, None, None)",
+    "('customer_id', VARCHAR, None, None, None, None, None)",
+    "('order_channel', VARCHAR, None, None, None, None, None)",
+    "('payment_method', VARCHAR, None, None, None, None, None)",
+    "('order_status', VARCHAR, None, None, None, None, None)",
+    "('item_count', BIGINT, None, None, None, None, None)",
+    "('subtotal', DECIMAL(12,2), None, None, None, None, None)",
+    "('discount_total', DECIMAL(12,2), None, None, None, None, None)",
+    "('vat_total', DECIMAL(12,2), None, None, None, None, None)",
+    "('delivery_fee', DECIMAL(12,2), None, None, None, None, None)",
+    "('total_amount', DECIMAL(12,2), None, None, None, None, None)",
+    "('revenue_amount', DECIMAL(12,2), None, None, None, None, None)"
+   ]
+  },
+  "gold.fato_vendas": {
+   "columns": [
+    "order_item_id",
+    "order_id",
+    "date_key",
+    "store_id",
+    "customer_id",
+    "product_id",
+    "supplier_id",
+    "promotion_id",
+    "order_channel",
+    "order_status",
+    "is_revenue",
+    "quantity",
+    "unit_price",
+    "gross_amount",
+    "discount_amount",
+    "net_amount",
+    "vat_amount",
+    "cost_amount",
+    "margin_amount"
+   ],
+   "rows": [
+    [
+     "OI0000017",
+     "ORD000006",
+     "20250520",
+     "ST007",
+     "ANON",
+     "P0047",
+     "SUP008",
+     null,
+     "In-store",
+     "Completed",
+     "true",
+     "1",
+     "1.85",
+     "1.85",
+     "0.00",
+     "1.85",
+     "0.37",
+     "0.90",
+     "0.95"
+    ],
+    [
+     "OI0000030",
+     "ORD000009",
+     "20250701",
+     "ST007",
+     "CUST00280",
+     "P0019",
+     "SUP008",
+     null,
+     "In-store",
+     "Completed",
+     "true",
+     "2",
+     "3.20",
+     "6.40",
+     "0.00",
+     "6.40",
+     "0.00",
+     "3.20",
+     "3.20"
+    ],
+    [
+     "OI0000072",
+     "ORD000018",
+     "20250801",
+     "ST004",
+     "CUST00409",
+     "P0051",
+     "SUP012",
+     null,
+     "In-store",
+     "Completed",
+     "true",
+     "3",
+     "2.10",
+     "6.30",
+     "0.00",
+     "6.30",
+     "1.26",
+     "3.30",
+     "3.00"
+    ]
+   ],
+   "types": [
+    "('order_item_id', VARCHAR, None, None, None, None, None)",
+    "('order_id', VARCHAR, None, None, None, None, None)",
+    "('date_key', INTEGER, None, None, None, None, None)",
+    "('store_id', VARCHAR, None, None, None, None, None)",
+    "('customer_id', VARCHAR, None, None, None, None, None)",
+    "('product_id', VARCHAR, None, None, None, None, None)",
+    "('supplier_id', VARCHAR, None, None, None, None, None)",
+    "('promotion_id', VARCHAR, None, None, None, None, None)",
+    "('order_channel', VARCHAR, None, None, None, None, None)",
+    "('order_status', VARCHAR, None, None, None, None, None)",
+    "('is_revenue', BOOLEAN, None, None, None, None, None)",
+    "('quantity', INTEGER, None, None, None, None, None)",
+    "('unit_price', DECIMAL(12,2), None, None, None, None, None)",
+    "('gross_amount', DECIMAL(12,2), None, None, None, None, None)",
+    "('discount_amount', DECIMAL(12,2), None, None, None, None, None)",
+    "('net_amount', DECIMAL(12,2), None, None, None, None, None)",
+    "('vat_amount', DECIMAL(12,2), None, None, None, None, None)",
+    "('cost_amount', DECIMAL(12,2), None, None, None, None, None)",
+    "('margin_amount', DECIMAL(12,2), None, None, None, None, None)"
+   ]
+  }
+ },
+ "types": {
+  "silver._checks": [
+   [
+    "run_at",
+    "TIMESTAMP WITH TIME ZONE"
+   ],
+   [
+    "table_name",
+    "VARCHAR"
+   ],
+   [
+    "check_name",
+    "VARCHAR"
+   ],
+   [
+    "status",
+    "VARCHAR"
+   ],
+   [
+    "failed_rows",
+    "INTEGER"
+   ]
+  ],
+  "silver._quarantine": [
+   [
+    "table_name",
+    "VARCHAR"
+   ],
+   [
+    "source_file",
+    "VARCHAR"
+   ],
+   [
+    "line",
+    "INTEGER"
+   ],
+   [
+    "reason",
+    "VARCHAR"
+   ],
+   [
+    "raw",
+    "VARCHAR"
+   ],
+   [
+    "built_at",
+    "TIMESTAMP WITH TIME ZONE"
+   ]
+  ],
+  "silver.customers": [
+   [
+    "customer_id",
+    "VARCHAR"
+   ],
+   [
+    "first_name",
+    "VARCHAR"
+   ],
+   [
+    "last_name",
+    "VARCHAR"
+   ],
+   [
+    "email",
+    "VARCHAR"
+   ],
+   [
+    "city",
+    "VARCHAR"
+   ],
+   [
+    "postcode_area",
+    "VARCHAR"
+   ],
+   [
+    "signup_date",
+    "DATE"
+   ],
+   [
+    "loyalty_tier",
+    "VARCHAR"
+   ],
+   [
+    "customer_segment",
+    "VARCHAR"
+   ],
+   [
+    "marketing_opt_in",
+    "BOOLEAN"
+   ],
+   [
+    "_source_file",
+    "VARCHAR"
+   ],
+   [
+    "_bronze_ingested_at",
+    "TIMESTAMP WITH TIME ZONE"
+   ],
+   [
+    "_silver_built_at",
+    "TIMESTAMP WITH TIME ZONE"
+   ]
+  ],
+  "silver.employees": [
+   [
+    "employee_id",
+    "VARCHAR"
+   ],
+   [
+    "first_name",
+    "VARCHAR"
+   ],
+   [
+    "last_name",
+    "VARCHAR"
+   ],
+   [
+    "store_id",
+    "VARCHAR"
+   ],
+   [
+    "role",
+    "VARCHAR"
+   ],
+   [
+    "hire_date",
+    "DATE"
+   ],
+   [
+    "contract_type",
+    "VARCHAR"
+   ],
+   [
+    "_source_file",
+    "VARCHAR"
+   ],
+   [
+    "_bronze_ingested_at",
+    "TIMESTAMP WITH TIME ZONE"
+   ],
+   [
+    "_silver_built_at",
+    "TIMESTAMP WITH TIME ZONE"
+   ]
+  ],
+  "silver.inventory": [
+   [
+    "store_id",
+    "VARCHAR"
+   ],
+   [
+    "product_id",
+    "VARCHAR"
+   ],
+   [
+    "stock_on_hand",
+    "INTEGER"
+   ],
+   [
+    "stock_on_order",
+    "INTEGER"
+   ],
+   [
+    "last_restock_date",
+    "DATE"
+   ],
+   [
+    "aisle_location",
+    "VARCHAR"
+   ],
+   [
+    "_source_file",
+    "VARCHAR"
+   ],
+   [
+    "_bronze_ingested_at",
+    "TIMESTAMP WITH TIME ZONE"
+   ],
+   [
+    "_silver_built_at",
+    "TIMESTAMP WITH TIME ZONE"
+   ]
+  ],
+  "silver.order_items": [
+   [
+    "order_item_id",
+    "VARCHAR"
+   ],
+   [
+    "order_id",
+    "VARCHAR"
+   ],
+   [
+    "product_id",
+    "VARCHAR"
+   ],
+   [
+    "quantity",
+    "INTEGER"
+   ],
+   [
+    "unit_price",
+    "DECIMAL(12,2)"
+   ],
+   [
+    "discount_amount",
+    "DECIMAL(12,2)"
+   ],
+   [
+    "line_net_amount",
+    "DECIMAL(12,2)"
+   ],
+   [
+    "line_vat_amount",
+    "DECIMAL(12,2)"
+   ],
+   [
+    "promotion_id",
+    "VARCHAR"
+   ],
+   [
+    "_source_file",
+    "VARCHAR"
+   ],
+   [
+    "_bronze_ingested_at",
+    "TIMESTAMP WITH TIME ZONE"
+   ],
+   [
+    "_silver_built_at",
+    "TIMESTAMP WITH TIME ZONE"
+   ]
+  ],
+  "silver.orders": [
+   [
+    "order_id",
+    "VARCHAR"
+   ],
+   [
+    "order_datetime_local",
+    "TIMESTAMP"
+   ],
+   [
+    "store_id",
+    "VARCHAR"
+   ],
+   [
+    "customer_id",
+    "VARCHAR"
+   ],
+   [
+    "order_channel",
+    "VARCHAR"
+   ],
+   [
+    "payment_method",
+    "VARCHAR"
+   ],
+   [
+    "order_status",
+    "VARCHAR"
+   ],
+   [
+    "subtotal",
+    "DECIMAL(12,2)"
+   ],
+   [
+    "discount_total",
+    "DECIMAL(12,2)"
+   ],
+   [
+    "vat_total",
+    "DECIMAL(12,2)"
+   ],
+   [
+    "delivery_fee",
+    "DECIMAL(12,2)"
+   ],
+   [
+    "total_amount",
+    "DECIMAL(12,2)"
+   ],
+   [
+    "_source_file",
+    "VARCHAR"
+   ],
+   [
+    "_bronze_ingested_at",
+    "TIMESTAMP WITH TIME ZONE"
+   ],
+   [
+    "order_datetime_utc",
+    "TIMESTAMP WITH TIME ZONE"
+   ],
+   [
+    "order_date",
+    "DATE"
+   ],
+   [
+    "_silver_built_at",
+    "TIMESTAMP WITH TIME ZONE"
+   ]
+  ],
+  "silver.products": [
+   [
+    "product_id",
+    "VARCHAR"
+   ],
+   [
+    "product_name",
+    "VARCHAR"
+   ],
+   [
+    "category",
+    "VARCHAR"
+   ],
+   [
+    "brand",
+    "VARCHAR"
+   ],
+   [
+    "supplier_id",
+    "VARCHAR"
+   ],
+   [
+    "unit_cost",
+    "DECIMAL(12,2)"
+   ],
+   [
+    "unit_price",
+    "DECIMAL(12,2)"
+   ],
+   [
+    "vat_rate",
+    "DECIMAL(12,2)"
+   ],
+   [
+    "reorder_level",
+    "INTEGER"
+   ],
+   [
+    "active",
+    "BOOLEAN"
+   ],
+   [
+    "_source_file",
+    "VARCHAR"
+   ],
+   [
+    "_bronze_ingested_at",
+    "TIMESTAMP WITH TIME ZONE"
+   ],
+   [
+    "_silver_built_at",
+    "TIMESTAMP WITH TIME ZONE"
+   ]
+  ],
+  "silver.promotions": [
+   [
+    "promotion_id",
+    "VARCHAR"
+   ],
+   [
+    "promotion_name",
+    "VARCHAR"
+   ],
+   [
+    "start_date",
+    "DATE"
+   ],
+   [
+    "end_date",
+    "DATE"
+   ],
+   [
+    "discount_type",
+    "VARCHAR"
+   ],
+   [
+    "discount_value",
+    "DECIMAL(12,2)"
+   ],
+   [
+    "category",
+    "VARCHAR"
+   ],
+   [
+    "_source_file",
+    "VARCHAR"
+   ],
+   [
+    "_bronze_ingested_at",
+    "TIMESTAMP WITH TIME ZONE"
+   ],
+   [
+    "_silver_built_at",
+    "TIMESTAMP WITH TIME ZONE"
+   ]
+  ],
+  "silver.stores": [
+   [
+    "store_id",
+    "VARCHAR"
+   ],
+   [
+    "store_name",
+    "VARCHAR"
+   ],
+   [
+    "city",
+    "VARCHAR"
+   ],
+   [
+    "region",
+    "VARCHAR"
+   ],
+   [
+    "postcode",
+    "VARCHAR"
+   ],
+   [
+    "store_format",
+    "VARCHAR"
+   ],
+   [
+    "opening_date",
+    "DATE"
+   ],
+   [
+    "staff_count",
+    "INTEGER"
+   ],
+   [
+    "_source_file",
+    "VARCHAR"
+   ],
+   [
+    "_bronze_ingested_at",
+    "TIMESTAMP WITH TIME ZONE"
+   ],
+   [
+    "_silver_built_at",
+    "TIMESTAMP WITH TIME ZONE"
+   ]
+  ],
+  "silver.suppliers": [
+   [
+    "supplier_id",
+    "VARCHAR"
+   ],
+   [
+    "supplier_name",
+    "VARCHAR"
+   ],
+   [
+    "main_category",
+    "VARCHAR"
+   ],
+   [
+    "city",
+    "VARCHAR"
+   ],
+   [
+    "postcode",
+    "VARCHAR"
+   ],
+   [
+    "email",
+    "VARCHAR"
+   ],
+   [
+    "lead_time_days",
+    "INTEGER"
+   ],
+   [
+    "_source_file",
+    "VARCHAR"
+   ],
+   [
+    "_bronze_ingested_at",
+    "TIMESTAMP WITH TIME ZONE"
+   ],
+   [
+    "_silver_built_at",
+    "TIMESTAMP WITH TIME ZONE"
+   ]
+  ],
+  "gold.dim_cliente": [
+   [
+    "customer_id",
+    "VARCHAR"
+   ],
+   [
+    "city",
+    "VARCHAR"
+   ],
+   [
+    "signup_date",
+    "DATE"
+   ],
+   [
+    "loyalty_tier",
+    "VARCHAR"
+   ],
+   [
+    "customer_segment",
+    "VARCHAR"
+   ],
+   [
+    "marketing_opt_in",
+    "BOOLEAN"
+   ],
+   [
+    "is_anonymous",
+    "BOOLEAN"
+   ]
+  ],
+  "gold.dim_data": [
+   [
+    "date_key",
+    "INTEGER"
+   ],
+   [
+    "date",
+    "DATE"
+   ],
+   [
+    "year",
+    "BIGINT"
+   ],
+   [
+    "quarter",
+    "BIGINT"
+   ],
+   [
+    "month",
+    "BIGINT"
+   ],
+   [
+    "month_name",
+    "VARCHAR"
+   ],
+   [
+    "day",
+    "BIGINT"
+   ],
+   [
+    "day_of_week",
+    "BIGINT"
+   ],
+   [
+    "day_name",
+    "VARCHAR"
+   ],
+   [
+    "is_weekend",
+    "BOOLEAN"
+   ]
+  ],
+  "gold.dim_fornecedor": [
+   [
+    "supplier_id",
+    "VARCHAR"
+   ],
+   [
+    "supplier_name",
+    "VARCHAR"
+   ],
+   [
+    "main_category",
+    "VARCHAR"
+   ],
+   [
+    "city",
+    "VARCHAR"
+   ],
+   [
+    "postcode",
+    "VARCHAR"
+   ],
+   [
+    "lead_time_days",
+    "INTEGER"
+   ]
+  ],
+  "gold.dim_loja": [
+   [
+    "store_id",
+    "VARCHAR"
+   ],
+   [
+    "store_name",
+    "VARCHAR"
+   ],
+   [
+    "city",
+    "VARCHAR"
+   ],
+   [
+    "region",
+    "VARCHAR"
+   ],
+   [
+    "postcode",
+    "VARCHAR"
+   ],
+   [
+    "store_format",
+    "VARCHAR"
+   ],
+   [
+    "opening_date",
+    "DATE"
+   ],
+   [
+    "staff_count",
+    "INTEGER"
+   ]
+  ],
+  "gold.dim_produto": [
+   [
+    "product_id",
+    "VARCHAR"
+   ],
+   [
+    "product_name",
+    "VARCHAR"
+   ],
+   [
+    "category",
+    "VARCHAR"
+   ],
+   [
+    "brand",
+    "VARCHAR"
+   ],
+   [
+    "supplier_id",
+    "VARCHAR"
+   ],
+   [
+    "supplier_name",
+    "VARCHAR"
+   ],
+   [
+    "unit_cost",
+    "DECIMAL(12,2)"
+   ],
+   [
+    "unit_price",
+    "DECIMAL(12,2)"
+   ],
+   [
+    "vat_rate",
+    "DECIMAL(12,2)"
+   ],
+   [
+    "reorder_level",
+    "INTEGER"
+   ],
+   [
+    "active",
+    "BOOLEAN"
+   ]
+  ],
+  "gold.fato_estoque": [
+   [
+    "snapshot_date_key",
+    "INTEGER"
+   ],
+   [
+    "snapshot_date",
+    "DATE"
+   ],
+   [
+    "store_id",
+    "VARCHAR"
+   ],
+   [
+    "product_id",
+    "VARCHAR"
+   ],
+   [
+    "stock_on_hand",
+    "INTEGER"
+   ],
+   [
+    "stock_on_order",
+    "INTEGER"
+   ],
+   [
+    "reorder_level",
+    "INTEGER"
+   ],
+   [
+    "below_reorder",
+    "BOOLEAN"
+   ],
+   [
+    "last_restock_date",
+    "DATE"
+   ],
+   [
+    "aisle_location",
+    "VARCHAR"
+   ]
+  ],
+  "gold.fato_pedidos": [
+   [
+    "order_id",
+    "VARCHAR"
+   ],
+   [
+    "date_key",
+    "INTEGER"
+   ],
+   [
+    "order_datetime_local",
+    "TIMESTAMP"
+   ],
+   [
+    "order_datetime_utc",
+    "TIMESTAMP WITH TIME ZONE"
+   ],
+   [
+    "store_id",
+    "VARCHAR"
+   ],
+   [
+    "customer_id",
+    "VARCHAR"
+   ],
+   [
+    "order_channel",
+    "VARCHAR"
+   ],
+   [
+    "payment_method",
+    "VARCHAR"
+   ],
+   [
+    "order_status",
+    "VARCHAR"
+   ],
+   [
+    "item_count",
+    "BIGINT"
+   ],
+   [
+    "subtotal",
+    "DECIMAL(12,2)"
+   ],
+   [
+    "discount_total",
+    "DECIMAL(12,2)"
+   ],
+   [
+    "vat_total",
+    "DECIMAL(12,2)"
+   ],
+   [
+    "delivery_fee",
+    "DECIMAL(12,2)"
+   ],
+   [
+    "total_amount",
+    "DECIMAL(12,2)"
+   ],
+   [
+    "revenue_amount",
+    "DECIMAL(12,2)"
+   ]
+  ],
+  "gold.fato_vendas": [
+   [
+    "order_item_id",
+    "VARCHAR"
+   ],
+   [
+    "order_id",
+    "VARCHAR"
+   ],
+   [
+    "date_key",
+    "INTEGER"
+   ],
+   [
+    "store_id",
+    "VARCHAR"
+   ],
+   [
+    "customer_id",
+    "VARCHAR"
+   ],
+   [
+    "product_id",
+    "VARCHAR"
+   ],
+   [
+    "supplier_id",
+    "VARCHAR"
+   ],
+   [
+    "promotion_id",
+    "VARCHAR"
+   ],
+   [
+    "order_channel",
+    "VARCHAR"
+   ],
+   [
+    "order_status",
+    "VARCHAR"
+   ],
+   [
+    "is_revenue",
+    "BOOLEAN"
+   ],
+   [
+    "quantity",
+    "INTEGER"
+   ],
+   [
+    "unit_price",
+    "DECIMAL(12,2)"
+   ],
+   [
+    "gross_amount",
+    "DECIMAL(12,2)"
+   ],
+   [
+    "discount_amount",
+    "DECIMAL(12,2)"
+   ],
+   [
+    "net_amount",
+    "DECIMAL(12,2)"
+   ],
+   [
+    "vat_amount",
+    "DECIMAL(12,2)"
+   ],
+   [
+    "cost_amount",
+    "DECIMAL(12,2)"
+   ],
+   [
+    "margin_amount",
+    "DECIMAL(12,2)"
+   ]
+  ]
+ },
+ "freshness": {
+  "gold.dim_data": 1793384531456,
+  "gold.dim_loja": 1793384538920,
+  "gold.dim_fornecedor": 1793384535154,
+  "gold.dim_produto": 1793384542449,
+  "gold.dim_cliente": 1793384527670,
+  "gold.fato_pedidos": 1793384549772,
+  "gold.fato_vendas": 1793384553554,
+  "gold.fato_estoque": 1793384546135
+ }
+}

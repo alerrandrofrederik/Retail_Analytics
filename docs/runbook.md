@@ -88,6 +88,14 @@ O `<id>` do job aparece no `bundle summary`. No dev, ele não fica no repositór
 
 Uma entrega fora do contrato (coluna nova, arquivo vazio ou chave fora do layout) faz a `ingest_bronze` falhar **no fim**, depois de gravar o resto. Veja o [guia da quarentena](guides/conferir-a-quarentena.md).
 
+## 6. Reconstruir o site de documentação (depois de cada release)
+
+| Passo | Comando | Grava? |
+|---|---|---|
+| Ajuda | `uv run --with pyyaml python tools/site/build_site.py --help` | não |
+| Gerar a partir do snapshot | `uv run --with pyyaml python tools/site/build_site.py` | só `docs/site/` |
+| Ler o Databricks e gerar | `uv run --with pyyaml python tools/site/build_site.py --refresh` | só `docs/site/`; no Databricks, só leitura |
+
 ## Guias
 
 - [Adicionar uma tabela da fonte](guides/adicionar-tabela-da-fonte.md)

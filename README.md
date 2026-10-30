@@ -102,7 +102,7 @@ lojas
 
 ## Como executar
 
-O passo a passo de operação (carga da origem, testes, deploy, execução, reprocessamento e o que fazer quando uma checagem falha) está no **[runbook](docs/runbook.md)**, com os [guias](docs/guides/) das tarefas repetidas. Os produtos de dados servidos pela gold estão em [`docs/data-products/`](docs/data-products/fato_vendas/README.md).
+O passo a passo de operação (carga da origem, testes, deploy, execução, reprocessamento e o que fazer quando uma checagem falha) está no **[runbook](docs/runbook.md)**, com os [guias](docs/guides/) das tarefas repetidas. Os produtos de dados servidos pela gold estão em [`docs/data-products/`](docs/data-products/fato_vendas/README.md), e o site de documentação, gerado do repositório, abre em [`docs/site/index.html`](docs/site/index.html) (`uv run --with pyyaml python tools/site/build_site.py`).
 
 ### Pré-requisitos
 
@@ -207,7 +207,9 @@ Retail_Analytics/
 ├── docs/             # runbook, guias e produtos de dados
 │   ├── runbook.md        # cada comando, em ordem, como roda hoje
 │   ├── guides/           # um guia por tarefa repetida
-│   └── data-products/    # um produto de dados por pasta, com o contrato do consumidor
+│   ├── data-products/    # um produto de dados por pasta, com o contrato do consumidor
+│   └── site/             # site de documentação gerado por tools/site/build_site.py
+├── tools/            # ferramentas do projeto (gerador do site)
 ├── retail_analytics/ # bundle do Databricks com o código do pipeline
 │   ├── databricks.yml    # targets dev e prod, catálogo lh_retail_analytics
 │   ├── resources/        # jobs e pipelines

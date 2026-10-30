@@ -21,7 +21,7 @@ Antes do 05: preparação do ambiente (skills da Databricks em `.claude/skills/`
 | [13](prompt_13.md) | Impacto de uma mudança (ex.: fuso) | impact | 09 | Concluído ([impacto: order_datetime em UTC](../reports/impact/rystore_impact_order_datetime_utc.html)) |
 | [14](prompt_14.md) | Produto de dados `fato_vendas` | data-product | 11, 12 | Concluído ([produto](../docs/data-products/fato_vendas/README.md), [página](../docs/data-products/index.html)) |
 | [15](prompt_15.md) | Runbook e guias | docs | 07–09 | Concluído ([runbook](../docs/runbook.md), 4 [guias](../docs/guides/)) |
-| [16](prompt_16.md) | Site de documentação | toolkit | 15 | Pendente |
+| [16](prompt_16.md) | Site de documentação | toolkit | 15 | Concluído ([site](../docs/site/index.html), gerador [`tools/site/build_site.py`](../tools/site/build_site.py)) |
 | [17](prompt_17.md) | Atualização do knowledge | knowledge-refresh | 16 | Pendente |
 | [18](prompt_18.md) | Modelo: incidente de job | incident | quando um job falhar | Modelo |
 | [19](prompt_19.md) | Modelo: revisão geral e de custo | big-review, cost-review | 1 a 3 meses rodando | Modelo |

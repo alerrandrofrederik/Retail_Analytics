@@ -198,6 +198,7 @@ Retail_Analytics/
 │   ├── decisions/        # decisões tomadas e em aberto
 │   ├── incidents/        # registro de incidentes
 │   └── sources/          # uma página por fonte de dados
+├── metadata/         # metadata das fontes (YAML) e o script que a gera
 ├── reports/          # relatórios gerados (ex.: perfil de dados da fonte)
 ├── retail_analytics/ # bundle do Databricks com o código do pipeline
 │   ├── databricks.yml    # targets dev e prod, catálogo lh_retail_analytics

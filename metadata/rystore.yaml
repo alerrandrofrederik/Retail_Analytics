@@ -1,0 +1,287 @@
+# A metadata da fonte RYStore, no formato de skills/metadata/references/purchasing.yaml.
+# Gerada por metadata/scripts/extract_metadata.py; não editar à mão, rodar o script de novo.
+# Nomes e tipos: dos CSVs em RYStore-Retail-Dataset/, lidos como texto.
+# Chaves: do perfil da fonte (reports/profile/rystore_profile.html).
+# Descrições das tabelas: RYStore-Retail-Dataset/README.md. Descrições das colunas:
+# RYStore-Retail-Dataset/data_dictionary.csv (textos genéricos da fonte), mais as relações do README.md.
+# Descrição vazia: o documento não diz nada ou contradiz os dados.
+
+source: rystore
+tables:
+
+  - name: customers
+    description: 800 loyalty customers. Blank customer_id in orders represents anonymous/non-loyalty purchases.
+    columns:
+      - name: customer_id
+        type: string
+        key: true
+        description: Unique or foreign key identifier depending on table context.
+      - name: first_name
+        type: string
+        description: Categorical or descriptive attribute.
+      - name: last_name
+        type: string
+        description: Categorical or descriptive attribute.
+      - name: email
+        type: string
+        description: Categorical or descriptive attribute.
+      - name: city
+        type: string
+        description: Categorical or descriptive attribute.
+      - name: postcode_area
+        type: string
+        description: Categorical or descriptive attribute.
+      - name: signup_date
+        type: date
+        description: Date/time value in ISO-style format.
+      - name: loyalty_tier
+        type: string
+        description: Categorical or descriptive attribute.
+      - name: customer_segment
+        type: string
+        description: Categorical or descriptive attribute.
+      - name: marketing_opt_in
+        type: boolean
+        description: Categorical or descriptive attribute.
+
+  - name: employees
+    description: 120 fictional employees linked to stores.
+    columns:
+      - name: employee_id
+        type: string
+        key: true
+        description: Unique or foreign key identifier depending on table context.
+      - name: first_name
+        type: string
+        description: Categorical or descriptive attribute.
+      - name: last_name
+        type: string
+        description: Categorical or descriptive attribute.
+      - name: store_id
+        type: string
+        description: Unique or foreign key identifier depending on table context. References stores.store_id.
+      - name: role
+        type: string
+        description: Categorical or descriptive attribute.
+      - name: hire_date
+        type: date
+        description: Date/time value in ISO-style format.
+      - name: contract_type
+        type: string
+        description: Categorical or descriptive attribute.
+      - name: annual_salary
+        type: integer
+        description: Currency value in GBP.
+
+  - name: inventory
+    description: 528 store-product stock snapshot rows.
+    columns:
+      - name: store_id
+        type: string
+        key: true
+        description: Unique or foreign key identifier depending on table context. References stores.store_id.
+      - name: product_id
+        type: string
+        key: true
+        description: Unique or foreign key identifier depending on table context. References products.product_id.
+      - name: stock_on_hand
+        type: integer
+        description: Integer count or threshold.
+      - name: stock_on_order
+        type: integer
+        description: Integer count or threshold.
+      - name: last_restock_date
+        type: date
+        description: Date/time value in ISO-style format.
+      - name: aisle_location
+        type: string
+        description: Categorical or descriptive attribute.
+
+  - name: order_items
+    description: 47512 item-level transaction lines linked to orders and products.
+    columns:
+      - name: order_item_id
+        type: string
+        key: true
+        description: Unique or foreign key identifier depending on table context.
+      - name: order_id
+        type: string
+        description: Unique or foreign key identifier depending on table context. References orders.order_id.
+      - name: product_id
+        type: string
+        description: Unique or foreign key identifier depending on table context. References products.product_id.
+      - name: quantity
+        type: integer
+        description: Integer count or threshold.
+      - name: unit_price
+        type: decimal
+        description: Currency value in GBP.
+      - name: discount_amount
+        type: decimal
+        description: Currency value in GBP.
+      - name: line_net_amount
+        type: decimal
+        description: Currency value in GBP.
+      - name: line_vat_amount
+        type: decimal
+        description: Currency value in GBP.
+      - name: promotion_id
+        type: string
+        description: Unique or foreign key identifier depending on table context. References promotions.promotion_id, nullable.
+
+  - name: orders
+    description: 10000 orders from 2025 with channel, payment method, status, subtotal, VAT, delivery fee, and total.
+    columns:
+      - name: order_id
+        type: string
+        key: true
+        description: Unique or foreign key identifier depending on table context.
+      - name: order_datetime
+        type: timestamp
+        description: Date/time value in ISO-style format.
+      - name: store_id
+        type: string
+        description: Unique or foreign key identifier depending on table context. References stores.store_id.
+      - name: customer_id
+        type: string
+        description: Unique or foreign key identifier depending on table context. References customers.customer_id, nullable.
+      - name: order_channel
+        type: string
+        description: Categorical or descriptive attribute.
+      - name: payment_method
+        type: string
+        description: Categorical or descriptive attribute.
+      - name: order_status
+        type: string
+        description: Categorical or descriptive attribute.
+      - name: subtotal
+        type: decimal
+        description: Currency value in GBP.
+      - name: discount_total
+        type: decimal
+        description: Currency value in GBP.
+      - name: vat_total
+        type: decimal
+        description: Currency value in GBP.
+      - name: delivery_fee
+        type: decimal
+        description: Currency value in GBP.
+      - name: total_amount
+        type: decimal
+        description: Currency value in GBP.
+
+  - name: products
+    description: 66 supermarket products with category, brand, supplier, cost, price, VAT, and reorder level.
+    columns:
+      - name: product_id
+        type: string
+        key: true
+        description: Unique or foreign key identifier depending on table context.
+      - name: product_name
+        type: string
+        description: Categorical or descriptive attribute.
+      - name: category
+        type: string
+        description: Categorical or descriptive attribute.
+      - name: brand
+        type: string
+        description: Categorical or descriptive attribute.
+      - name: supplier_id
+        type: string
+        description: Unique or foreign key identifier depending on table context. References suppliers.supplier_id.
+      - name: unit_cost
+        type: decimal
+        description: Currency value in GBP.
+      - name: unit_price
+        type: decimal
+        description: Currency value in GBP.
+      - name: vat_rate
+        type: decimal
+        description: UK-style VAT rate or VAT amount depending on column.
+      - name: reorder_level
+        type: integer
+        description: Integer count or threshold.
+      - name: active
+        type: boolean
+        description: Categorical or descriptive attribute.
+
+  - name: promotions
+    description: 6 category-level promotional campaigns.
+    columns:
+      - name: promotion_id
+        type: string
+        key: true
+        description: Unique or foreign key identifier depending on table context.
+      - name: promotion_name
+        type: string
+        description: Categorical or descriptive attribute.
+      - name: start_date
+        type: date
+        description: Date/time value in ISO-style format.
+      - name: end_date
+        type: date
+        description: Date/time value in ISO-style format.
+      - name: discount_type
+        type: string
+        description: ""
+      - name: discount_value
+        type: decimal
+        description: ""
+      - name: category
+        type: string
+        description: Categorical or descriptive attribute.
+
+  - name: stores
+    description: 8 RYStore branches across UK cities.
+    columns:
+      - name: store_id
+        type: string
+        key: true
+        description: Unique or foreign key identifier depending on table context.
+      - name: store_name
+        type: string
+        description: Categorical or descriptive attribute.
+      - name: city
+        type: string
+        description: Categorical or descriptive attribute.
+      - name: region
+        type: string
+        description: Categorical or descriptive attribute.
+      - name: postcode
+        type: string
+        description: Categorical or descriptive attribute.
+      - name: store_format
+        type: string
+        description: Categorical or descriptive attribute.
+      - name: opening_date
+        type: date
+        description: Date/time value in ISO-style format.
+      - name: staff_count
+        type: integer
+        description: Integer count or threshold.
+
+  - name: suppliers
+    description: 12 fictional suppliers.
+    columns:
+      - name: supplier_id
+        type: string
+        key: true
+        description: Unique or foreign key identifier depending on table context.
+      - name: supplier_name
+        type: string
+        description: Categorical or descriptive attribute.
+      - name: main_category
+        type: string
+        description: Categorical or descriptive attribute.
+      - name: city
+        type: string
+        description: Categorical or descriptive attribute.
+      - name: postcode
+        type: string
+        description: Categorical or descriptive attribute.
+      - name: email
+        type: string
+        description: Categorical or descriptive attribute.
+      - name: lead_time_days
+        type: integer
+        description: Integer count or threshold.

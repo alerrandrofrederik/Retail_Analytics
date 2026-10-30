@@ -44,4 +44,18 @@ Estão no [registro de decisões](../decisions/decision-log.md): o fuso de `orde
 
 ## Dicionário de dados
 
-O `data_dictionary.csv` cobre as 77 colunas, mas com descrições genéricas. Ele diz que `promotions.discount_type` é inteiro, mas a coluna chega como texto (`Percentage`/`Fixed`). O contrato de dados vai substituí-lo.
+O `data_dictionary.csv` cobre as 77 colunas, mas só com 6 textos genéricos repetidos (ex.: "Categorical or descriptive attribute.").
+
+Ele contradiz os dados em duas colunas de `promotions`, que descreve como "Integer count or threshold.":
+- `discount_type` chega como texto (`Percentage`/`Fixed`);
+- `discount_value` chega como decimal (há `0.3`).
+
+O contrato de dados vai substituí-lo.
+
+## Metadata
+
+A metadata da fonte está em [`metadata/rystore.yaml`](../../metadata/rystore.yaml), gerada por [`metadata/scripts/extract_metadata.py`](../../metadata/scripts/extract_metadata.py) (skill `metadata`, 2026-10-30).
+
+- Traz 9 tabelas e 77 colunas, com o tipo inferido dos dados, as chaves do perfil e as descrições do dicionário e do README da fonte.
+- As descrições são genéricas e, nas 2 colunas acima, ficaram vazias: não foram inventadas. Descrições reais são uma pergunta para o dono da fonte (contrato).
+- Para atualizar, rode o script de novo; não edite o YAML à mão.

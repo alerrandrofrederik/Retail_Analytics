@@ -28,6 +28,7 @@ Uma linha por decisão. Uma decisão em aberto passa para "tomada" quando o enge
 | 2026-10-30 | A `gold.fato_estoque` guarda só a última foto do estoque, sem histórico | Engenheiro de dados ([revisão 07 a 09](../../reports/pr-review/pr_review_pipeline_07_09.html), achado 13, recusado) |
 | 2026-10-30 | A bronze (tabelas e volume `bronze.raw`) fica sem restrição de acesso, porque o workspace é pessoal e tem um usuário só. A PII é mascarada a partir da silver, inclusive no JSON da quarentena. Rever se outra pessoa ganhar acesso ao workspace | Engenheiro de dados ([revisão 07 a 09](../../reports/pr-review/pr_review_pipeline_07_09.html), achado 2, parte recusada) |
 | 2026-10-30 | Os CSVs ficam no git byte a byte (`.gitattributes`: `*.csv -text`), com CRLF como no contrato | Revisão 07 a 09, achado 4 |
+| 2026-10-30 | SLA da gold: as tabelas gold ficam prontas até 08:00 UTC, 1h depois do início do job (07:00 UTC) | Engenheiro de dados, ao aprovar o plano do prompt 11 |
 
 ## Em aberto
 

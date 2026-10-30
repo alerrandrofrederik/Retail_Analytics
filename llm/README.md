@@ -16,7 +16,7 @@ Antes do 05: preparação do ambiente (skills da Databricks em `.claude/skills/`
 | [08](prompt_08.md) | Camada silver | — | 07 | Concluído (Python puro com DuckDB, sem PySpark; rodada 173663739566769 no dev) |
 | [09](prompt_09.md) | Camada gold (modelo dimensional) | — | 08 | Concluído (Python puro com DuckDB, sem PySpark; rodada 173663739566769 no dev) |
 | [10](prompt_10.md) | Revisão do código do pipeline | pr-review | 09 | Concluído ([revisão](../reports/pr-review/pr_review_pipeline_07_09.html): 16 achados; 1 a 9 corrigidos, 10 e 13 decididos; rodada 498752805931100) |
-| [11](prompt_11.md) | Qualidade das tabelas | quality | 09 rodando | Pendente |
+| [11](prompt_11.md) | Qualidade das tabelas | quality | 09 rodando | Concluído ([qualidade 2026-10](../reports/quality/rystore_quality_2026-10.html)) |
 | [12](prompt_12.md) | Reconciliação fonte x lakehouse | reconcile | 09 | Pendente |
 | [13](prompt_13.md) | Impacto de uma mudança (ex.: fuso) | impact | 09 | Pendente |
 | [14](prompt_14.md) | Produto de dados `fato_vendas` | data-product | 11, 12 | Pendente |
@@ -38,4 +38,4 @@ O pipeline roda no dev em Python puro, sem PySpark: DuckDB e pyarrow sobre Parqu
 - **Executar localmente:** `uv run python scripts/run_pipeline_local.py --out <pasta>`. Roda o mesmo código em cerca de 23 s.
 - **Testes:** dentro de `retail_analytics/`, `uv run --no-project --with pytest --with pyyaml --with duckdb --with pyarrow pytest tests -q`, com 24 testes.
 
-Os achados 1 a 9 da [revisão](../reports/pr-review/pr_review_pipeline_07_09.html) foram corrigidos (31 testes; rodada `498752805931100` com SUCCESS). Continuam abertos o achado 11 (a montagem do ambiente leva cerca de 220 s) e os baixos, de 12 a 16. Próximo passo: prompts 11 a 19.
+Os achados 1 a 9 da [revisão](../reports/pr-review/pr_review_pipeline_07_09.html) foram corrigidos (31 testes; rodada `498752805931100` com SUCCESS). Continuam abertos o achado 11 (a montagem do ambiente leva cerca de 220 s) e os baixos, de 12 a 16. O prompt 11 (qualidade) também está concluído: os dados estão certos, a gold está "usar com cuidado" porque não tem rodada agendada e passou do SLA, e nenhuma das 38 checagens tem um teste que confira o status com dado ruim. Próximo passo: prompts 12 a 19.

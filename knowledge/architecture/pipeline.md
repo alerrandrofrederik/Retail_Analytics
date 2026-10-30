@@ -48,6 +48,13 @@ Origem: rodada `966981410696310` do job no dev.
 - **O DuckDB não grava direto em `/Volumes`.** O `COPY … TO '/Volumes/…'` falhou uma vez com "Async write failed … Input/output error", porque o DuckDB grava fora de ordem e o volume montado não aceita isso de forma confiável. Agora o DuckDB grava num arquivo temporário local, que é copiado inteiro para o volume (`silver._copy`). O pyarrow grava em sequência e não teve o problema na bronze.
 - **Hora local vira `TIMESTAMP_NTZ`.** As colunas `order_datetime_local` (silver.orders e gold.fato_pedidos) não têm fuso. A tabela Delta precisa do recurso `timestampNtz`, que a `publish` habilita no `CREATE OR REPLACE`. Sem isso, substituir uma tabela que já existia falha com `DELTA_FEATURES_REQUIRE_MANUAL_ENABLEMENT`.
 
+## Qualidade
+
+- **SLA da gold:** pronta até 08:00 UTC ([registro de decisões](../decisions/decision-log.md)).
+- **Página de qualidade de 2026-10:** [`reports/quality/rystore_quality_2026-10.html`](../../reports/quality/rystore_quality_2026-10.html) (skill `quality`), com os números.
+- **Fato novo** (origem: a página de qualidade e `tests/`): nenhuma das 38 checagens da silver tem um teste que confira o status com dado ruim. As regras de negócio, as listas fechadas e os `row_count` nunca receberam dado ruim; só a quarentena de tipo, a de chave estrangeira e as checagens da bronze são testadas. Proposta pendente: um caso por checagem nas fixtures.
+- **Checagens antigas:** os resultados da rodada em PySpark (2026-10-30 16:56) não estão em `silver._checks`, porque a tabela é recriada a partir dos Parquet [med].
+
 ## Revisões
 
 - 2026-10-30: [revisão do código dos prompts 07 a 09](../../reports/pr-review/pr_review_pipeline_07_09.html) (skill `pr-review`). Veredito: mudanças pedidas, com 4 achados altos, 7 médios e 5 baixos. As correções aguardam o sim do engenheiro de dados.

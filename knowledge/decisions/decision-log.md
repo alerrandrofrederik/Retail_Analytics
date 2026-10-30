@@ -13,6 +13,9 @@ Uma linha por decisão. Uma decisão em aberto passa para "tomada" quando o enge
 | 2026-10-30 | O conhecimento do projeto fica em `knowledge/<assunto>/` | Engenheiro de dados, em conversa |
 | 2026-10-30 | Supabase é o banco OLTP simulado da empresa (origem); Databricks é a plataforma de dados, com lakehouse em arquitetura medalhão que lê do Supabase | Engenheiro de dados, em conversa; ver [pipeline.md](../architecture/pipeline.md) |
 | 2026-10-30 | A ingestão é um notebook Python no Databricks que lê o Supabase com `boto3`, com as credenciais do `.env` nos *secrets* do Databricks, e grava em `bronze.raw` | Engenheiro de dados, em conversa |
+| 2026-10-30 | As tarefas do projeto viram prompts em ordem em `llm/prompt_NN.md`, com índice em [`llm/README.md`](../../llm/README.md); a skill `migration` fica de fora (não há ambiente legado) | Engenheiro de dados, ao aprovar o plano |
+| 2026-10-30 | Skills da Databricks instaladas só no projeto, sem plugin: `databricks aitools install --scope project --agents claude-code --skills-only` com 8 skills, em `.claude/skills/`. O plugin falhou porque outro marketplace do Claude Code não atualizava | Engenheiro de dados, em conversa |
+| 2026-10-30 | O código do pipeline fica em um Databricks Asset Bundle `default-python`, na subpasta `retail_analytics/`, com target dev | Engenheiro de dados, ao aprovar o plano |
 
 ## Em aberto
 

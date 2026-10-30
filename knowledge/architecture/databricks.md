@@ -26,3 +26,28 @@ Todos os objetos do projeto ficam no catálogo **`lh_retail_analytics`** (Unity 
 | Volume | Tipo | Caminho |
 |---|---|---|
 | `bronze.raw` | Gerenciado | `/Volumes/lh_retail_analytics/bronze/raw` |
+
+## Ferramentas do agente (aitools)
+
+Origem: `databricks aitools install`, executado em 2026-10-30 com o CLI v1.22.1.
+
+- **Instalação:** `databricks aitools install --scope project --agents claude-code --skills-only --skills databricks-core,databricks-dabs,databricks-jobs,databricks-pipelines,databricks-dbsql,databricks-python-sdk,databricks-serverless,databricks-data-discovery -p pessoal`.
+- **Onde ficam:** as skills ficam em `.claude/skills/`, e o Claude Code as encontra sozinho. O CLI guarda uma cópia e o estado em `.databricks/aitools/`.
+- **Por que `--skills-only`:** a instalação padrão, como plugin, roda `claude plugin marketplace update` e falha quando qualquer marketplace configurado não atualiza (no nosso caso, um marketplace sem relação com a Databricks).
+- **Comandos úteis:** `databricks aitools list` mostra o que está instalado e `databricks aitools update` atualiza.
+
+## Bundle
+
+Origem: `databricks bundle init default-python` (2026-10-30), ajustado depois; `databricks bundle validate -p pessoal` retorna OK nos targets dev e prod.
+
+O código do pipeline fica em um Declarative Automation Bundle (antigo Databricks Asset Bundle), na subpasta [`retail_analytics/`](../../retail_analytics/).
+
+- **Ajustes em relação ao template:**
+  - nome `retail_analytics`, no lugar de `my_project`;
+  - catálogo `lh_retail_analytics` nos dois targets, no lugar de `workspace`;
+  - exemplos removidos (pipeline e job de táxi, notebook e teste de exemplo).
+- **Targets:**
+  - `dev` é o padrão, em `mode: development`: os agendamentos ficam pausados e o schema é o nome curto do usuário;
+  - `prod` usa o schema `prod`.
+- **Sem host no arquivo:** o `databricks.yml` não traz URL do workspace nem e-mail. O workspace vem do perfil (`-p pessoal`), e o caminho e a permissão do prod usam `${workspace.current_user.userName}`.
+- **Validação:** `databricks bundle validate -p pessoal`, dentro de `retail_analytics/`. Deploy e run só com o sim do engenheiro de dados.

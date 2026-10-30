@@ -9,3 +9,6 @@ wheels/
 # Virtual environments
 .venv
 .env
+
+# Databricks CLI (estado do aitools e do bundle)
+.databricks/

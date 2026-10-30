@@ -38,12 +38,6 @@ O **Supabase** simula o sistema transacional (OLTP) da empresa e é a origem dos
 | **Gold** | `lh_retail_analytics.gold` | Modelo dimensional pronto para indicadores |
 | **Consumo** | Chat Genie One | Consumo e análise dos dados modelados |
 
----|---|
-| **Arquivos CSV** | Dados originais do RYStore |
-| **Supabase PostgreSQL** | Importação dos CSVs para tabelas de *staging* |
-| **ETL com SQL** | Limpeza, transformação e modelagem dimensional |
-| **Chat Genie One** | Consumo e análise dos dados modelados |
-
 ---
 
 ## Modelo de dados
@@ -205,7 +199,13 @@ Retail_Analytics/
 │   ├── incidents/        # registro de incidentes
 │   └── sources/          # uma página por fonte de dados
 ├── reports/          # relatórios gerados (ex.: perfil de dados da fonte)
-├── llm/              # prompts usados com o Claude Code
+├── retail_analytics/ # bundle do Databricks com o código do pipeline
+│   ├── databricks.yml    # targets dev e prod, catálogo lh_retail_analytics
+│   ├── resources/        # jobs e pipelines
+│   ├── src/              # código Python
+│   └── tests/            # testes e fixtures
+├── llm/              # prompts de execução, em ordem (ver llm/README.md)
+├── .claude/skills/   # skills da Databricks (databricks aitools install --skills-only)
 ├── RYStore-Retail-Dataset/  # arquivos da fonte RYStore
 └── README.md
 ```

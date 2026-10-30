@@ -1,0 +1,198 @@
+# The data contract between the data platform and the consumers of gold.fato_vendas (skill data-product).
+# Open Data Contract Standard (ODCS) v3.1.0, validated against its JSON Schema.
+# Version 1.0.0, 2026-10-30: written from the table (gold/files/fato_vendas, run 498752805931100), its SQL
+# (retail_analytics/src/retail_analytics/gold.py) and the reconciliation (reports/reconcile/). Types are the
+# types of the published table, never retyped.
+
+kind: DataContract
+apiVersion: v3.1.0
+id: rystore-fato-vendas
+name: fato_vendas
+version: 1.0.0
+status: active
+domain: retail
+dataProduct: Vendas RYStore
+description:
+  purpose: One row per order item of the RYStore supermarket, with the store, the customer, the product, the supplier, the
+    promotion, the channel and the status of its order, and the amounts of the line. For sales, margin and mix analysis,
+    in the Genie or in SQL.
+  usage: 'Revenue: filter is_revenue = true (orders Completed). Day and month: use date_key (local UK date), never a UTC time.
+    The order-level total, with the delivery fee, is in gold.fato_pedidos.'
+  limitations: 'cost_amount and margin_amount use the current unit_cost of the product, not the cost on the day of the sale.
+    The sum of net_amount + vat_amount of an order differs from its total_amount by the delivery fee and, in 82 orders, by
+    0.01 (rounding of the source). promotion_id has no dimension in gold yet. The data covers 2025-01-01 to 2025-12-31.'
+servers:
+  - server: databricks-gold
+    type: databricks
+    catalog: lh_retail_analytics
+    schema: gold
+    description: 'The managed Delta table lh_retail_analytics.gold.fato_vendas, published every day from the Parquet of the
+      volume gold.files by the job rystore_pipeline. The workspace comes from the reader''s own access, never from here.'
+team:
+  name: retail-analytics-data-platform
+  members:
+    - username: data-engineer
+      role: owner
+      description: The data engineer of the project builds and answers for the table.
+    - username: genie-analysts
+      role: consumer
+      description: The analysts who ask the Genie about sales, margin and mix. No query from a consumer in the logs yet (2026-10-30).
+support:
+  - channel: github-issues
+    tool: ticket
+    url: https://github.com/alerrandrofrederik/Retail_Analytics/issues
+    description: Questions, wrong numbers and requests for a change, as an issue of the project repository.
+slaProperties:
+  - property: frequency
+    value: 1
+    unit: d
+    description: Rebuilt once a day by the job rystore_pipeline (07:00 UTC).
+  - property: timeOfAvailability
+    value: 08:00+00:00
+    description: The table of the day is ready by 08:00 UTC (decision of 2026-10-30).
+  - property: latency
+    value: 1
+    unit: d
+    description: The orders delivered by the source by 06:00 UTC are in the table the same day.
+customProperties:
+  - property: grain
+    value: one order item (order_item_id)
+  - property: currency
+    value: GBP
+  - property: timezone
+    value: Europe/London
+    description: date_key is the local UK date of the order (Europe/London), as in the source contract.
+  - property: sourceContract
+    value: contracts/rystore.odcs.yaml
+    description: The upstream contract with the RYStore source, version 1.0.0.
+  - property: personalData
+    value: none
+    description: No personal data. customer_id is the source identifier; anonymous sales are ANON.
+schema:
+  - name: fato_vendas
+    physicalName: lh_retail_analytics.gold.fato_vendas
+    physicalType: table
+    businessName: Vendas por item de pedido
+    description: One row per order item, all statuses; revenue is the rows with is_revenue = true.
+    dataGranularityDescription: One row per order_item_id.
+    quality:
+      - type: library
+        metric: rowCount
+        mustBeGreaterThan: 0
+        dimension: completeness
+        description: The table is never empty.
+      - type: text
+        dimension: consistency
+        description: 'Reconciled with the source: the rows, the revenue, the orders and the items by status, month and store
+          are equal to the RYStore files (reports/reconcile/rystore_reconcile_2026-10-30.html).'
+    properties:
+      - name: order_item_id
+        logicalType: string
+        physicalType: STRING
+        required: true
+        primaryKey: true
+        primaryKeyPosition: 1
+        unique: true
+        description: The item of the order, the key of the table.
+      - name: order_id
+        logicalType: string
+        physicalType: STRING
+        required: true
+        description: The order; joins gold.fato_pedidos.
+      - name: date_key
+        logicalType: integer
+        physicalType: INT
+        required: true
+        description: The local UK date of the order as yyyymmdd; joins gold.dim_data.date_key.
+      - name: store_id
+        logicalType: string
+        physicalType: STRING
+        required: true
+        description: The store; joins gold.dim_loja.
+      - name: customer_id
+        logicalType: string
+        physicalType: STRING
+        required: true
+        description: The customer; ANON for an anonymous sale. Joins gold.dim_cliente.
+      - name: product_id
+        logicalType: string
+        physicalType: STRING
+        required: true
+        description: The product; joins gold.dim_produto.
+      - name: supplier_id
+        logicalType: string
+        physicalType: STRING
+        required: true
+        description: The supplier of the product; joins gold.dim_fornecedor.
+      - name: promotion_id
+        logicalType: string
+        physicalType: STRING
+        required: false
+        description: The promotion of the line, empty when there is none. No dimension in gold yet.
+      - name: order_channel
+        logicalType: string
+        physicalType: STRING
+        required: true
+        description: In-store, Online or Click & Collect.
+      - name: order_status
+        logicalType: string
+        physicalType: STRING
+        required: true
+        description: Completed, Cancelled or Refunded; the status of the order.
+        quality:
+          - type: library
+            metric: invalidValues
+            arguments:
+              validValues:
+                - Cancelled
+                - Completed
+                - Refunded
+            mustBe: 0
+            dimension: conformity
+            severity: warning
+            description: Closed list of the source contract.
+      - name: is_revenue
+        logicalType: boolean
+        physicalType: BOOLEAN
+        required: true
+        description: True when the order is Completed; the filter of every revenue measure.
+      - name: quantity
+        logicalType: integer
+        physicalType: INT
+        required: true
+        description: Units sold in the line; summable.
+      - name: unit_price
+        logicalType: number
+        physicalType: DECIMAL(12,2)
+        required: true
+        description: Price of one unit in GBP, before discount and VAT; never summed.
+      - name: gross_amount
+        logicalType: number
+        physicalType: DECIMAL(12,2)
+        required: true
+        description: quantity x unit_price, in GBP; summable.
+      - name: discount_amount
+        logicalType: number
+        physicalType: DECIMAL(12,2)
+        required: true
+        description: Discount of the line in GBP; summable.
+      - name: net_amount
+        logicalType: number
+        physicalType: DECIMAL(12,2)
+        required: true
+        description: gross_amount - discount_amount, without VAT, in GBP; summable.
+      - name: vat_amount
+        logicalType: number
+        physicalType: DECIMAL(12,2)
+        required: true
+        description: VAT of the line in GBP; summable.
+      - name: cost_amount
+        logicalType: number
+        physicalType: DECIMAL(12,2)
+        required: true
+        description: quantity x the current unit_cost of the product, in GBP; summable.
+      - name: margin_amount
+        logicalType: number
+        physicalType: DECIMAL(12,2)
+        required: true
+        description: net_amount - cost_amount, in GBP; summable. Uses the current cost (see limitations).

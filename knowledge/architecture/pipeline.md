@@ -48,6 +48,11 @@ Origem: rodada `966981410696310` do job no dev.
 - **O DuckDB não grava direto em `/Volumes`.** O `COPY … TO '/Volumes/…'` falhou uma vez com "Async write failed … Input/output error", porque o DuckDB grava fora de ordem e o volume montado não aceita isso de forma confiável. Agora o DuckDB grava num arquivo temporário local, que é copiado inteiro para o volume (`silver._copy`). O pyarrow grava em sequência e não teve o problema na bronze.
 - **Hora local vira `TIMESTAMP_NTZ`.** As colunas `order_datetime_local` (silver.orders e gold.fato_pedidos) não têm fuso. A tabela Delta precisa do recurso `timestampNtz`, que a `publish` habilita no `CREATE OR REPLACE`. Sem isso, substituir uma tabela que já existia falha com `DELTA_FEATURES_REQUIRE_MANUAL_ENABLEMENT`.
 
+## Produtos de dados
+
+- [`docs/data-products/`](../../docs/data-products/): um produto por pasta, com o README (guia, métricas, consultas) e o contrato ODCS com o consumidor. A página `index.html` é gerada por `build_index.py`.
+- `fato_vendas` (Vendas RYStore) 1.0.0, de 2026-10-30. A margem usa o custo atual do produto, e os itens não somam a taxa de entrega: a receita do pedido está na `fato_pedidos`.
+
 ## Qualidade
 
 - **SLA da gold:** pronta até 08:00 UTC ([registro de decisões](../decisions/decision-log.md)).

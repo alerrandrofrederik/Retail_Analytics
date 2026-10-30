@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Produtos de dados · Retail Analytics</title>
+<style>
+@font-face{font-family:'Bricolage Grotesque';font-weight:200 800;font-display:block;src:url('../../reports/quality/fonts/BricolageGrotesque-700.woff2') format('woff2');}
+@font-face{font-family:'JetBrains Mono';font-weight:100 800;font-display:block;src:url('../../reports/quality/fonts/JetBrainsMono-500.woff2') format('woff2');}
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#080513;--plate:#1b1436;--ink:#ece7f8;--ink-2:rgba(236,231,248,.72);--line:rgba(236,231,248,.14);--line-2:rgba(236,231,248,.08);
+  --purple:#8a63f2;--purple-soft:#c9b8ff;--orange:#ffa657;--green:#7ee0a8;}
+html,body{background:var(--bg);}
+body{font-family:'Bricolage Grotesque',sans-serif;color:var(--ink);font-size:19px;line-height:1.55;-webkit-font-smoothing:antialiased;
+  background:radial-gradient(1500px 900px at 50% 300px,#161033 0%,#0e0a1d 55%,#080513 100%) no-repeat;}
+main{max-width:1320px;margin:0 auto;padding:48px 40px 120px;}
+code,pre,.mono{font-family:'JetBrains Mono',monospace;font-variant-ligatures:none;}
+a{color:var(--purple-soft);text-decoration:none;}
+h1{font-size:44px;font-weight:800;letter-spacing:-.02em;line-height:1.1;}
+.sub{margin-top:8px;color:var(--ink-2);font-size:21px;}
+.view{display:none;} .view.on{display:block;}
+.cards{margin-top:32px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;}
+.pcard{border:1px solid rgba(173,150,255,.26);border-radius:14px;padding:22px;background:linear-gradient(160deg,#1b1436 0%,#110c24 100%);cursor:pointer;}
+.pcard:hover{border-color:var(--purple-soft);}
+.pcard .nm{font-size:24px;font-weight:700;} .pcard .desc{margin-top:8px;color:var(--ink-2);font-size:17px;}
+.pcard .tl{margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--purple-soft);}
+.pcard .foot{margin-top:14px;display:flex;justify-content:space-between;font-size:15px;color:var(--ink-2);}
+.cert{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--green);border:1px solid rgba(126,224,168,.4);border-radius:6px;padding:2px 8px;margin-left:10px;vertical-align:4px;}
+.crumbs{font-size:16px;color:var(--ink-2);margin-bottom:14px;} .crumbs a{cursor:pointer;}
+.tabs{margin-top:26px;display:flex;flex-wrap:wrap;gap:8px;border-bottom:1px solid var(--line);padding-bottom:12px;}
+.tab{cursor:pointer;border:1px solid var(--line);border-radius:10px;padding:8px 16px;font-size:16px;color:var(--ink-2);}
+.tab.on{color:var(--ink);background:rgba(138,99,242,.22);border-color:rgba(138,99,242,.55);}
+.pp{display:none;margin-top:24px;} .pp.on{display:block;}
+.pp p,.pp li{max-width:1100px;margin-top:10px;} .pp ol,.pp ul{padding-left:26px;}
+.pp table{width:100%;border-collapse:collapse;margin-top:14px;}
+.pp th{text-align:left;font-size:15px;color:var(--ink-2);font-weight:600;padding:8px 18px 8px 0;border-bottom:1px solid var(--line);}
+.pp td{padding:9px 18px 9px 0;border-bottom:1px solid var(--line-2);vertical-align:top;font-size:17px;}
+.pp code{font-size:.9em;color:var(--purple-soft);}
+pre{margin-top:14px;background:#0d0919;border:1px solid var(--line);border-radius:10px;padding:16px 18px;overflow-x:auto;font-size:14.5px;line-height:1.6;color:#d6e0f5;}
+pre code{color:inherit;font-size:inherit;}
+@media (max-width:900px){.cards{grid-template-columns:1fr;} main{padding:24px 16px 80px;}}
+</style>
+</head>
+<body>
+<main>
+<section class="view on" id="v-hub">
+  <h1>Produtos de dados</h1>
+  <div class="sub">O que a plataforma serve da camada gold de <span class="mono">lh_retail_analytics</span>, cada produto com o guia, as métricas e o contrato.</div>
+  <div class="cards"><div class="pcard" data-go="v-fato_vendas"><div class="nm">Vendas RYStore<span class="cert">1.0.0 · active</span></div><div class="desc">One row per order item of the RYStore supermarket, with the store, the customer, the product, the supplier, the promotion, the channel and the status of its order, and the amounts of the line. For sales, margin and mix analysis, in the Genie or in SQL.</div><div class="tl">lh_retail_analytics.gold.fato_vendas</div><div class="foot"><span>one order item (order_item_id)</span><span>pronta até 08:00 UTC</span></div></div></div>
+</section>
+<section class="view" id="v-fato_vendas"><div class="crumbs"><a data-go="v-hub">Produtos de dados</a> / fato_vendas</div><h1>Vendas RYStore<span class="cert">1.0.0 · active</span></h1><div class="sub">One row per order item of the RYStore supermarket, with the store, the customer, the product, the supplier, the promotion, the channel and the status of its order, and the amounts of the line. For sales, margin and mix analysis, in the Genie or in SQL.</div><div class="tabs"><div class="tab on" data-pt="t0">Visão geral</div><div class="tab" data-pt="t1">Guia</div><div class="tab" data-pt="t2">Modelo de dados</div><div class="tab" data-pt="t3">Métricas</div><div class="tab" data-pt="t4">Consultas iniciais</div><div class="tab" data-pt="t5">Qualidade</div><div class="tab" data-pt="t6">Versões</div><div class="tab" data-pt="t7">Pontos em aberto</div><div class="tab" data-pt="t8">Contrato</div></div><div class="pp on" data-pp="t0"><table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tabela</td>
+<td><code>lh_retail_analytics.gold.fato_vendas</code> (Delta, gerenciada)</td>
+</tr>
+<tr>
+<td>Para que serve</td>
+<td>Vendas, margem e mix da RYStore por dia, loja, produto, fornecedor, cliente, canal e promoção, no Genie ou em SQL</td>
+</tr>
+<tr>
+<td>Granularidade</td>
+<td>Um item de pedido (<code>order_item_id</code>), com todos os status; receita = linhas com <code>is_revenue</code></td>
+</tr>
+<tr>
+<td>Linhas</td>
+<td>47.512 itens de 10.000 pedidos, de 2025-01-01 a 2025-12-31 (rodada <code>498752805931100</code>)</td>
+</tr>
+<tr>
+<td>Quem lê</td>
+<td>Ninguém além do engenheiro de dados até 2026-10-30 (<code>system.query.history</code>); o público previsto são os analistas no Genie</td>
+</tr>
+<tr>
+<td>Nível de serviço</td>
+<td>Reconstruída todo dia pelo job <code>rystore_pipeline</code> (07:00 UTC), pronta até <strong>08:00 UTC</strong> (<a href="../../../knowledge/decisions/decision-log.md">decisão</a>)</td>
+</tr>
+<tr>
+<td>Dono e suporte</td>
+<td>O engenheiro de dados; issues do repositório no GitHub</td>
+</tr>
+<tr>
+<td>Código</td>
+<td><a href="../../../retail_analytics/src/retail_analytics/gold.py"><code>gold.py</code></a>, tabela <code>fato_vendas</code></td>
+</tr>
+</tbody>
+</table></div><div class="pp" data-pp="t1"><p><strong>No que confiar:</strong>
+- A <a href="../../../reports/reconcile/rystore_reconcile_2026-10-30.html">reconciliação de 2026-10-30</a> bate com os arquivos da fonte: as linhas e, por status, mês e loja, a receita, os pedidos e os itens têm diferença zero.
+- A <a href="../../../reports/quality/rystore_quality_2026-10.html">qualidade de 2026-10</a> deu 38 checagens aprovadas e 0 linhas em quarentena.
+- Toda chave da tabela encontra a sua dimensão: os joins com loja, cliente, produto, fornecedor e data não perdem nenhuma linha.</p>
+<p><strong>Problemas conhecidos:</strong>
+1. <strong>Margem com o custo de hoje.</strong> <code>cost_amount</code> e <code>margin_amount</code> usam o <code>unit_cost</code> atual do produto, e não o custo no dia da venda. Se um custo mudar, a margem de todo o histórico muda junto. A fonte não guarda o histórico de custos.
+2. <strong>Itens × total do pedido.</strong> A soma de <code>net_amount + vat_amount</code> de um pedido não inclui a taxa de entrega, que é cobrada por pedido. Nos pedidos Completed, os itens somam £244.156,27; com as taxas de entrega (£5.364,13), chegam a £249.520,40, contra os £249.520,30 de receita da <code>fato_pedidos</code>. A diferença de £0,10 vem de 82 pedidos com ±0,01, que é o arredondamento da fonte, dentro da tolerância do contrato. Para a receita do pedido, use <code>gold.fato_pedidos.revenue_amount</code>.
+3. <strong>Desconto por item × desconto do pedido.</strong> Em 22 pedidos, a soma de <code>discount_amount</code> difere de <code>discount_total</code> do pedido em ±0,01, também por arredondamento da fonte.
+4. <strong>Promoção sem dimensão.</strong> <code>promotion_id</code> existe, mas a gold ainda não tem <code>dim_promocao</code>. Há 6 promoções em 1.990 linhas, e só elas têm desconto.
+5. <strong>Atualização.</strong> No dev, o agendamento está pausado; em 2026-10-30, a tabela foi reconstruída à mão às 18:22 UTC, depois do SLA.
+6. <strong>Dia e mês.</strong> Use sempre <code>date_key</code>, que é a data local do Reino Unido. Agrupar por um horário em UTC muda 247 pedidos de dia e 6 de mês (<a href="../../../knowledge/business/glossary.md">glossário</a>).</p>
+<p><strong>Por onde começar:</strong> pela consulta 1 (receita e margem por mês), sempre com <code>WHERE is_revenue</code>.</p></div><div class="pp" data-pp="t2"><table>
+<thead>
+<tr>
+<th>Chave em <code>fato_vendas</code></th>
+<th>Junta com</th>
+<th>Observação</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>date_key</code></td>
+<td><code>gold.dim_data.date_key</code></td>
+<td>data local; a dimensão cobre 2025 e 2026</td>
+</tr>
+<tr>
+<td><code>store_id</code></td>
+<td><code>gold.dim_loja.store_id</code></td>
+<td>8 lojas</td>
+</tr>
+<tr>
+<td><code>customer_id</code></td>
+<td><code>gold.dim_cliente.customer_id</code></td>
+<td><code>ANON</code> = venda anônima (13.098 itens); sem dados pessoais</td>
+</tr>
+<tr>
+<td><code>product_id</code></td>
+<td><code>gold.dim_produto.product_id</code></td>
+<td>inclui o nome do fornecedor</td>
+</tr>
+<tr>
+<td><code>supplier_id</code></td>
+<td><code>gold.dim_fornecedor.supplier_id</code></td>
+<td>o fornecedor do produto</td>
+</tr>
+<tr>
+<td><code>order_id</code></td>
+<td><code>gold.fato_pedidos.order_id</code></td>
+<td>o pedido (total, taxa de entrega, receita do pedido)</td>
+</tr>
+<tr>
+<td><code>promotion_id</code></td>
+<td>—</td>
+<td>sem dimensão na gold (problema conhecido 4)</td>
+</tr>
+</tbody>
+</table>
+<p>É um esquema estrela: os joins são N:1 e não multiplicam linhas.</p></div><div class="pp" data-pp="t3"><table>
+<thead>
+<tr>
+<th>Medida</th>
+<th>Regra</th>
+<th>Soma?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Receita líquida de itens</td>
+<td><code>sum(net_amount)</code> com <code>is_revenue</code></td>
+<td>sim</td>
+</tr>
+<tr>
+<td>IVA</td>
+<td><code>sum(vat_amount)</code> com <code>is_revenue</code></td>
+<td>sim</td>
+</tr>
+<tr>
+<td>Receita bruta de itens</td>
+<td><code>sum(gross_amount)</code> = quantidade × preço, antes do desconto</td>
+<td>sim</td>
+</tr>
+<tr>
+<td>Desconto</td>
+<td><code>sum(discount_amount)</code></td>
+<td>sim</td>
+</tr>
+<tr>
+<td>Custo</td>
+<td><code>sum(cost_amount)</code>, com o custo atual</td>
+<td>sim, com o problema 1</td>
+</tr>
+<tr>
+<td>Margem</td>
+<td><code>sum(margin_amount)</code> = receita líquida − custo</td>
+<td>sim, com o problema 1</td>
+</tr>
+<tr>
+<td>Margem %</td>
+<td><code>sum(margin_amount) / sum(net_amount)</code></td>
+<td>não; recalcule a partir das somas</td>
+</tr>
+<tr>
+<td>Unidades</td>
+<td><code>sum(quantity)</code></td>
+<td>sim</td>
+</tr>
+<tr>
+<td>Preço unitário</td>
+<td><code>unit_price</code></td>
+<td>não; use <code>sum(gross_amount) / sum(quantity)</code></td>
+</tr>
+<tr>
+<td>Pedidos</td>
+<td><code>count(DISTINCT order_id)</code></td>
+<td>não; conte de novo em cada recorte</td>
+</tr>
+<tr>
+<td>Receita do pedido (com entrega)</td>
+<td><code>gold.fato_pedidos.revenue_amount</code></td>
+<td>sim, mas na outra tabela</td>
+</tr>
+</tbody>
+</table>
+<p>Os números de 2025 (pedidos Completed): receita líquida de itens de £228.457,01, IVA de £15.699,26 e margem de £107.706,81.</p></div><div class="pp" data-pp="t4"><p>O histórico de consultas ainda não tem nenhuma consulta de consumidor, então estas são propostas. Todas foram testadas na gold da rodada <code>498752805931100</code>.</p>
+<pre><code class="language-sql">-- 1. Receita líquida, IVA e margem por mês (só pedidos Completed)
+SELECT d.year, d.month, sum(v.net_amount) AS receita_liquida, sum(v.vat_amount) AS iva, sum(v.margin_amount) AS margem
+FROM lh_retail_analytics.gold.fato_vendas v
+JOIN lh_retail_analytics.gold.dim_data d ON d.date_key = v.date_key
+WHERE v.is_revenue
+GROUP BY d.year, d.month
+ORDER BY d.year, d.month;
+
+-- 2. Os 10 produtos com mais receita líquida
+SELECT p.product_name, p.category, sum(v.quantity) AS unidades, sum(v.net_amount) AS receita_liquida
+FROM lh_retail_analytics.gold.fato_vendas v
+JOIN lh_retail_analytics.gold.dim_produto p ON p.product_id = v.product_id
+WHERE v.is_revenue
+GROUP BY p.product_name, p.category
+ORDER BY receita_liquida DESC
+LIMIT 10;
+
+-- 3. Receita líquida por loja e canal
+SELECT l.store_name, v.order_channel, count(DISTINCT v.order_id) AS pedidos, sum(v.net_amount) AS receita_liquida
+FROM lh_retail_analytics.gold.fato_vendas v
+JOIN lh_retail_analytics.gold.dim_loja l ON l.store_id = v.store_id
+WHERE v.is_revenue
+GROUP BY l.store_name, v.order_channel
+ORDER BY l.store_name, v.order_channel;
+
+-- 4. Itens cancelados e devolvidos por mês
+SELECT d.month, v.order_status, count(*) AS itens, sum(v.net_amount) AS valor_liquido
+FROM lh_retail_analytics.gold.fato_vendas v
+JOIN lh_retail_analytics.gold.dim_data d ON d.date_key = v.date_key
+WHERE v.order_status IN ('Cancelled', 'Refunded')
+GROUP BY d.month, v.order_status
+ORDER BY d.month, v.order_status;
+
+-- 5. Linhas com e sem promoção
+SELECT v.promotion_id IS NOT NULL AS com_promocao, count(*) AS itens, sum(v.discount_amount) AS desconto, sum(v.net_amount) AS receita_liquida
+FROM lh_retail_analytics.gold.fato_vendas v
+WHERE v.is_revenue
+GROUP BY 1;
+
+-- 6. Receita líquida por segmento de cliente (ANON = vendas anônimas)
+SELECT c.customer_segment, count(DISTINCT v.order_id) AS pedidos, sum(v.net_amount) AS receita_liquida
+FROM lh_retail_analytics.gold.fato_vendas v
+JOIN lh_retail_analytics.gold.dim_cliente c ON c.customer_id = v.customer_id
+WHERE v.is_revenue
+GROUP BY c.customer_segment
+ORDER BY receita_liquida DESC;
+</code></pre></div><div class="pp" data-pp="t5"><table>
+<thead>
+<tr>
+<th>Regra</th>
+<th>Onde</th>
+<th>Resultado em 2026-10-30</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>As 38 checagens da silver (fórmulas, listas fechadas, contagens)</td>
+<td><code>silver._checks</code></td>
+<td>todas aprovadas</td>
+</tr>
+<tr>
+<td>Quarentena de tipo e de chave estrangeira</td>
+<td><code>silver._quarantine</code></td>
+<td>0 linhas</td>
+</tr>
+<tr>
+<td>Toda <code>date_key</code> existe em <code>dim_data</code></td>
+<td><code>tests/test_gold.py</code></td>
+<td>aprovado</td>
+</tr>
+<tr>
+<td>Reconciliação com a fonte</td>
+<td><a href="../../../reports/reconcile/rystore_reconcile_2026-10-30.html">página</a></td>
+<td>diferença zero</td>
+</tr>
+<tr>
+<td>Atualização até 08:00 UTC</td>
+<td><a href="../../../reports/quality/rystore_quality_2026-10.html">qualidade</a></td>
+<td>não cumprida em 2026-10-30 (rodada manual)</td>
+</tr>
+</tbody>
+</table></div><div class="pp" data-pp="t6"><table>
+<thead>
+<tr>
+<th>Versão</th>
+<th>Data</th>
+<th>O que mudou</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.0.0</td>
+<td>2026-10-30</td>
+<td>Primeira versão: 47.512 itens, 2025. Nenhuma correção reportada por consumidores.</td>
+</tr>
+</tbody>
+</table></div><div class="pp" data-pp="t7"><p>Nada foi alterado na tabela nem no SQL.</p>
+<ol>
+<li>Criar uma <code>dim_promocao</code> na gold, a partir de <code>silver.promotions</code>.</li>
+<li>Decidir se a margem deve usar o custo histórico. Isso depende de a fonte entregar o histórico de <code>unit_cost</code>, então é uma pergunta para o dono da fonte.</li>
+<li>Reativar o agendamento no prod, para cumprir o SLA de 08:00 UTC.</li>
+</ol></div><div class="pp" data-pp="t8"><p>Contrato com o consumidor, <code>fato_vendas.odcs.yaml</code> (ODCS v3.1.0, validado contra o JSON Schema).</p><pre><code># The data contract between the data platform and the consumers of gold.fato_vendas (skill data-product).
+# Open Data Contract Standard (ODCS) v3.1.0, validated against its JSON Schema.
+# Version 1.0.0, 2026-10-30: written from the table (gold/files/fato_vendas, run 498752805931100), its SQL
+# (retail_analytics/src/retail_analytics/gold.py) and the reconciliation (reports/reconcile/). Types are the
+# types of the published table, never retyped.
+
+kind: DataContract
+apiVersion: v3.1.0
+id: rystore-fato-vendas
+name: fato_vendas
+version: 1.0.0
+status: active
+domain: retail
+dataProduct: Vendas RYStore
+description:
+  purpose: One row per order item of the RYStore supermarket, with the store, the customer, the product, the supplier, the
+    promotion, the channel and the status of its order, and the amounts of the line. For sales, margin and mix analysis,
+    in the Genie or in SQL.
+  usage: &#x27;Revenue: filter is_revenue = true (orders Completed). Day and month: use date_key (local UK date), never a UTC time.
+    The order-level total, with the delivery fee, is in gold.fato_pedidos.&#x27;
+  limitations: &#x27;cost_amount and margin_amount use the current unit_cost of the product, not the cost on the day of the sale.
+    The sum of net_amount + vat_amount of an order differs from its total_amount by the delivery fee and, in 82 orders, by
+    0.01 (rounding of the source). promotion_id has no dimension in gold yet. The data covers 2025-01-01 to 2025-12-31.&#x27;
+servers:
+  - server: databricks-gold
+    type: databricks
+    catalog: lh_retail_analytics
+    schema: gold
+    description: &#x27;The managed Delta table lh_retail_analytics.gold.fato_vendas, published every day from the Parquet of the
+      volume gold.files by the job rystore_pipeline. The workspace comes from the reader&#x27;&#x27;s own access, never from here.&#x27;
+team:
+  name: retail-analytics-data-platform
+  members:
+    - username: data-engineer
+      role: owner
+      description: The data engineer of the project builds and answers for the table.
+    - username: genie-analysts
+      role: consumer
+      description: The analysts who ask the Genie about sales, margin and mix. No query from a consumer in the logs yet (2026-10-30).
+support:
+  - channel: github-issues
+    tool: ticket
+    url: https://github.com/alerrandrofrederik/Retail_Analytics/issues
+    description: Questions, wrong numbers and requests for a change, as an issue of the project repository.
+slaProperties:
+  - property: frequency
+    value: 1
+    unit: d
+    description: Rebuilt once a day by the job rystore_pipeline (07:00 UTC).
+  - property: timeOfAvailability
+    value: 08:00+00:00
+    description: The table of the day is ready by 08:00 UTC (decision of 2026-10-30).
+  - property: latency
+    value: 1
+    unit: d
+    description: The orders delivered by the source by 06:00 UTC are in the table the same day.
+customProperties:
+  - property: grain
+    value: one order item (order_item_id)
+  - property: currency
+    value: GBP
+  - property: timezone
+    value: Europe/London
+    description: date_key is the local UK date of the order (Europe/London), as in the source contract.
+  - property: sourceContract
+    value: contracts/rystore.odcs.yaml
+    description: The upstream contract with the RYStore source, version 1.0.0.
+  - property: personalData
+    value: none
+    description: No personal data. customer_id is the source identifier; anonymous sales are ANON.
+schema:
+  - name: fato_vendas
+    physicalName: lh_retail_analytics.gold.fato_vendas
+    physicalType: table
+    businessName: Vendas por item de pedido
+    description: One row per order item, all statuses; revenue is the rows with is_revenue = true.
+    dataGranularityDescription: One row per order_item_id.
+    quality:
+      - type: library
+        metric: rowCount
+        mustBeGreaterThan: 0
+        dimension: completeness
+        description: The table is never empty.
+      - type: text
+        dimension: consistency
+        description: &#x27;Reconciled with the source: the rows, the revenue, the orders and the items by status, month and store
+          are equal to the RYStore files (reports/reconcile/rystore_reconcile_2026-10-30.html).&#x27;
+    properties:
+      - name: order_item_id
+        logicalType: string
+        physicalType: STRING
+        required: true
+        primaryKey: true
+        primaryKeyPosition: 1
+        unique: true
+        description: The item of the order, the key of the table.
+      - name: order_id
+        logicalType: string
+        physicalType: STRING
+        required: true
+        description: The order; joins gold.fato_pedidos.
+      - name: date_key
+        logicalType: integer
+        physicalType: INT
+        required: true
+        description: The local UK date of the order as yyyymmdd; joins gold.dim_data.date_key.
+      - name: store_id
+        logicalType: string
+        physicalType: STRING
+        required: true
+        description: The store; joins gold.dim_loja.
+      - name: customer_id
+        logicalType: string
+        physicalType: STRING
+        required: true
+        description: The customer; ANON for an anonymous sale. Joins gold.dim_cliente.
+      - name: product_id
+        logicalType: string
+        physicalType: STRING
+        required: true
+        description: The product; joins gold.dim_produto.
+      - name: supplier_id
+        logicalType: string
+        physicalType: STRING
+        required: true
+        description: The supplier of the product; joins gold.dim_fornecedor.
+      - name: promotion_id
+        logicalType: string
+        physicalType: STRING
+        required: false
+        description: The promotion of the line, empty when there is none. No dimension in gold yet.
+      - name: order_channel
+        logicalType: string
+        physicalType: STRING
+        required: true
+        description: In-store, Online or Click &amp; Collect.
+      - name: order_status
+        logicalType: string
+        physicalType: STRING
+        required: true
+        description: Completed, Cancelled or Refunded; the status of the order.
+        quality:
+          - type: library
+            metric: invalidValues
+            arguments:
+              validValues:
+                - Cancelled
+                - Completed
+                - Refunded
+            mustBe: 0
+            dimension: conformity
+            severity: warning
+            description: Closed list of the source contract.
+      - name: is_revenue
+        logicalType: boolean
+        physicalType: BOOLEAN
+        required: true
+        description: True when the order is Completed; the filter of every revenue measure.
+      - name: quantity
+        logicalType: integer
+        physicalType: INT
+        required: true
+        description: Units sold in the line; summable.
+      - name: unit_price
+        logicalType: number
+        physicalType: DECIMAL(12,2)
+        required: true
+        description: Price of one unit in GBP, before discount and VAT; never summed.
+      - name: gross_amount
+        logicalType: number
+        physicalType: DECIMAL(12,2)
+        required: true
+        description: quantity x unit_price, in GBP; summable.
+      - name: discount_amount
+        logicalType: number
+        physicalType: DECIMAL(12,2)
+        required: true
+        description: Discount of the line in GBP; summable.
+      - name: net_amount
+        logicalType: number
+        physicalType: DECIMAL(12,2)
+        required: true
+        description: gross_amount - discount_amount, without VAT, in GBP; summable.
+      - name: vat_amount
+        logicalType: number
+        physicalType: DECIMAL(12,2)
+        required: true
+        description: VAT of the line in GBP; summable.
+      - name: cost_amount
+        logicalType: number
+        physicalType: DECIMAL(12,2)
+        required: true
+        description: quantity x the current unit_cost of the product, in GBP; summable.
+      - name: margin_amount
+        logicalType: number
+        physicalType: DECIMAL(12,2)
+        required: true
+        description: net_amount - cost_amount, in GBP; summable. Uses the current cost (see limitations).
+</code></pre></div></section>
+</main>
+<script>
+document.querySelectorAll('[data-go]').forEach(function (el) { el.addEventListener('click', function () {
+  document.querySelectorAll('.view').forEach(function (v) { v.classList.remove('on'); });
+  document.getElementById(el.dataset.go).classList.add('on'); window.scrollTo(0, 0); }); });
+document.querySelectorAll('.tab').forEach(function (t) { t.addEventListener('click', function () {
+  var view = t.closest('.view');
+  view.querySelectorAll('.tab').forEach(function (x) { x.classList.toggle('on', x === t); });
+  view.querySelectorAll('.pp').forEach(function (p) { p.classList.toggle('on', p.dataset.pp === t.dataset.pt); }); }); });
+</script>
+</body>
+</html>

@@ -19,7 +19,7 @@ Antes do 05: preparação do ambiente (skills da Databricks em `.claude/skills/`
 | [11](prompt_11.md) | Qualidade das tabelas | quality | 09 rodando | Concluído ([qualidade 2026-10](../reports/quality/rystore_quality_2026-10.html)) |
 | [12](prompt_12.md) | Reconciliação fonte x lakehouse | reconcile | 09 | Concluído ([reconciliação](../reports/reconcile/rystore_reconcile_2026-10-30.html): diferença zero) |
 | [13](prompt_13.md) | Impacto de uma mudança (ex.: fuso) | impact | 09 | Concluído ([impacto: order_datetime em UTC](../reports/impact/rystore_impact_order_datetime_utc.html)) |
-| [14](prompt_14.md) | Produto de dados `fato_vendas` | data-product | 11, 12 | Pendente |
+| [14](prompt_14.md) | Produto de dados `fato_vendas` | data-product | 11, 12 | Concluído ([produto](../docs/data-products/fato_vendas/README.md), [página](../docs/data-products/index.html)) |
 | [15](prompt_15.md) | Runbook e guias | docs | 07–09 | Pendente |
 | [16](prompt_16.md) | Site de documentação | toolkit | 15 | Pendente |
 | [17](prompt_17.md) | Atualização do knowledge | knowledge-refresh | 16 | Pendente |

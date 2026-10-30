@@ -35,3 +35,6 @@ Uma linha por decisão. Uma decisão em aberto passa para "tomada" quando o enge
 | Desde | Pergunta | Para quem | Origem |
 |---|---|---|---|
 | 2026-10-30 | Descrições reais das 77 colunas, para a próxima versão do contrato | Dono da fonte | [Pauta do contrato](../../contracts/rystore_open_points.md), ponto 16 |
+| 2026-10-30 | Criar uma `dim_promocao` na gold (hoje `fato_vendas.promotion_id` não tem dimensão) | Engenheiro de dados | [Produto fato_vendas](../../docs/data-products/fato_vendas/README.md), ponto 1 |
+| 2026-10-30 | A margem deve usar o custo do dia da venda? A fonte não entrega o histórico de `unit_cost` | Dono da fonte | [Produto fato_vendas](../../docs/data-products/fato_vendas/README.md), ponto 2 |
+| 2026-10-30 | Reativar o agendamento do job no prod, para cumprir o SLA de 08:00 UTC | Engenheiro de dados | [Qualidade 2026-10](../../reports/quality/rystore_quality_2026-10.html) |

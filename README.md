@@ -110,6 +110,9 @@ lojas
 git clone https://github.com/alerrandrofrederik/Retail_Analytics.git
 cd Retail_Analytics
 
+# Configurar as credenciais do Supabase
+cp .env.example .env   # depois edite o .env com suas chaves
+
 # Criar o ambiente virtual e instalar as dependências
 uv sync
 
@@ -129,6 +132,7 @@ git clone https://github.com/ryanariefe/RYStore-Retail-Dataset.git
 
 ```
 Retail_Analytics/
+├── .env.example      # modelo das variáveis de ambiente (copiar para .env)
 ├── .python-version   # versão do Python usada pelo uv (3.12)
 ├── pyproject.toml    # metadados e dependências do projeto
 ├── main.py           # ponto de entrada

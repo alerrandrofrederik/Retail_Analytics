@@ -120,6 +120,27 @@ uv sync
 uv run main.py
 ```
 
+### Databricks CLI
+
+Este projeto usa sempre o perfil **`pessoal`** do Databricks CLI (workspace pessoal). O perfil `DEFAULT` da máquina aponta para outro workspace e não deve ser usado aqui.
+
+Todos os objetos do projeto (schemas, tabelas, volumes) ficam no catálogo **`lh_retail_analytics`** do Unity Catalog.
+
+```bash
+# Criar o perfil (uma única vez)
+databricks auth login --host <url-do-workspace> --profile pessoal
+
+# Usar o perfil em todos os comandos
+databricks current-user me -p pessoal
+```
+
+Para não precisar repetir o `-p` na sessão do terminal:
+
+```bash
+export DATABRICKS_CONFIG_PROFILE=pessoal          # bash
+$env:DATABRICKS_CONFIG_PROFILE = "pessoal"        # PowerShell
+```
+
 ### Obter os dados
 
 ```bash

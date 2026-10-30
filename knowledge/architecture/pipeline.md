@@ -26,6 +26,11 @@ CSVs RYStore ──▶ Supabase Storage (bucket rystore) ──▶ Databricks: b
   - `publish` transforma cada pasta de `/Volumes/lh_retail_analytics/<camada>/files/` na tabela Delta `<camada>.<pasta>`, pelo SQL warehouse ("Serverless Starter Warehouse"). O Parquet é a verdade, e a tabela é a vitrine para os consumidores.
 - **Ingestão:** a tarefa `ingest_bronze` lê o bucket com `boto3`, usando 8 downloads em paralelo. Copia cada arquivo como chegou para o volume `bronze.raw`, valida contra o contrato e grava as linhas como texto em `bronze/files/<tabela>/<carimbo>.parquet`.
   - Só entram os arquivos cujo par (chave, ETag) ainda não está em `bronze._ingested_files`.
+  - Uma chave fora do layout do contrato (`<tabela>/dt=yyyy-MM-dd/<tabela>.csv` ou `<tabela>/<tabela>.csv`) não é baixada nem gravada; fica no log como `unknown_key` e faz a tarefa falhar no fim.
+  - Os arquivos de uma rodada levam o carimbo dela, e o log é gravado por último. No início de cada rodada, os arquivos de tabela cujo carimbo não está no log (sobras de uma rodada que caiu) são apagados.
+  - **Retenção:** as fotos das tabelas completas ficam 30 dias, e a mais recente nunca é apagada. As tabelas incrementais e o volume `bronze.raw` não são apagados.
+- **Tipos na silver:** só converte o valor que tem o formato do contrato. Inteiro é só dígitos, e valor em dinheiro tem no máximo 2 casas. O resto vai para a quarentena, porque um `CAST` sozinho arredondaria 5,5 para 6. As listas fechadas das checagens vêm do contrato (`rystore_schema.VALID_VALUES`).
+- **Publicação em duas fases:** primeiro todas as tabelas são criadas como `<camada>._stage_<tabela>`; só se todas derem certo, cada tabela publicada é trocada pela sua stage. Uma falha não deixa camadas pela metade.
   - As credenciais ficam no *secret scope* `retail_analytics`, nas chaves `s3_endpoint`, `aws_default_region`, `aws_access_key_id` e `aws_secret_access_key`. São as variáveis do `.env` (modelo em [`.env.example`](../../.env.example)) e nunca vão para o código.
   - O job roda uma vez por dia, às 07:00 UTC.
 - **bronze:** cópia fiel do que vem do Supabase, sem regra de negócio, mais as colunas técnicas `_source_file`, `_line` e `_ingested_at`. As linhas rejeitadas vão para `bronze._quarantine`.

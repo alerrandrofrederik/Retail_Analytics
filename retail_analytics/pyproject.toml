@@ -3,12 +3,12 @@ name = "retail_analytics"
 version = "0.0.1"
 authors = [{ name = "Alerrandro" }]
 requires-python = ">=3.12,<3.13"
-# The pipeline is plain Python (no Spark). Keep these in step with the job environment
+# The pipeline is plain Python (no Spark). Exact versions, the same as the job environment
 # (resources/rystore_pipeline.job.yml).
 dependencies = [
-    "duckdb==2.0.*",
-    "pyarrow==26.*",
-    "boto3==1.43.*",
+    "duckdb==2.0.0",
+    "pyarrow==26.0.0",
+    "boto3==1.43.122",
 ]
 
 [dependency-groups]

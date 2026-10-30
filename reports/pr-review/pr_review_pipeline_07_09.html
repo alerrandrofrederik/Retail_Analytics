@@ -101,7 +101,7 @@ h2 .count{margin-left:0;font-family:inherit;font-size:inherit;letter-spacing:0;c
 </head>
 <body>
 <main>
-  <div class="status">revisão <span class="pill">7259063..5ed9235</span><span class="pill state">mudanças pedidas</span></div>
+  <div class="status">revisão <span class="pill">7259063..5ed9235</span><span class="pill state">mudanças pedidas</span><span class="pill">correções aplicadas</span></div>
   <h1>Pipeline RYStore: bronze, silver e gold em Python puro (prompts 07 a 09)</h1>
   <div class="strip">
     <div class="cell"><div class="l">Arquivos</div><div class="v"><a>retail_analytics/src/</a>, <a>resources/</a>, <a>tests/</a>, <a>scripts/</a></div></div>
@@ -109,7 +109,7 @@ h2 .count{margin-left:0;font-family:inherit;font-size:inherit;letter-spacing:0;c
     <div class="cell"><div class="l">Autor</div><div class="v">Claude (engenheiro de dados IA)</div></div>
     <div class="cell"><div class="l">Achados</div><div class="v sevs"><span class="high">4 altos</span><span class="medium">7 médios</span><span class="low">5 baixos</span></div></div>
   </div>
-  <p class="comment" style="margin-top:22px">Revisado em 2026-10-30 contra o <a>CLAUDE.md</a>, o contrato <a>contracts/rystore.odcs.yaml</a> 1.0.0 e o <a>knowledge/</a>. Os 24 testes passam localmente, e a rodada <span class="mono">173663739566769</span> no dev terminou com SUCCESS e as contagens iguais às da fonte. Os achados abaixo não aparecem nesses dados porque a fonte é limpa: eles quebram com a primeira entrega fora do padrão, num clone fora do Windows ou numa consulta da gold. Nenhum código foi alterado por esta revisão.</p>
+  <p class="comment" style="margin-top:22px">Revisado em 2026-10-30 contra o <a>CLAUDE.md</a>, o contrato <a>contracts/rystore.odcs.yaml</a> 1.0.0 e o <a>knowledge/</a>. Os 24 testes passam localmente, e a rodada <span class="mono">173663739566769</span> no dev terminou com SUCCESS e as contagens iguais às da fonte. Os achados abaixo não aparecem nesses dados porque a fonte é limpa: eles quebram com a primeira entrega fora do padrão, num clone fora do Windows ou numa consulta da gold. Nenhum código foi alterado por esta revisão. <b>Atualização em 2026-10-30:</b> o engenheiro de dados pediu as correções dos achados 1 a 9 e decidiu os achados 10 e 13 e a parte de acesso do achado 2. O desfecho de cada um está na conversa sob o achado; os achados 12 a 16 seguem abertos.</p>
 
   <div class="group" id="high">
     <h2 class="high"><span class="chev"></span><span class="meter high"><i></i><i></i><i></i></span>Risco alto<span class="count">· 4</span></h2>
@@ -135,6 +135,7 @@ h2 .count{margin-left:0;font-family:inherit;font-size:inherit;letter-spacing:0;c
             <div class="d plus"><span class="g">+</span><span class="t" style="--i:8">        <span class="kw">return</span> f<span class="st">"CASE WHEN regexp_full_match({column}, '-?[0-9]+(\.[0-9]{1,2})?') THEN TRY_CAST({column} AS DECIMAL(12,2)) END"</span></span></div>
             <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># e um caso em fixtures/rystore/source: quantity "5.5" e unit_price "1.005" vão para cast:&lt;coluna&gt;</span></span></div>
         </div>
+        <div class="thread"><div class="msg"><span class="who">autor</span><span class="txt">Corrigido: inteiros só com dígitos e valores com no máximo 2 casas. O resto vai para a quarentena (<span class="mono">cast:&lt;coluna&gt;</span>). As fixtures agora têm 5.5 e 1.005, e os dados reais continuam com 0 linhas em quarentena.</span></div></div>
       </div>
     </div>
     <div class="item" data-key="pii" data-cat="security">
@@ -156,6 +157,7 @@ h2 .count{margin-left:0;font-family:inherit;font-size:inherit;letter-spacing:0;c
             <div class="d plus"><span class="g">+</span><span class="t" style="--i:8">        raw = <span class="st">", "</span>.<span class="fn">join</span>(f<span class="st">"'{name}', {_masked(table, name)}"</span> <span class="kw">for</span> name, _, _ <span class="kw">in</span> columns <span class="kw">if</span> name <span class="kw">not in</span> DROPPED.<span class="fn">get</span>(table, []))</span></div>
             <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># publish.py / bundle: REVOKE SELECT ON SCHEMA bronze FROM `account users`; o volume bronze.raw só para o engenheiro de dados</span></span></div>
         </div>
+        <div class="thread"><div class="msg"><span class="who">autor</span><span class="txt">Em parte corrigido: o <span class="mono">_raw</span> da quarentena agora traz as colunas restritas em SHA-256 e não traz o <span class="mono">annual_salary</span>, com teste.</span></div><div class="msg"><span class="who">engenheiro de dados</span><span class="txt">Recusado na parte de acesso à bronze: o workspace é pessoal e tem um usuário só, então fica como está.</span></div><div class="msg"><span class="who">revisor</span><span class="txt">A parte recusada continua neste relatório como risco aceito: a bronze e o volume <span class="mono">bronze.raw</span> seguem com PII aberta para quem tiver acesso ao catálogo. Rever se outra pessoa entrar no workspace (registro de decisões).</span></div></div>
       </div>
     </div>
     <div class="item" data-key="calendar" data-cat="correctness">
@@ -178,6 +180,7 @@ h2 .count{margin-left:0;font-family:inherit;font-size:inherit;letter-spacing:0;c
             <div class="d plus"><span class="g">+</span><span class="t" style="--i:13">             bounds <span class="kw">AS</span> (<span class="kw">SELECT</span> <span class="fn">make_date</span>(<span class="fn">year</span>(<span class="fn">min</span>(d)), 1, 1) <span class="kw">AS</span> d0, <span class="fn">make_date</span>(<span class="fn">year</span>(<span class="fn">max</span>(d)), 12, 31) <span class="kw">AS</span> d1 <span class="kw">FROM</span> dates),</span></div>
             <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># e um teste: todo date_key dos fatos existe em dim_data</span></span></div>
         </div>
+        <div class="thread"><div class="msg"><span class="who">autor</span><span class="txt">Corrigido: a <span class="mono">dim_data</span> cobre os anos dos pedidos e das fotos de estoque (730 dias hoje), e há um teste que confere se toda chave de data dos fatos existe no calendário.</span></div></div>
       </div>
     </div>
     <div class="item" data-key="crlf" data-cat="portability">
@@ -198,6 +201,7 @@ h2 .count{margin-left:0;font-family:inherit;font-size:inherit;letter-spacing:0;c
             <div class="d plus"><span class="g">+</span><span class="t" style="--i:0">*.csv -text</span></div>
             <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># depois: git add --renormalize . e conferir com git ls-files --eol (i/crlf)</span></span></div>
         </div>
+        <div class="thread"><div class="msg"><span class="who">autor</span><span class="txt">Corrigido: <span class="mono">.gitattributes</span> com <span class="mono">*.csv -text</span> e renormalização; o <span class="mono">git ls-files --eol</span> agora mostra <span class="mono">i/crlf</span>.</span></div></div>
       </div>
     </div>
     </div>
@@ -223,6 +227,7 @@ h2 .count{margin-left:0;font-family:inherit;font-size:inherit;letter-spacing:0;c
             <div class="d plus"><span class="g">+</span><span class="t" style="--i:0">LAYOUT = re.<span class="fn">compile</span>(<span class="st">r"(?P&lt;t&gt;[a-z_]+)/(dt=\d{4}-\d{2}-\d{2}/)?(?P=t)\.csv"</span>)</span></div>
             <div class="d plus"><span class="g">+</span><span class="t" style="--i:4">    <span class="kw">if not</span> LAYOUT.<span class="fn">fullmatch</span>(key): summary.fatal.<span class="fn">append</span>(f<span class="st">"{key}: fora do layout"</span>); <span class="kw">continue</span>   <span class="cm"># antes de gravar no raw</span></span></div>
         </div>
+        <div class="thread"><div class="msg"><span class="who">autor</span><span class="txt">Corrigido: só a chave no layout do contrato é baixada e gravada. As outras ficam no log como <span class="mono">unknown_key</span> e fazem a tarefa falhar, com teste das chaves <span class="mono">../</span>, de tabela desconhecida e de extensão errada.</span></div></div>
       </div>
     </div>
     <div class="item" data-key="publish" data-cat="correctness">
@@ -241,6 +246,7 @@ h2 .count{margin-left:0;font-family:inherit;font-size:inherit;letter-spacing:0;c
             <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># 1. publicar cada tabela em &lt;camada&gt;.&lt;t&gt;__next e, no fim, trocar com ALTER TABLE … RENAME, numa transação de várias instruções</span></span></div>
             <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># 2. ou publicar a gold só depois que a silver inteira tiver sido publicada, e registrar a versão publicada em _publish_log</span></span></div>
         </div>
+        <div class="thread"><div class="msg"><span class="who">autor</span><span class="txt">Corrigido: a publicação agora tem duas fases. Todas as tabelas são criadas como <span class="mono">_stage_</span>, e as publicadas só são trocadas se nenhuma falhar.</span></div><div class="msg"><span class="who">revisor</span><span class="txt">A troca ainda é uma tabela por vez, então a janela de inconsistência diminui, mas não some. Aceitável para um lote diário.</span></div></div>
       </div>
     </div>
     <div class="item" data-key="crash" data-cat="correctness">
@@ -260,6 +266,7 @@ h2 .count{margin-left:0;font-family:inherit;font-size:inherit;letter-spacing:0;c
             <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># no início de ingest(): apagar os &lt;stamp&gt;.parquet das tabelas cujo carimbo não está em _ingested_files (sobra de uma rodada que caiu)</span></span></div>
             <div class="d plus"><span class="g">+</span><span class="t" style="--i:0">orphans = [p <span class="kw">for</span> p <span class="kw">in</span> lake.<span class="fn">glob</span>(<span class="st">"*/*.parquet"</span>) <span class="kw">if</span> p.stem <span class="kw">not in</span> logged_stamps]</span></div>
         </div>
+        <div class="thread"><div class="msg"><span class="who">autor</span><span class="txt">Corrigido: no início de cada rodada, os arquivos com carimbo sem log são apagados, com teste que simula uma rodada que caiu.</span></div></div>
       </div>
     </div>
     <div class="item" data-key="rules" data-cat="duplication">
@@ -279,6 +286,7 @@ h2 .count{margin-left:0;font-family:inherit;font-size:inherit;letter-spacing:0;c
             <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># rystore_schema.py: VALID_VALUES gerado das métricas invalidValues/validValues do contrato</span></span></div>
             <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># test_schema.py: assert silver.VALID == rystore_schema.VALID_VALUES</span></span></div>
         </div>
+        <div class="thread"><div class="msg"><span class="who">autor</span><span class="txt">Corrigido nas listas: <span class="mono">VALID_VALUES</span> é gerado do contrato e conferido pelo <span class="mono">test_schema.py</span>. A silver tinha 6 listas e o contrato tem 11; agora são 38 checagens.</span></div><div class="msg"><span class="who">revisor</span><span class="txt">As regras de negócio (<span class="mono">RULES</span>) seguem em SQL na silver, porque o contrato as descreve só em texto. Isso fica para uma próxima versão do contrato.</span></div></div>
       </div>
     </div>
     <div class="item" data-key="tests" data-cat="tests">
@@ -304,6 +312,7 @@ h2 .count{margin-left:0;font-family:inherit;font-size:inherit;letter-spacing:0;c
             <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># fixtures/rystore/source_day2/: customers sem CUST90002, orders/dt=2025-06-01 com novo ETag, orders_x.csv com coluna nova</span></span></div>
             <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># expected_pipeline.json: "day2" com as contagens e os status esperados</span></span></div>
         </div>
+        <div class="thread"><div class="msg"><span class="who">autor</span><span class="txt">Corrigido: um segundo dia (<span class="mono">fixtures/rystore/source_day2/</span>) cobre a exclusão na foto completa, o reenvio com ETag novo e uma entrega com coluna nova. Também entraram testes de layout, de rodada que caiu, de retenção e de PII na quarentena. São 31 testes ao todo; a <span class="mono">publish</span> só é testada no dev.</span></div></div>
       </div>
     </div>
     <div class="item" data-key="growth" data-cat="performance">
@@ -322,6 +331,7 @@ h2 .count{margin-left:0;font-family:inherit;font-size:inherit;letter-spacing:0;c
             <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># publish: bronze com INSERT INTO … SELECT do carimbo novo, em vez de CREATE OR REPLACE do histórico</span></span></div>
             <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># retenção das fotos em bronze/files: a definir com o engenheiro de dados (decisão)</span></span></div>
         </div>
+        <div class="thread"><div class="msg"><span class="who">engenheiro de dados</span><span class="txt">Decidido: as fotos das tabelas completas ficam 30 dias.</span></div><div class="msg"><span class="who">autor</span><span class="txt">Corrigido: a retenção apaga as fotos mais antigas que 30 dias e nunca a mais recente, com teste. A <span class="mono">publish</span> ainda recria a bronze inteira, mas agora sobre no máximo 30 fotos.</span></div></div>
       </div>
     </div>
     <div class="item" data-key="setup" data-cat="cost">
@@ -342,6 +352,7 @@ h2 .count{margin-left:0;font-family:inherit;font-size:inherit;letter-spacing:0;c
             <div class="d plus"><span class="g">+</span><span class="t" style="--i:14">              - duckdb==2.0.0   <span class="cm"># versões exatas (iguais ao uv.lock), para o ambiente ir para o cache</span></span></div>
             <div class="d plus"><span class="g">+</span><span class="t" style="--i:0"><span class="cm"># medir de novo; se continuar alto, usar um ambiente base do workspace com essas dependências</span></span></div>
         </div>
+        <div class="thread"><div class="msg"><span class="who">autor</span><span class="txt">Versões exatas (iguais ao <span class="mono">uv.lock</span>). Medido na rodada 498752805931100: a montagem continuou em 226 s, então fixar as versões não resolveu, e o achado segue aberto. O próximo passo é testar um ambiente base do workspace. Também anoto um custo do achado 6: a publicação em duas fases dobrou o tempo da <span class="mono">publish</span>, de 112 s para 236 s, e a rodada foi de 402 s para 552 s.</span></div></div>
       </div>
     </div>
     </div>
@@ -351,7 +362,7 @@ h2 .count{margin-left:0;font-family:inherit;font-size:inherit;letter-spacing:0;c
     <h2 class="low"><span class="chev"></span><span class="meter low"><i></i><i></i><i></i></span>Risco baixo<span class="count">· 5</span></h2>
     <div class="list">
       <div class="item small" data-key="private" data-cat="duplication"><div class="head"><span class="no">12</span><span class="title">gold.py importa a função privada <span class="mono">silver._write</span>; o melhor é um módulo <span class="mono">lake.py</span> com <span class="mono">write</span> e <span class="mono">copy</span></span><span class="sev low"><span class="meter low"><i></i><i></i><i></i></span><span class="cat">duplicação</span></span></div></div>
-      <div class="item small" data-key="snapshot" data-cat="contract"><div class="head"><span class="no">13</span><span class="title">fato_estoque guarda só a última foto: sem histórico, não dá para ver a evolução do estoque. É uma decisão de modelo a confirmar</span><span class="sev low"><span class="meter low"><i></i><i></i><i></i></span><span class="cat">contrato</span></span></div></div>
+      <div class="item small" data-key="snapshot" data-cat="contract"><div class="head"><span class="no">13</span><span class="title">[recusado pelo engenheiro de dados: só a última foto] fato_estoque guarda só a última foto: sem histórico, não dá para ver a evolução do estoque. É uma decisão de modelo a confirmar</span><span class="sev low"><span class="meter low"><i></i><i></i><i></i></span><span class="cat">contrato</span></span></div></div>
       <div class="item small" data-key="ruff" data-cat="style"><div class="head"><span class="no">14</span><span class="title">O ruff aponta 11 avisos (imports fora de ordem, <span class="mono">dict()</span>, <span class="mono">timezone.utc</span>), 6 corrigíveis com <span class="mono">--fix</span></span><span class="sev low"><span class="meter low"><i></i><i></i><i></i></span><span class="cat">estilo</span></span></div></div>
       <div class="item small" data-key="stale" data-cat="docs"><div class="head"><span class="no">15</span><span class="title">O databricks.md (linha 60) ainda diz que o dev usa um schema com o nome do usuário; a variável <span class="mono">schema</span> saiu do bundle</span><span class="sev low"><span class="meter low"><i></i><i></i><i></i></span><span class="cat">documentação</span></span></div></div>
       <div class="item small" data-key="runbook" data-cat="docs"><div class="head"><span class="no">16</span><span class="title">Não há runbook (como repetir uma tarefa, refazer um dia ou tratar uma entrega com erro fatal): fica para o prompt 15</span><span class="sev low"><span class="meter low"><i></i><i></i><i></i></span><span class="cat">documentação</span></span></div></div>

@@ -24,9 +24,9 @@ resources:
           spec:
             environment_version: "4"
             dependencies:
-              - duckdb==2.0.*
-              - pyarrow==26.*
-              - boto3==1.43.*
+              - duckdb==2.0.0
+              - pyarrow==26.0.0
+              - boto3==1.43.122
       tasks:
         - task_key: ingest_bronze
           environment_key: default

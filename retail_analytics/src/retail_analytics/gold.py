@@ -2,7 +2,7 @@
 
 | Table | Grain | Note |
 |---|---|---|
-| dim_data | one day | calendar covering every order date; day_of_week as in Spark (Sunday = 1) |
+| dim_data | one day | whole years covering every order date and stock snapshot; day_of_week as in Spark (Sunday = 1) |
 | dim_loja | one store | |
 | dim_produto | one product | with the supplier |
 | dim_fornecedor | one supplier | without e-mail |
@@ -22,8 +22,9 @@ from retail_analytics.silver import _write
 
 TABLES = {
     "dim_data": """
-        WITH bounds AS (SELECT make_date(year(min(order_date)), 1, 1) AS d0, make_date(year(max(order_date)), 12, 31) AS d1
-                        FROM orders),
+        WITH dates AS (SELECT order_date AS d FROM orders
+                       UNION ALL SELECT CAST(_bronze_ingested_at AS DATE) FROM inventory),
+             bounds AS (SELECT make_date(year(min(d)), 1, 1) AS d0, make_date(year(max(d)), 12, 31) AS d1 FROM dates),
              days AS (SELECT CAST(d AS DATE) AS d FROM bounds, generate_series(d0, d1, INTERVAL 1 DAY) AS t(d))
         SELECT CAST(strftime(d, '%Y%m%d') AS INTEGER) AS date_key, d AS "date", year(d) AS year, quarter(d) AS quarter,
                month(d) AS month, strftime(d, '%B') AS month_name, day(d) AS day,

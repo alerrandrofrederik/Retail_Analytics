@@ -4,7 +4,7 @@ Pauta do contrato [`rystore.odcs.yaml`](rystore.odcs.yaml) da fonte RYStore, com
 
 Origem das respostas:
 - **EDD:** o engenheiro de dados respondeu na conversa (ele também é o dono da fonte neste projeto).
-- **Delegada:** o engenheiro pediu que o Claude decidisse e seguisse. Valem até alguém revisar.
+- **Delegada:** o engenheiro pediu que o Claude decidisse e seguisse. Todas as delegadas foram revisadas e **confirmadas pelo engenheiro de dados em 2026-10-30**.
 
 ## Responsáveis e entrega
 

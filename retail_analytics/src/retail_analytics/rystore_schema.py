@@ -137,3 +137,18 @@ LOAD = {
     "stores": "full",
     "suppliers": "full",
 }
+
+# (table, column) -> the closed list of values (contract: invalidValues with validValues; a new value is a warning)
+VALID_VALUES = {
+    ('customers', 'customer_segment'): ['Budget-conscious', 'Convenience shopper', 'Family shopper', 'Health-focused', 'Premium buyer', 'Student'],
+    ('customers', 'loyalty_tier'): ['Bronze', 'Gold', 'Platinum', 'Silver'],
+    ('employees', 'contract_type'): ['Full-time', 'Part-time'],
+    ('employees', 'role'): ['Assistant Manager', 'Cashier', 'Customer Service', 'Online Picker', 'Stock Assistant', 'Store Manager', 'Supervisor'],
+    ('orders', 'order_channel'): ['Click & Collect', 'In-store', 'Online'],
+    ('orders', 'order_status'): ['Cancelled', 'Completed', 'Refunded'],
+    ('orders', 'payment_method'): ['Card', 'Cash', 'Gift Card', 'Mobile Wallet'],
+    ('products', 'category'): ['Bakery', 'Beverages', 'Dairy & Eggs', 'Fresh Produce', 'Frozen', 'Grocery', 'Health & Beauty', 'Household', 'Meat & Fish', 'Snacks'],
+    ('promotions', 'category'): ['Bakery', 'Beverages', 'Fresh Produce', 'Grocery', 'Meat & Fish', 'Snacks'],
+    ('promotions', 'discount_type'): ['Fixed', 'Percentage'],
+    ('stores', 'store_format'): ['Convenience', 'Large Supermarket', 'Medium Supermarket'],
+}

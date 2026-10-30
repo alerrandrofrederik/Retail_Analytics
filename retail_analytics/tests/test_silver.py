@@ -32,7 +32,7 @@ def test_bronze_rerun_ingests_nothing(lake):
 def test_silver_rows_and_quarantine(lake):
     expected = EXPECTED["silver"]
     assert _counts(lake, "silver", expected["rows"]) == expected["rows"]
-    rows = lake["sql"]("SELECT table_name, line, reason FROM silver._quarantine ORDER BY line")
+    rows = lake["sql"]("SELECT table_name, line, reason FROM silver._quarantine ORDER BY table_name, line")
     assert [dict(zip(("table_name", "line", "reason"), r)) for r in rows] == expected["quarantine"]
 
 
@@ -59,3 +59,11 @@ def test_personal_data_is_hashed_or_dropped(lake):
 def test_no_failed_check(lake):
     assert [c for c in lake["checks"] if c.status == "fail"] == EXPECTED["silver"]["failed_checks"]
     assert lake["sql"]("SELECT count(*) FROM silver._checks")[0][0] == len(lake["checks"])
+
+
+def test_quarantine_raw_has_no_plain_personal_data(lake):
+    raw = dict(lake["sql"]("SELECT table_name, raw FROM silver._quarantine WHERE table_name IN ('customers', 'employees')"))
+    customer = json.loads(raw["customers"])
+    assert customer["email"] == hashlib.sha256(b"dan.test@example.test").hexdigest()
+    assert customer["first_name"] == hashlib.sha256(b"dan").hexdigest()
+    assert "annual_salary" not in json.loads(raw["employees"])

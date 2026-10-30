@@ -19,7 +19,7 @@ from pathlib import Path
 
 import duckdb
 
-from retail_analytics.rystore_schema import COLUMNS, FOREIGN_KEYS, LOAD, PRIMARY_KEYS
+from retail_analytics.rystore_schema import COLUMNS, FOREIGN_KEYS, LOAD, PRIMARY_KEYS, VALID_VALUES
 
 TZ = "Europe/London"
 PERSONAL = {
@@ -30,14 +30,6 @@ PERSONAL = {
 DROPPED = {"employees": ["annual_salary"]}
 PARENTS_FIRST = ["suppliers", "stores", "promotions", "customers", "products", "employees", "inventory",
                  "orders", "order_items"]
-VALID = {
-    ("orders", "order_status"): ["Cancelled", "Completed", "Refunded"],
-    ("orders", "order_channel"): ["Click & Collect", "In-store", "Online"],
-    ("orders", "payment_method"): ["Card", "Cash", "Gift Card", "Mobile Wallet"],
-    ("customers", "loyalty_tier"): ["Bronze", "Gold", "Platinum", "Silver"],
-    ("promotions", "discount_type"): ["Fixed", "Percentage"],
-    ("stores", "store_format"): ["Convenience", "Large Supermarket", "Medium Supermarket"],
-}
 RULES = [
     ("orders", "total_formula", "fail",
      "SELECT count(*) FROM orders WHERE order_status <> 'Cancelled' AND "
@@ -75,11 +67,19 @@ def _typed(name, logical):
         return f"try_strptime({column}, '%Y-%m-%d %H:%M:%S')"
     if logical == "boolean":
         return f"CASE {column} WHEN 'True' THEN true WHEN 'False' THEN false END"
+    # Only the format of the contract casts: a cast alone would round 5.5 to 6 and 1.005 to 1.01.
     if logical == "integer":
-        return f"TRY_CAST({column} AS INTEGER)"
+        return f"CASE WHEN regexp_full_match({column}, '-?[0-9]+') THEN TRY_CAST({column} AS INTEGER) END"
     if logical == "number":
-        return f"TRY_CAST({column} AS DECIMAL(12,2))"
+        return f"CASE WHEN regexp_full_match({column}, '-?[0-9]+([.][0-9]{{1,2}})?') THEN TRY_CAST({column} AS DECIMAL(12,2)) END"
     return column
+
+
+def _masked(table, name):
+    """The text of a column as quarantine may keep it: personal data hashed, as in the silver tables."""
+    if name in PERSONAL.get(table, []):
+        return f'sha256(lower(trim("{name}")))'
+    return f'"{name}"'
 
 
 def _current(table, files):
@@ -128,7 +128,8 @@ def build(bronze_dir, silver_dir, built_at: datetime) -> list[Check]:
         typed = ", ".join(f'{_typed(name, logical)} AS "{name}"' for name, logical, _ in columns)
         reason = ", ".join(f"""CASE WHEN "{name}" IS NOT NULL AND {_typed(name, logical)} IS NULL THEN 'cast:{name}' END"""
                            for name, logical, _ in columns)
-        raw = ", ".join(f"""'{name}', "{name}\"""" for name, _, _ in columns)
+        raw = ", ".join(f"'{name}', {_masked(table, name)}" for name, _, _ in columns
+                        if name not in DROPPED.get(table, []))
         files = (bronze_dir / table).as_posix() + "/*.parquet"
         con.execute(f"""CREATE TABLE stage AS SELECT {typed}, _source_file, _line, _ingested_at,
                         coalesce({reason}) AS _reason, CAST(json_object({raw}) AS VARCHAR) AS _raw
@@ -163,8 +164,8 @@ def build(bronze_dir, silver_dir, built_at: datetime) -> list[Check]:
     _write(con, f"SELECT *, {built} AS built_at FROM quarantine", silver_dir / "_quarantine")
 
     checks = list(RULES)
-    for (table, column), values in VALID.items():
-        allowed = ", ".join(f"'{v}'" for v in values)
+    for (table, column), values in VALID_VALUES.items():
+        allowed = ", ".join("'" + v.replace("'", "''") + "'" for v in values)
         checks.append((table, f"valid_values:{column}", "warn", f"SELECT count(*) FROM {table} WHERE {column} NOT IN ({allowed})"))
     for table in COLUMNS:
         checks.append((table, "row_count", "fail", f"SELECT CASE WHEN count(*) = 0 THEN 1 ELSE 0 END FROM {table}"))

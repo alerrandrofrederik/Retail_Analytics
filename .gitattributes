@@ -1,0 +1,2 @@
+# The source files are CRLF byte for byte (contract): git must never convert their line endings.
+*.csv -text

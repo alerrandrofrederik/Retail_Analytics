@@ -5,34 +5,159 @@
     "why": "One file per full table (7), two deliveries of orders (dt=2025-06-01 and dt=2025-06-02) and one of order_items."
   },
   "bronze": {
-    "rows": {"customers": 2, "employees": 1, "inventory": 2, "order_items": 7, "orders": 6, "products": 3, "promotions": 1, "stores": 2, "suppliers": 1},
+    "rows": {
+      "customers": 3,
+      "employees": 2,
+      "inventory": 2,
+      "order_items": 9,
+      "orders": 6,
+      "products": 3,
+      "promotions": 1,
+      "stores": 2,
+      "suppliers": 1
+    },
     "quarantine": 0,
     "rerun_new_files": 0,
-    "why": "Bronze keeps every line as text; the bad quantity and the orphan item are only found in silver. A second run with the same ETags ingests nothing."
+    "why": "Bronze keeps every line as text; the bad quantity and the orphan item are only found in silver. A second run with the same ETags ingests nothing. The bad casts (5.5, 1.005, 2024-13-01, not-a-date) are also only found in silver."
   },
   "silver": {
-    "rows": {"customers": 2, "employees": 1, "inventory": 2, "order_items": 5, "orders": 5, "products": 3, "promotions": 1, "stores": 2, "suppliers": 1},
+    "rows": {
+      "customers": 2,
+      "employees": 1,
+      "inventory": 2,
+      "order_items": 5,
+      "orders": 5,
+      "products": 3,
+      "promotions": 1,
+      "stores": 2,
+      "suppliers": 1
+    },
     "quarantine": [
-      {"table_name": "order_items", "line": 7, "reason": "cast:quantity"},
-      {"table_name": "order_items", "line": 8, "reason": "orphan:product_id"}
+      {
+        "table_name": "customers",
+        "line": 4,
+        "reason": "cast:signup_date"
+      },
+      {
+        "table_name": "employees",
+        "line": 3,
+        "reason": "cast:hire_date"
+      },
+      {
+        "table_name": "order_items",
+        "line": 7,
+        "reason": "cast:quantity"
+      },
+      {
+        "table_name": "order_items",
+        "line": 8,
+        "reason": "orphan:product_id"
+      },
+      {
+        "table_name": "order_items",
+        "line": 9,
+        "reason": "cast:quantity"
+      },
+      {
+        "table_name": "order_items",
+        "line": 10,
+        "reason": "cast:unit_price"
+      }
     ],
-    "latest_version": {"order_id": "ORD900002", "order_status": "Refunded",
-      "why": "The delivery of dt=2025-06-02 replaces the one of dt=2025-06-01 (same ingestion, later file)."},
+    "latest_version": {
+      "order_id": "ORD900002",
+      "order_status": "Refunded",
+      "why": "The delivery of dt=2025-06-02 replaces the one of dt=2025-06-01 (same ingestion, later file)."
+    },
     "utc": {
       "ORD900001": "2025-06-01 09:15:00",
       "ORD900004": "2025-03-30 01:30:00",
       "ORD900005": "2025-10-26 00:30:00",
       "why": "Europe/London. 01:30 on 2025-03-30 does not exist: it moves forward 1h to 02:30 BST = 01:30 UTC. 01:30 on 2025-10-26 happens twice: the first one (BST) = 00:30 UTC (contract, open point 5)."
     },
-    "pii": {"suppliers.email": "sha256 of 'one@supplier.test' (lower and trimmed)", "employees.annual_salary": "absent"},
-    "failed_checks": []
+    "pii": {
+      "suppliers.email": "sha256 of 'one@supplier.test' (lower and trimmed)",
+      "employees.annual_salary": "absent",
+      "quarantine_raw": "The raw JSON of a quarantined customer has the e-mail as sha256 of 'dan.test@example.test' and no plain name; the raw JSON of a quarantined employee has no annual_salary."
+    },
+    "failed_checks": [],
+    "quarantine_why": "A number is cast only when it has the format of the contract: integers without decimals (5.5 is not rounded to 6) and amounts with at most 2 decimals (1.005 is not rounded to 1.01). Order: table, then line."
   },
   "gold": {
-    "rows": {"dim_data": 365, "dim_loja": 2, "dim_fornecedor": 1, "dim_produto": 3, "dim_cliente": 3, "fato_pedidos": 5, "fato_vendas": 5, "fato_estoque": 2},
+    "rows": {
+      "dim_data": 730,
+      "dim_loja": 2,
+      "dim_fornecedor": 1,
+      "dim_produto": 3,
+      "dim_cliente": 3,
+      "fato_pedidos": 5,
+      "fato_vendas": 5,
+      "fato_estoque": 2
+    },
     "revenue_amount": "15.00",
-    "anon_orders": ["ORD900002", "ORD900005"],
-    "date_2025_06_01": {"day_of_week": 1, "is_weekend": true, "why": "A Sunday; day_of_week keeps the Spark numbering (Sunday = 1)."},
-    "below_reorder": [["ST901", "P9001"]],
-    "why": "Revenue only from Completed: ORD900001 (11.00) + ORD900004 (4.00); ORD900002 is now Refunded."
+    "anon_orders": [
+      "ORD900002",
+      "ORD900005"
+    ],
+    "date_2025_06_01": {
+      "day_of_week": 1,
+      "is_weekend": true,
+      "why": "A Sunday; day_of_week keeps the Spark numbering (Sunday = 1)."
+    },
+    "below_reorder": [
+      [
+        "ST901",
+        "P9001"
+      ]
+    ],
+    "why": "Revenue only from Completed: ORD900001 (11.00) + ORD900004 (4.00); ORD900002 is now Refunded.",
+    "calendar_why": "dim_data covers the years of the orders (2025) and of the stock snapshot (ingested 2026-01-01): 2025-01-01..2026-12-31. Every date key of a fact exists in dim_data."
+  },
+  "layout": {
+    "keys": {
+      "orders/../../silver/x.csv": "fatal",
+      "unknown/unknown.csv": "fatal",
+      "orders/orders.txt": "fatal",
+      "orders/dt=2025-06-01/orders.csv": "ok",
+      "customers/customers.csv": "ok"
+    },
+    "why": "Only keys of the bucket layout of the contract are read; others are logged as fatal and never written to raw."
+  },
+  "day2": {
+    "source": "source/ plus source_day2/ (same keys replace those of day 1)",
+    "new_files": 3,
+    "fatal": [
+      "orders/dt=2025-06-03/orders.csv: schema_drift"
+    ],
+    "log_status": {
+      "orders/dt=2025-06-03/orders.csv": "schema_drift"
+    },
+    "silver_rows": {
+      "inventory": 1,
+      "orders": 5
+    },
+    "order_status": {
+      "ORD900001": "Refunded"
+    },
+    "why": "Inventory is full: ST902/P9002 left the snapshot, so it was deleted. orders/dt=2025-06-01 came again with a new ETag: its latest version wins. A new column stops only that delivery.",
+    "ingested_at": {
+      "day1": "2026-01-01 07:00",
+      "day2": "2026-03-01 07:00"
+    }
+  },
+  "crash": {
+    "why": "A table file whose stamp has no log file (a run that died before writing the log) is removed at the start of the next run, so the files are ingested once.",
+    "rows_after_rerun": {
+      "orders": 6
+    }
+  },
+  "retention": {
+    "days": 30,
+    "why": "Full-table snapshots older than 30 days are removed, the latest one is always kept; incremental tables are never pruned. Day 2 runs 59 days after day 1: the day-1 inventory snapshot goes; customers keeps its only snapshot; orders keeps both run files (incremental).",
+    "files_after_day2": {
+      "inventory": 1,
+      "customers": 1,
+      "orders": 2
+    }
   }
 }

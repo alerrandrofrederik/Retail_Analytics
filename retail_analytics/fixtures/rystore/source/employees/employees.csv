@@ -1,2 +1,3 @@
 employee_id,first_name,last_name,store_id,role,hire_date,contract_type,annual_salary
 EMP901,Cat,Test,ST901,Cashier,2021-02-01,Full-time,20000
+EMP902,Eve,Test,ST902,Cashier,not-a-date,Part-time,18000

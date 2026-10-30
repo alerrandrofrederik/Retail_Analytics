@@ -7,21 +7,30 @@ in the job, the volume /Volumes/<catalog>/bronze/files; locally, any folder.
     <lake>/_quarantine/<stamp>.parquet       rejected lines (validation.validate_delivery)
     <lake>/_ingested_files/<stamp>.parquet   one row per file seen: key, ETag, rows, status
 
-A file is new when its (key, ETag) is not yet in _ingested_files. Fatal files (schema drift, no rows)
-are logged too, so they are not retried until the source sends them again with a new ETag.
+A file is new when its (key, ETag) is not yet in _ingested_files. Fatal files (schema drift, no rows, a key
+outside the bucket layout) are logged too, so they are not retried until the source sends them again with a
+new ETag. Every file of a run carries the run's stamp, and the log is written last: a table file whose stamp
+has no log is what a run that died left behind, and is removed at the start of the next one. Snapshots of
+the full tables older than RETENTION_DAYS go, except the latest (decision of 2026-10-30).
 """
 
 import hashlib
+import re
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-from retail_analytics.rystore_schema import COLUMNS
+from retail_analytics.rystore_schema import COLUMNS, LOAD
 from retail_analytics.validation import validate_delivery
+
+RETENTION_DAYS = 30
+STAMP = "%Y%m%dT%H%M%S%f"
+# The bucket layout of the contract: <table>/dt=yyyy-MM-dd/<table>.csv or <table>/<table>.csv
+LAYOUT = re.compile(r"(?P<table>[a-z_]+)/(dt=\d{4}-\d{2}-\d{2}/)?(?P=table)\.csv")
 
 TIMESTAMP = pa.timestamp("us", tz="UTC")
 LOG_SCHEMA = pa.schema([("source_file", pa.string()), ("etag", pa.string()), ("table_name", pa.string()),
@@ -81,6 +90,25 @@ def ingested(lake):
     return done
 
 
+def _clean(lake):
+    """Remove the files of a run that died before its log (run before the ingestion)."""
+    logged = {p.stem for p in (lake / "_ingested_files").glob("*.parquet")}
+    for path in lake.glob("*/*.parquet"):
+        if path.parent.name != "_ingested_files" and path.stem not in logged:
+            path.unlink()
+
+
+def _prune(lake, ingested_at):
+    """Remove the full snapshots past the retention, never the latest (run after the ingestion)."""
+    oldest = (ingested_at - timedelta(days=RETENTION_DAYS)).strftime(STAMP)
+    for table, load in LOAD.items():
+        snapshots = sorted((lake / table).glob("*.parquet"))
+        if load == "full":
+            for path in snapshots[:-1]:
+                if path.stem < oldest:
+                    path.unlink()
+
+
 def _write(rows, schema, folder, stamp):
     folder.mkdir(parents=True, exist_ok=True)
     pq.write_table(pa.Table.from_pylist(rows, schema), folder / f"{stamp}.parquet")
@@ -93,26 +121,28 @@ def ingest(source, lake, ingested_at: datetime, raw_dir=None, threads=8) -> Summ
     a fatal file means (the job fails at the end, after everything else has landed).
     """
     lake = Path(lake)
-    stamp = ingested_at.strftime("%Y%m%dT%H%M%S%f")
+    stamp = ingested_at.strftime(STAMP)
+    _clean(lake)
     done = ingested(lake)
     todo = [(key, etag) for key, etag in source.list() if (key, etag) not in done]
     with ThreadPoolExecutor(max_workers=threads) as pool:
-        bodies = list(pool.map(source.read, [key for key, _ in todo]))
+        bodies = list(pool.map(lambda key: source.read(key) if LAYOUT.fullmatch(key) else b"", [key for key, _ in todo]))
 
     summary = Summary(files=len(todo))
     rows_by_table = {t: [] for t in COLUMNS}
     quarantine, log = [], []
     for (key, etag), body in zip(todo, bodies):
+        match = LAYOUT.fullmatch(key)
+        if not match or match["table"] not in COLUMNS:
+            summary.fatal.append(f"{key}: fora do layout do contrato")
+            log.append(dict(source_file=key, etag=etag, table_name=key.split("/")[0], rows=0, quarantined=0,
+                            status="unknown_key", ingested_at=ingested_at))
+            continue
         if raw_dir is not None:
             target = Path(raw_dir) / key
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(body)
-        table = key.split("/")[0]
-        if table not in COLUMNS:
-            summary.fatal.append(f"{key}: tabela fora do contrato")
-            log.append(dict(source_file=key, etag=etag, table_name=table, rows=0, quarantined=0,
-                            status="unknown_table", ingested_at=ingested_at))
-            continue
+        table = match["table"]
         result = validate_delivery(table, body)
         if result.fatal:
             summary.fatal.append(f"{key}: {result.fatal}")
@@ -135,5 +165,6 @@ def ingest(source, lake, ingested_at: datetime, raw_dir=None, threads=8) -> Summ
         _write(quarantine, QUARANTINE_SCHEMA, lake / "_quarantine", stamp)
     if log:
         _write(log, LOG_SCHEMA, lake / "_ingested_files", stamp)
+    _prune(lake, ingested_at)
     summary.quarantined = len(quarantine)
     return summary

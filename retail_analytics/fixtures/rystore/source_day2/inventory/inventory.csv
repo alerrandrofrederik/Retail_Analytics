@@ -1,0 +1,2 @@
+store_id,product_id,stock_on_hand,stock_on_order,last_restock_date,aisle_location
+ST901,P9001,5,20,2025-06-01,Aisle 1

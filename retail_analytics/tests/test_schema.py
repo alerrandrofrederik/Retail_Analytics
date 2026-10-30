@@ -19,3 +19,12 @@ def test_schema_matches_contract():
         assert rystore_schema.COLUMNS[table["name"]] == columns
         keys = sorted((p for p in table["properties"] if p.get("primaryKey")), key=lambda p: p["primaryKeyPosition"])
         assert rystore_schema.PRIMARY_KEYS[table["name"]] == [p["name"] for p in keys]
+
+
+@pytest.mark.skipif(not CONTRACT.exists(), reason="contract not available (outside the repository)")
+def test_valid_values_match_contract():
+    contract = yaml.safe_load(CONTRACT.read_text(encoding="utf-8"))
+    lists = {(t["name"], p["name"]): q["arguments"]["validValues"]
+             for t in contract["schema"] for p in t["properties"] for q in p.get("quality") or []
+             if (q.get("arguments") or {}).get("validValues")}
+    assert rystore_schema.VALID_VALUES == lists

@@ -35,3 +35,12 @@ def test_calendar_keeps_spark_numbering(lake):
 def test_stock_below_reorder(lake):
     rows = lake["sql"]("SELECT store_id, product_id FROM gold.fato_estoque WHERE below_reorder ORDER BY 1, 2")
     assert [list(r) for r in rows] == EXPECTED["below_reorder"]
+
+
+def test_every_date_key_of_a_fact_is_in_the_calendar(lake):
+    missing = lake["sql"]("""
+        SELECT count(*) FROM (
+            SELECT date_key AS k FROM gold.fato_pedidos UNION ALL SELECT date_key FROM gold.fato_vendas
+            UNION ALL SELECT snapshot_date_key FROM gold.fato_estoque)
+        WHERE k NOT IN (SELECT date_key FROM gold.dim_data)""")
+    assert missing == [(0,)]

@@ -23,11 +23,14 @@ Uma linha por decisão. Uma decisão em aberto passa para "tomada" quando o enge
 | 2026-10-30 | O job de ingestão roda uma vez por dia às 07:00 UTC, 1h depois da entrega | Delegada (prompt_04) |
 | 2026-10-30 | Pipeline sem PySpark: Python puro com DuckDB e pyarrow, Parquet nos volumes `<camada>.files` e publicação no Unity Catalog pelo SQL warehouse. O mesmo código roda localmente, nos testes e no job serverless. Motivo: a primeira execução com Spark passou de 10 min só na bronze e foi abortada; com DuckDB, o pipeline inteiro roda em cerca de 23 s localmente | Engenheiro de dados (sem PySpark, no Databricks, com DuckDB); [incidente de 2026-10-30](../incidents/incident-log.md) |
 | 2026-10-30 | Os volumes `bronze.files`, `silver.files` e `gold.files` são criados pelo CLI, como o `bronze.raw`, e não pelo bundle, para que o modo de desenvolvimento não mude os nomes | Delegada (refatoração sem PySpark) |
+| 2026-10-30 | As decisões delegadas foram confirmadas: os pontos 6, 9 e 13 a 19 da pauta, a `inventory` completa, a PII em SHA-256 na silver e o `annual_salary` fora da silver e da gold | Engenheiro de dados, em conversa |
+| 2026-10-30 | As fotos diárias das tabelas completas ficam 30 dias em `bronze/files`, e a mais recente nunca é apagada. Os arquivos brutos em `bronze.raw` ficam para sempre | Engenheiro de dados ([revisão 07 a 09](../../reports/pr-review/pr_review_pipeline_07_09.html), achado 10) |
+| 2026-10-30 | A `gold.fato_estoque` guarda só a última foto do estoque, sem histórico | Engenheiro de dados ([revisão 07 a 09](../../reports/pr-review/pr_review_pipeline_07_09.html), achado 13, recusado) |
+| 2026-10-30 | A bronze (tabelas e volume `bronze.raw`) fica sem restrição de acesso, porque o workspace é pessoal e tem um usuário só. A PII é mascarada a partir da silver, inclusive no JSON da quarentena. Rever se outra pessoa ganhar acesso ao workspace | Engenheiro de dados ([revisão 07 a 09](../../reports/pr-review/pr_review_pipeline_07_09.html), achado 2, parte recusada) |
+| 2026-10-30 | Os CSVs ficam no git byte a byte (`.gitattributes`: `*.csv -text`), com CRLF como no contrato | Revisão 07 a 09, achado 4 |
 
 ## Em aberto
 
 | Desde | Pergunta | Para quem | Origem |
 |---|---|---|---|
 | 2026-10-30 | Descrições reais das 77 colunas, para a próxima versão do contrato | Dono da fonte | [Pauta do contrato](../../contracts/rystore_open_points.md), ponto 16 |
-| 2026-10-30 | Quanto tempo guardar as fotos diárias das tabelas completas em `bronze/files` (hoje ficam para sempre) | Engenheiro de dados | [Revisão 07 a 09](../../reports/pr-review/pr_review_pipeline_07_09.html), achado 10 |
-| 2026-10-30 | A `fato_estoque` deve guardar o histórico das fotos diárias, e não só a última? | Engenheiro de dados | [Revisão 07 a 09](../../reports/pr-review/pr_review_pipeline_07_09.html), achado 13 |

@@ -102,6 +102,8 @@ lojas
 
 ## Como executar
 
+O passo a passo de operação (carga da origem, testes, deploy, execução, reprocessamento e o que fazer quando uma checagem falha) está no **[runbook](docs/runbook.md)**, com os [guias](docs/guides/) das tarefas repetidas. Os produtos de dados servidos pela gold estão em [`docs/data-products/`](docs/data-products/fato_vendas/README.md).
+
 ### Pré-requisitos
 
 - [Python 3.12+](https://www.python.org/)
@@ -202,6 +204,10 @@ Retail_Analytics/
 ├── metadata/         # metadata das fontes (YAML) e o script que a gera
 ├── contracts/        # contratos de dados com as fontes (ODCS) e pontos em aberto
 ├── reports/          # relatórios gerados (ex.: perfil de dados da fonte)
+├── docs/             # runbook, guias e produtos de dados
+│   ├── runbook.md        # cada comando, em ordem, como roda hoje
+│   ├── guides/           # um guia por tarefa repetida
+│   └── data-products/    # um produto de dados por pasta, com o contrato do consumidor
 ├── retail_analytics/ # bundle do Databricks com o código do pipeline
 │   ├── databricks.yml    # targets dev e prod, catálogo lh_retail_analytics
 │   ├── resources/        # jobs e pipelines

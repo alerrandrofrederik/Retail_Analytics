@@ -21,12 +21,12 @@ Uma linha por decisão. Uma decisão em aberto passa para "tomada" quando o enge
 
 | Desde | Pergunta | Para quem | Origem |
 |---|---|---|---|
-| 2026-10-30 | Qual é o fuso de `orders.order_datetime` (Europe/London ou UTC)? | Dono da fonte | [Perfil RYStore](../../reports/profile/rystore_profile.html) |
-| 2026-10-30 | Pedidos `Cancelled` (total 0) e `Refunded` (valores mantidos) entram na receita? Como? | Dono da fonte e consumidores | Perfil RYStore |
-| 2026-10-30 | O que `customers.signup_date` representa, se há pedidos anteriores a ela? | Dono da fonte | Perfil RYStore |
-| 2026-10-30 | `employees` é completo ou uma amostra (não bate com `stores.staff_count`)? | Dono da fonte | Perfil RYStore |
-| 2026-10-30 | As vendas na loja física entre 00h e 6h são reais ou efeito de fuso? | Dono da fonte | Perfil RYStore |
-| 2026-10-30 | Funcionários admitidos antes da abertura da loja: transferência ou data inválida? | Dono da fonte | Perfil RYStore |
-| 2026-10-30 | A carga é sempre completa? Como chega uma exclusão? | Dono da fonte | Perfil RYStore |
+| 2026-10-30 | Qual é o fuso de `orders.order_datetime` (Europe/London ou UTC)? | Dono da fonte | [Pauta do contrato](../../contracts/rystore_open_points.md) |
+| 2026-10-30 | Pedidos `Cancelled` (total 0) e `Refunded` (valores mantidos) entram na receita? Como? | Dono da fonte e consumidores | [Pauta do contrato](../../contracts/rystore_open_points.md) |
+| 2026-10-30 | O que `customers.signup_date` representa, se há pedidos anteriores a ela? | Dono da fonte | [Pauta do contrato](../../contracts/rystore_open_points.md) |
+| 2026-10-30 | `employees` é completo ou uma amostra (não bate com `stores.staff_count`)? | Dono da fonte | [Pauta do contrato](../../contracts/rystore_open_points.md) |
+| 2026-10-30 | As vendas na loja física entre 00h e 6h são reais ou efeito de fuso? | Dono da fonte | [Pauta do contrato](../../contracts/rystore_open_points.md) |
+| 2026-10-30 | Funcionários admitidos antes da abertura da loja: transferência ou data inválida? | Dono da fonte | [Pauta do contrato](../../contracts/rystore_open_points.md) |
+| 2026-10-30 | A carga é sempre completa? Como chega uma exclusão? | Dono da fonte | [Pauta do contrato](../../contracts/rystore_open_points.md) |
 | 2026-10-30 | Com que frequência roda a ingestão? Qual o nome do *secret scope*? | Engenheiro de dados | [pipeline.md](../architecture/pipeline.md) |
 | 2026-10-30 | Os dados ficam no Supabase Storage como arquivos (o `boto3` lê o bucket, não as tabelas do PostgreSQL)? | Engenheiro de dados | [pipeline.md](../architecture/pipeline.md) |

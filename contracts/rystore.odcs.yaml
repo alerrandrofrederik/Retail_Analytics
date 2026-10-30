@@ -1,0 +1,1623 @@
+# The data contract between the data platform and the RYStore source (skill contract).
+# Open Data Contract Standard (ODCS) v3.1.0, validated against its JSON Schema.
+# Draft: written from the profile (reports/profile/rystore_profile.html) and the metadata
+# (metadata/rystore.yaml), not yet agreed with the source owner. "a definir" = open point,
+# listed in contracts/rystore_open_points.md. Columns, types, keys and descriptions come from
+# the metadata, never retyped. It describes the data, never the pipeline.
+
+kind: DataContract
+apiVersion: v3.1.0
+id: rystore
+name: rystore
+version: 0.1.0
+status: draft
+description:
+  purpose: The sales, stock and master data of the RYStore supermarket (the company's simulated OLTP in Supabase), delivered
+    as one CSV per table to the data platform.
+  limitations: Draft from the profile and the metadata, not yet agreed with the source owner. Every 'a definir' is in contracts/rystore_open_points.md.
+servers:
+  - server: supabase-storage
+    type: custom
+    format: csv
+    description: 'Supabase Storage, read through its S3-compatible API. Bucket, path and whether the data comes from Storage
+      or PostgreSQL: a definir.'
+team:
+  name: rystore
+  members:
+    - username: rystore-owner
+      role: owner
+      description: 'Owns the RYStore data and answers for the delivery. Person: a definir.'
+    - username: data-platform
+      role: consumer
+      description: Loads the files and runs the checks of this contract.
+support:
+  - channel: rystore-data
+    tool: other
+    description: 'Questions about a delivery and announcements of a change. Channel: a definir.'
+slaProperties:
+  - property: frequency
+    value: a definir
+    description: How often a delivery arrives.
+  - property: timeOfAvailability
+    value: a definir
+    description: By what time a delivery is available.
+customProperties:
+  - property: changeNotice
+    value: a definir
+    description: How many days before a change of the schema or the format the source announces it, with a new version of
+      this contract.
+  - property: timezone
+    value: a definir
+    description: The zone of orders.order_datetime (Europe/London or UTC). The data has no offset.
+  - property: personalData
+    value: restricted
+    description: Columns with classification restricted hold personal data. The source says all of it is fictional; the platform
+      treats it as real.
+schema:
+  - name: customers
+    physicalName: customers.csv
+    physicalType: file
+    description: 800 loyalty customers. Blank customer_id in orders represents anonymous/non-loyalty purchases.
+    customProperties:
+      - property: delimiter
+        value: ','
+      - property: quoting
+        value: none
+      - property: encoding
+        value: ascii
+      - property: lineEnding
+        value: CRLF
+      - property: header
+        value: true
+      - property: decimalSeparator
+        value: .
+      - property: nullToken
+        value: ''
+      - property: load
+        value: full
+        description: 'The whole table in every delivery: no change date in the source. Full or changes only is an open point.'
+      - property: deletes
+        value: a definir
+        description: 'No deletion flag: today a deleted row only disappears from the file.'
+    properties:
+      - name: customer_id
+        physicalName: customer_id
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        primaryKey: true
+        primaryKeyPosition: 1
+        unique: true
+        description: Unique or foreign key identifier depending on table context.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+          - type: library
+            metric: invalidValues
+            arguments:
+              pattern: ^CUST\d{5}$
+            mustBe: 0
+            dimension: conformity
+            description: The format of the identifier.
+      - name: first_name
+        physicalName: first_name
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        classification: restricted
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: last_name
+        physicalName: last_name
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        classification: restricted
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: email
+        physicalName: email
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        classification: restricted
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: city
+        physicalName: city
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: postcode_area
+        physicalName: postcode_area
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        classification: restricted
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: signup_date
+        physicalName: signup_date
+        logicalType: date
+        physicalType: DATE
+        logicalTypeOptions:
+          format: yyyy-MM-dd
+        required: true
+        description: Date/time value in ISO-style format.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: loyalty_tier
+        physicalName: loyalty_tier
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+          - type: library
+            metric: invalidValues
+            arguments:
+              validValues:
+                - Bronze
+                - Gold
+                - Platinum
+                - Silver
+            mustBe: 0
+            dimension: conformity
+            description: Closed list, as seen in the profile. A new value is a change of this contract.
+      - name: customer_segment
+        physicalName: customer_segment
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+          - type: library
+            metric: invalidValues
+            arguments:
+              validValues:
+                - Budget-conscious
+                - Convenience shopper
+                - Family shopper
+                - Health-focused
+                - Premium buyer
+                - Student
+            mustBe: 0
+            dimension: conformity
+            description: Closed list, as seen in the profile. A new value is a change of this contract.
+      - name: marketing_opt_in
+        physicalName: marketing_opt_in
+        logicalType: boolean
+        physicalType: BOOLEAN
+        required: true
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+    quality:
+      - type: library
+        metric: duplicateValues
+        arguments:
+          properties:
+            - customer_id
+        mustBe: 0
+        dimension: uniqueness
+        description: The primary key is unique in every delivery.
+      - type: library
+        metric: rowCount
+        mustBeGreaterThan: 0
+        dimension: completeness
+        description: Every delivery has rows.
+  - name: employees
+    physicalName: employees.csv
+    physicalType: file
+    description: 120 fictional employees linked to stores.
+    customProperties:
+      - property: delimiter
+        value: ','
+      - property: quoting
+        value: none
+      - property: encoding
+        value: ascii
+      - property: lineEnding
+        value: CRLF
+      - property: header
+        value: true
+      - property: decimalSeparator
+        value: .
+      - property: nullToken
+        value: ''
+      - property: load
+        value: full
+        description: 'The whole table in every delivery: no change date in the source. Full or changes only is an open point.'
+      - property: deletes
+        value: a definir
+        description: 'No deletion flag: today a deleted row only disappears from the file.'
+    properties:
+      - name: employee_id
+        physicalName: employee_id
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        primaryKey: true
+        primaryKeyPosition: 1
+        unique: true
+        description: Unique or foreign key identifier depending on table context.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+          - type: library
+            metric: invalidValues
+            arguments:
+              pattern: ^EMP\d{4}$
+            mustBe: 0
+            dimension: conformity
+            description: The format of the identifier.
+      - name: first_name
+        physicalName: first_name
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        classification: restricted
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: last_name
+        physicalName: last_name
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        classification: restricted
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: store_id
+        physicalName: store_id
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Unique or foreign key identifier depending on table context. References stores.store_id.
+        relationships:
+          - type: foreignKey
+            to: stores.store_id
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: role
+        physicalName: role
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+          - type: library
+            metric: invalidValues
+            arguments:
+              validValues:
+                - Assistant Manager
+                - Cashier
+                - Customer Service
+                - Online Picker
+                - Stock Assistant
+                - Store Manager
+                - Supervisor
+            mustBe: 0
+            dimension: conformity
+            description: Closed list, as seen in the profile. A new value is a change of this contract.
+      - name: hire_date
+        physicalName: hire_date
+        logicalType: date
+        physicalType: DATE
+        logicalTypeOptions:
+          format: yyyy-MM-dd
+        required: true
+        description: Date/time value in ISO-style format.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: contract_type
+        physicalName: contract_type
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+          - type: library
+            metric: invalidValues
+            arguments:
+              validValues:
+                - Full-time
+                - Part-time
+            mustBe: 0
+            dimension: conformity
+            description: Closed list, as seen in the profile. A new value is a change of this contract.
+      - name: annual_salary
+        physicalName: annual_salary
+        logicalType: integer
+        physicalType: INTEGER
+        required: true
+        classification: restricted
+        description: Currency value in GBP.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+    quality:
+      - type: library
+        metric: duplicateValues
+        arguments:
+          properties:
+            - employee_id
+        mustBe: 0
+        dimension: uniqueness
+        description: The primary key is unique in every delivery.
+      - type: library
+        metric: rowCount
+        mustBeGreaterThan: 0
+        dimension: completeness
+        description: Every delivery has rows.
+  - name: inventory
+    physicalName: inventory.csv
+    physicalType: file
+    description: 528 store-product stock snapshot rows.
+    customProperties:
+      - property: delimiter
+        value: ','
+      - property: quoting
+        value: none
+      - property: encoding
+        value: ascii
+      - property: lineEnding
+        value: CRLF
+      - property: header
+        value: true
+      - property: decimalSeparator
+        value: .
+      - property: nullToken
+        value: ''
+      - property: load
+        value: full
+        description: 'The whole table in every delivery: no change date in the source. Full or changes only is an open point.'
+      - property: deletes
+        value: a definir
+        description: 'No deletion flag: today a deleted row only disappears from the file.'
+    properties:
+      - name: store_id
+        physicalName: store_id
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        primaryKey: true
+        primaryKeyPosition: 1
+        description: Unique or foreign key identifier depending on table context. References stores.store_id.
+        relationships:
+          - type: foreignKey
+            to: stores.store_id
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: product_id
+        physicalName: product_id
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        primaryKey: true
+        primaryKeyPosition: 2
+        description: Unique or foreign key identifier depending on table context. References products.product_id.
+        relationships:
+          - type: foreignKey
+            to: products.product_id
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: stock_on_hand
+        physicalName: stock_on_hand
+        logicalType: integer
+        physicalType: INTEGER
+        required: true
+        description: Integer count or threshold.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: stock_on_order
+        physicalName: stock_on_order
+        logicalType: integer
+        physicalType: INTEGER
+        required: true
+        description: Integer count or threshold.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: last_restock_date
+        physicalName: last_restock_date
+        logicalType: date
+        physicalType: DATE
+        logicalTypeOptions:
+          format: yyyy-MM-dd
+        required: true
+        description: Date/time value in ISO-style format.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: aisle_location
+        physicalName: aisle_location
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+    quality:
+      - type: library
+        metric: duplicateValues
+        arguments:
+          properties:
+            - store_id
+            - product_id
+        mustBe: 0
+        dimension: uniqueness
+        description: The primary key is unique in every delivery.
+      - type: library
+        metric: rowCount
+        mustBeGreaterThan: 0
+        dimension: completeness
+        description: Every delivery has rows.
+      - type: text
+        dimension: accuracy
+        description: stock_on_hand and stock_on_order are 0 or more.
+  - name: order_items
+    physicalName: order_items.csv
+    physicalType: file
+    description: 47512 item-level transaction lines linked to orders and products.
+    customProperties:
+      - property: delimiter
+        value: ','
+      - property: quoting
+        value: none
+      - property: encoding
+        value: ascii
+      - property: lineEnding
+        value: CRLF
+      - property: header
+        value: true
+      - property: decimalSeparator
+        value: .
+      - property: nullToken
+        value: ''
+      - property: load
+        value: full
+        description: 'The whole table in every delivery: no change date in the source. Full or changes only is an open point.'
+      - property: deletes
+        value: a definir
+        description: 'No deletion flag: today a deleted row only disappears from the file.'
+    properties:
+      - name: order_item_id
+        physicalName: order_item_id
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        primaryKey: true
+        primaryKeyPosition: 1
+        unique: true
+        description: Unique or foreign key identifier depending on table context.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+          - type: library
+            metric: invalidValues
+            arguments:
+              pattern: ^OI\d{7}$
+            mustBe: 0
+            dimension: conformity
+            description: The format of the identifier.
+      - name: order_id
+        physicalName: order_id
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Unique or foreign key identifier depending on table context. References orders.order_id.
+        relationships:
+          - type: foreignKey
+            to: orders.order_id
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: product_id
+        physicalName: product_id
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Unique or foreign key identifier depending on table context. References products.product_id.
+        relationships:
+          - type: foreignKey
+            to: products.product_id
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: quantity
+        physicalName: quantity
+        logicalType: integer
+        physicalType: INTEGER
+        required: true
+        description: Integer count or threshold.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: unit_price
+        physicalName: unit_price
+        logicalType: number
+        physicalType: DECIMAL
+        required: true
+        description: Currency value in GBP.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: discount_amount
+        physicalName: discount_amount
+        logicalType: number
+        physicalType: DECIMAL
+        required: true
+        description: Currency value in GBP.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: line_net_amount
+        physicalName: line_net_amount
+        logicalType: number
+        physicalType: DECIMAL
+        required: true
+        description: Currency value in GBP.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: line_vat_amount
+        physicalName: line_vat_amount
+        logicalType: number
+        physicalType: DECIMAL
+        required: true
+        description: Currency value in GBP.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: promotion_id
+        physicalName: promotion_id
+        logicalType: string
+        physicalType: VARCHAR
+        required: false
+        description: Unique or foreign key identifier depending on table context. References promotions.promotion_id, nullable.
+        relationships:
+          - type: foreignKey
+            to: promotions.promotion_id
+    quality:
+      - type: library
+        metric: duplicateValues
+        arguments:
+          properties:
+            - order_item_id
+        mustBe: 0
+        dimension: uniqueness
+        description: The primary key is unique in every delivery.
+      - type: library
+        metric: rowCount
+        mustBeGreaterThan: 0
+        dimension: completeness
+        description: Every delivery has rows.
+      - type: text
+        dimension: accuracy
+        description: 'line_net_amount is net: quantity x unit_price - discount_amount.'
+      - type: text
+        dimension: accuracy
+        description: quantity is greater than 0; unit_price, discount_amount, line_net_amount and line_vat_amount are 0 or
+          more.
+  - name: orders
+    physicalName: orders.csv
+    physicalType: file
+    description: 10000 orders from 2025 with channel, payment method, status, subtotal, VAT, delivery fee, and total.
+    customProperties:
+      - property: delimiter
+        value: ','
+      - property: quoting
+        value: none
+      - property: encoding
+        value: ascii
+      - property: lineEnding
+        value: CRLF
+      - property: header
+        value: true
+      - property: decimalSeparator
+        value: .
+      - property: nullToken
+        value: ''
+      - property: load
+        value: full
+        description: 'The whole table in every delivery: no change date in the source. Full or changes only is an open point.'
+      - property: deletes
+        value: a definir
+        description: 'No deletion flag: today a deleted row only disappears from the file.'
+    properties:
+      - name: order_id
+        physicalName: order_id
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        primaryKey: true
+        primaryKeyPosition: 1
+        unique: true
+        description: Unique or foreign key identifier depending on table context.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+          - type: library
+            metric: invalidValues
+            arguments:
+              pattern: ^ORD\d{6}$
+            mustBe: 0
+            dimension: conformity
+            description: The format of the identifier.
+      - name: order_datetime
+        physicalName: order_datetime
+        logicalType: timestamp
+        physicalType: TIMESTAMP
+        logicalTypeOptions:
+          format: yyyy-MM-dd HH:mm:ss
+        required: true
+        description: Date/time value in ISO-style format.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: store_id
+        physicalName: store_id
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Unique or foreign key identifier depending on table context. References stores.store_id.
+        relationships:
+          - type: foreignKey
+            to: stores.store_id
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: customer_id
+        physicalName: customer_id
+        logicalType: string
+        physicalType: VARCHAR
+        required: false
+        description: Unique or foreign key identifier depending on table context. References customers.customer_id, nullable.
+        relationships:
+          - type: foreignKey
+            to: customers.customer_id
+      - name: order_channel
+        physicalName: order_channel
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+          - type: library
+            metric: invalidValues
+            arguments:
+              validValues:
+                - Click & Collect
+                - In-store
+                - Online
+            mustBe: 0
+            dimension: conformity
+            description: Closed list, as seen in the profile. A new value is a change of this contract.
+      - name: payment_method
+        physicalName: payment_method
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+          - type: library
+            metric: invalidValues
+            arguments:
+              validValues:
+                - Card
+                - Cash
+                - Gift Card
+                - Mobile Wallet
+            mustBe: 0
+            dimension: conformity
+            description: Closed list, as seen in the profile. A new value is a change of this contract.
+      - name: order_status
+        physicalName: order_status
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+          - type: library
+            metric: invalidValues
+            arguments:
+              validValues:
+                - Cancelled
+                - Completed
+                - Refunded
+            mustBe: 0
+            dimension: conformity
+            description: Closed list, as seen in the profile. A new value is a change of this contract.
+      - name: subtotal
+        physicalName: subtotal
+        logicalType: number
+        physicalType: DECIMAL
+        required: true
+        description: Currency value in GBP.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: discount_total
+        physicalName: discount_total
+        logicalType: number
+        physicalType: DECIMAL
+        required: true
+        description: Currency value in GBP.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: vat_total
+        physicalName: vat_total
+        logicalType: number
+        physicalType: DECIMAL
+        required: true
+        description: Currency value in GBP.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: delivery_fee
+        physicalName: delivery_fee
+        logicalType: number
+        physicalType: DECIMAL
+        required: true
+        description: Currency value in GBP.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: total_amount
+        physicalName: total_amount
+        logicalType: number
+        physicalType: DECIMAL
+        required: true
+        description: Currency value in GBP.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+    quality:
+      - type: library
+        metric: duplicateValues
+        arguments:
+          properties:
+            - order_id
+        mustBe: 0
+        dimension: uniqueness
+        description: The primary key is unique in every delivery.
+      - type: library
+        metric: rowCount
+        mustBeGreaterThan: 0
+        dimension: completeness
+        description: Every delivery has rows.
+      - type: text
+        dimension: accuracy
+        description: total_amount = subtotal - discount_total + vat_total + delivery_fee, within 0.01 for rounding, except
+          Cancelled orders.
+      - type: text
+        dimension: accuracy
+        description: 'subtotal is gross: the sum of quantity x unit_price of the order''s items, before discounts.'
+      - type: text
+        dimension: consistency
+        description: A Cancelled order arrives with total_amount 0 and keeps subtotal, VAT and items. Its meaning for revenue
+          is an open point.
+      - type: text
+        dimension: accuracy
+        description: delivery_fee is 0 for In-store and Click & Collect; Online pays 3.49, and 0 when subtotal >= 40.00.
+      - type: text
+        dimension: conformity
+        description: order_datetime has no time zone; the zone is an open point of this contract.
+  - name: products
+    physicalName: products.csv
+    physicalType: file
+    description: 66 supermarket products with category, brand, supplier, cost, price, VAT, and reorder level.
+    customProperties:
+      - property: delimiter
+        value: ','
+      - property: quoting
+        value: none
+      - property: encoding
+        value: ascii
+      - property: lineEnding
+        value: CRLF
+      - property: header
+        value: true
+      - property: decimalSeparator
+        value: .
+      - property: nullToken
+        value: ''
+      - property: load
+        value: full
+        description: 'The whole table in every delivery: no change date in the source. Full or changes only is an open point.'
+      - property: deletes
+        value: a definir
+        description: 'No deletion flag: today a deleted row only disappears from the file.'
+    properties:
+      - name: product_id
+        physicalName: product_id
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        primaryKey: true
+        primaryKeyPosition: 1
+        unique: true
+        description: Unique or foreign key identifier depending on table context.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+          - type: library
+            metric: invalidValues
+            arguments:
+              pattern: ^P\d{4}$
+            mustBe: 0
+            dimension: conformity
+            description: The format of the identifier.
+      - name: product_name
+        physicalName: product_name
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: category
+        physicalName: category
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+          - type: library
+            metric: invalidValues
+            arguments:
+              validValues:
+                - Bakery
+                - Beverages
+                - Dairy & Eggs
+                - Fresh Produce
+                - Frozen
+                - Grocery
+                - Health & Beauty
+                - Household
+                - Meat & Fish
+                - Snacks
+            mustBe: 0
+            dimension: conformity
+            description: Closed list, as seen in the profile. A new value is a change of this contract.
+      - name: brand
+        physicalName: brand
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: supplier_id
+        physicalName: supplier_id
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Unique or foreign key identifier depending on table context. References suppliers.supplier_id.
+        relationships:
+          - type: foreignKey
+            to: suppliers.supplier_id
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: unit_cost
+        physicalName: unit_cost
+        logicalType: number
+        physicalType: DECIMAL
+        required: true
+        description: Currency value in GBP.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: unit_price
+        physicalName: unit_price
+        logicalType: number
+        physicalType: DECIMAL
+        required: true
+        description: Currency value in GBP.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: vat_rate
+        physicalName: vat_rate
+        logicalType: number
+        physicalType: DECIMAL
+        required: true
+        description: UK-style VAT rate or VAT amount depending on column.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: reorder_level
+        physicalName: reorder_level
+        logicalType: integer
+        physicalType: INTEGER
+        required: true
+        description: Integer count or threshold.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: active
+        physicalName: active
+        logicalType: boolean
+        physicalType: BOOLEAN
+        required: true
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+    quality:
+      - type: library
+        metric: duplicateValues
+        arguments:
+          properties:
+            - product_id
+        mustBe: 0
+        dimension: uniqueness
+        description: The primary key is unique in every delivery.
+      - type: library
+        metric: rowCount
+        mustBeGreaterThan: 0
+        dimension: completeness
+        description: Every delivery has rows.
+      - type: text
+        dimension: accuracy
+        description: unit_cost and unit_price are greater than 0; reorder_level is 0 or more.
+  - name: promotions
+    physicalName: promotions.csv
+    physicalType: file
+    description: 6 category-level promotional campaigns.
+    customProperties:
+      - property: delimiter
+        value: ','
+      - property: quoting
+        value: none
+      - property: encoding
+        value: ascii
+      - property: lineEnding
+        value: CRLF
+      - property: header
+        value: true
+      - property: decimalSeparator
+        value: .
+      - property: nullToken
+        value: ''
+      - property: load
+        value: full
+        description: 'The whole table in every delivery: no change date in the source. Full or changes only is an open point.'
+      - property: deletes
+        value: a definir
+        description: 'No deletion flag: today a deleted row only disappears from the file.'
+    properties:
+      - name: promotion_id
+        physicalName: promotion_id
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        primaryKey: true
+        primaryKeyPosition: 1
+        unique: true
+        description: Unique or foreign key identifier depending on table context.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+          - type: library
+            metric: invalidValues
+            arguments:
+              pattern: ^PROMO\d{3}$
+            mustBe: 0
+            dimension: conformity
+            description: The format of the identifier.
+      - name: promotion_name
+        physicalName: promotion_name
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: start_date
+        physicalName: start_date
+        logicalType: date
+        physicalType: DATE
+        logicalTypeOptions:
+          format: yyyy-MM-dd
+        required: true
+        description: Date/time value in ISO-style format.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: end_date
+        physicalName: end_date
+        logicalType: date
+        physicalType: DATE
+        logicalTypeOptions:
+          format: yyyy-MM-dd
+        required: true
+        description: Date/time value in ISO-style format.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: discount_type
+        physicalName: discount_type
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: ''
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+          - type: library
+            metric: invalidValues
+            arguments:
+              validValues:
+                - Fixed
+                - Percentage
+            mustBe: 0
+            dimension: conformity
+            description: Closed list, as seen in the profile. A new value is a change of this contract.
+      - name: discount_value
+        physicalName: discount_value
+        logicalType: number
+        physicalType: DECIMAL
+        required: true
+        description: ''
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: category
+        physicalName: category
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+          - type: library
+            metric: invalidValues
+            arguments:
+              validValues:
+                - Bakery
+                - Beverages
+                - Fresh Produce
+                - Grocery
+                - Meat & Fish
+                - Snacks
+            mustBe: 0
+            dimension: conformity
+            description: Closed list, as seen in the profile. A new value is a change of this contract.
+    quality:
+      - type: library
+        metric: duplicateValues
+        arguments:
+          properties:
+            - promotion_id
+        mustBe: 0
+        dimension: uniqueness
+        description: The primary key is unique in every delivery.
+      - type: library
+        metric: rowCount
+        mustBeGreaterThan: 0
+        dimension: completeness
+        description: Every delivery has rows.
+      - type: text
+        dimension: consistency
+        description: start_date is on or before end_date. discount_value is a percentage when discount_type is Percentage
+          and an amount in GBP when Fixed.
+  - name: stores
+    physicalName: stores.csv
+    physicalType: file
+    description: 8 RYStore branches across UK cities.
+    customProperties:
+      - property: delimiter
+        value: ','
+      - property: quoting
+        value: none
+      - property: encoding
+        value: ascii
+      - property: lineEnding
+        value: CRLF
+      - property: header
+        value: true
+      - property: decimalSeparator
+        value: .
+      - property: nullToken
+        value: ''
+      - property: load
+        value: full
+        description: 'The whole table in every delivery: no change date in the source. Full or changes only is an open point.'
+      - property: deletes
+        value: a definir
+        description: 'No deletion flag: today a deleted row only disappears from the file.'
+    properties:
+      - name: store_id
+        physicalName: store_id
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        primaryKey: true
+        primaryKeyPosition: 1
+        unique: true
+        description: Unique or foreign key identifier depending on table context.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+          - type: library
+            metric: invalidValues
+            arguments:
+              pattern: ^ST\d{3}$
+            mustBe: 0
+            dimension: conformity
+            description: The format of the identifier.
+      - name: store_name
+        physicalName: store_name
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: city
+        physicalName: city
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: region
+        physicalName: region
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: postcode
+        physicalName: postcode
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: store_format
+        physicalName: store_format
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+          - type: library
+            metric: invalidValues
+            arguments:
+              validValues:
+                - Convenience
+                - Large Supermarket
+                - Medium Supermarket
+            mustBe: 0
+            dimension: conformity
+            description: Closed list, as seen in the profile. A new value is a change of this contract.
+      - name: opening_date
+        physicalName: opening_date
+        logicalType: date
+        physicalType: DATE
+        logicalTypeOptions:
+          format: yyyy-MM-dd
+        required: true
+        description: Date/time value in ISO-style format.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: staff_count
+        physicalName: staff_count
+        logicalType: integer
+        physicalType: INTEGER
+        required: true
+        description: Integer count or threshold.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+    quality:
+      - type: library
+        metric: duplicateValues
+        arguments:
+          properties:
+            - store_id
+        mustBe: 0
+        dimension: uniqueness
+        description: The primary key is unique in every delivery.
+      - type: library
+        metric: rowCount
+        mustBeGreaterThan: 0
+        dimension: completeness
+        description: Every delivery has rows.
+  - name: suppliers
+    physicalName: suppliers.csv
+    physicalType: file
+    description: 12 fictional suppliers.
+    customProperties:
+      - property: delimiter
+        value: ','
+      - property: quoting
+        value: none
+      - property: encoding
+        value: ascii
+      - property: lineEnding
+        value: CRLF
+      - property: header
+        value: true
+      - property: decimalSeparator
+        value: .
+      - property: nullToken
+        value: ''
+      - property: load
+        value: full
+        description: 'The whole table in every delivery: no change date in the source. Full or changes only is an open point.'
+      - property: deletes
+        value: a definir
+        description: 'No deletion flag: today a deleted row only disappears from the file.'
+    properties:
+      - name: supplier_id
+        physicalName: supplier_id
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        primaryKey: true
+        primaryKeyPosition: 1
+        unique: true
+        description: Unique or foreign key identifier depending on table context.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+          - type: library
+            metric: invalidValues
+            arguments:
+              pattern: ^SUP\d{3}$
+            mustBe: 0
+            dimension: conformity
+            description: The format of the identifier.
+      - name: supplier_name
+        physicalName: supplier_name
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: main_category
+        physicalName: main_category
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: city
+        physicalName: city
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: postcode
+        physicalName: postcode
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: email
+        physicalName: email
+        logicalType: string
+        physicalType: VARCHAR
+        required: true
+        classification: restricted
+        description: Categorical or descriptive attribute.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+      - name: lead_time_days
+        physicalName: lead_time_days
+        logicalType: integer
+        physicalType: INTEGER
+        required: true
+        description: Integer count or threshold.
+        quality:
+          - type: library
+            metric: nullValues
+            mustBe: 0
+            dimension: completeness
+            description: 'Required: never empty.'
+    quality:
+      - type: library
+        metric: duplicateValues
+        arguments:
+          properties:
+            - supplier_id
+        mustBe: 0
+        dimension: uniqueness
+        description: The primary key is unique in every delivery.
+      - type: library
+        metric: rowCount
+        mustBeGreaterThan: 0
+        dimension: completeness
+        description: Every delivery has rows.

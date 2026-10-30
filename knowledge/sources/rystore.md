@@ -38,9 +38,20 @@ Colunas restritas: `customers.first_name`, `last_name`, `email`, `postcode_area`
 
 Ver o [glossário](../business/glossary.md), que traz as fórmulas de valores, o status dos pedidos, o frete e as promoções.
 
+## Contrato de dados
+
+O rascunho do contrato está em [`contracts/rystore.odcs.yaml`](../../contracts/rystore.odcs.yaml) (skill `contract`, 2026-10-30).
+
+- Segue o ODCS v3.1.0, versão 0.1.0, com `status: draft`, e foi validado contra o JSON Schema do padrão.
+- Colunas, tipos, chaves e descrições vêm da metadata.
+- Define 2 colunas opcionais, 8 colunas `restricted` (PII) e as 9 chaves estrangeiras.
+- As regras de qualidade não usam SQL: são métricas `library` (nulos, duplicados, formato dos IDs e listas de valores) e regras de negócio em texto.
+
+Os campos "a definir" estão na pauta [`contracts/rystore_open_points.md`](../../contracts/rystore_open_points.md), com 19 pontos, para a reunião com o dono da fonte.
+
 ## Pontos em aberto com o dono da fonte
 
-Estão no [registro de decisões](../decisions/decision-log.md): o fuso de `order_datetime`, a semântica de `Cancelled` e `Refunded`, o significado de `signup_date`, se `employees` é completo, as vendas na loja de madrugada e funcionários admitidos antes da abertura da loja.
+Estão na [pauta do contrato](../../contracts/rystore_open_points.md) e no [registro de decisões](../decisions/decision-log.md): o fuso de `order_datetime`, a semântica de `Cancelled` e `Refunded`, o significado de `signup_date`, se `employees` é completo, as vendas na loja de madrugada e funcionários admitidos antes da abertura da loja.
 
 ## Dicionário de dados
 

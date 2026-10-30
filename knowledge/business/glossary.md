@@ -16,7 +16,7 @@ Origem: perfil da fonte RYStore em [`reports/profile/rystore_profile.html`](../.
 ## Valores
 
 - `subtotal` é **bruto**: Σ `quantity` × `unit_price` dos itens, antes do desconto.
-- `total_amount` = `subtotal` − `discount_total` + `vat_total` + `delivery_fee` (exceto `Cancelled`, que tem total 0).
+- `total_amount` = `subtotal` − `discount_total` + `vat_total` + `delivery_fee` (exceto `Cancelled`, que tem total 0). A fórmula fecha com tolerância de 0,01: 98 pedidos diferem em ±0,01 por arredondamento (conferido por script em 2026-10-30, ao escrever o [contrato](../../contracts/rystore.odcs.yaml)).
 - `line_net_amount` é **líquido**: `quantity` × `unit_price` − `discount_amount`.
 - `line_vat_amount` = `line_net_amount` × `products.vat_rate`. O `vat_rate` é 0 ou 0,2 (IVA do Reino Unido).
 - `vat_total` e `discount_total` do pedido são a soma dos itens.

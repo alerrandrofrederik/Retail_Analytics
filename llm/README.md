@@ -23,19 +23,19 @@ Antes do 05: preparação do ambiente (skills da Databricks em `.claude/skills/`
 | [15](prompt_15.md) | Runbook e guias | docs | 07–09 | Concluído ([runbook](../docs/runbook.md), 4 [guias](../docs/guides/)) |
 | [16](prompt_16.md) | Site de documentação | toolkit | 15 | Concluído ([site](../docs/site/index.html), gerador [`tools/site/build_site.py`](../tools/site/build_site.py)) |
 | [17](prompt_17.md) | Atualização do knowledge | knowledge-refresh | 16 | Propostas prontas ([6 propostas](../reports/knowledge-refresh/knowledge_refresh_2026-10-30.html)); aguardam o sim |
-| [18](prompt_18.md) | Modelo: incidente de job | incident | quando um job falhar | Modelo |
-| [19](prompt_19.md) | Modelo: revisão geral e de custo | big-review, cost-review | 1 a 3 meses rodando | Modelo |
+| [18](prompt_18.md) | Modelo: incidente de job | incident | quando um job falhar | Modelo; aplicado à rodada 966981410696310 ([incidente](../reports/incident/incident_2026-10-30_rystore_pipeline.html)); a entrada do log aguarda o sim |
+| [19](prompt_19.md) | Modelo: revisão geral e de custo | big-review, cost-review | 1 a 3 meses rodando | Modelo; ainda sem pré-requisito (1 dia de histórico de consultas, faturamento das rodadas ainda não disponível em 2026-10-30) |
 
 A skill `migration` não tem prompt: o projeto não tem ambiente legado (ver o [registro de decisões](../knowledge/decisions/decision-log.md)).
 
-## Onde paramos (2026-10-30)
+## Onde paramos (2026-10-30, noite)
 
-O pipeline roda no dev em Python puro, sem PySpark: DuckDB e pyarrow sobre Parquet nos volumes `<camada>.files`, publicado no Unity Catalog pelo SQL warehouse. Detalhes em [`knowledge/architecture/pipeline.md`](../knowledge/architecture/pipeline.md).
-
-- **Rodada `173663739566769`:** SUCCESS nas 4 tarefas.
-  - As contagens batem com a fonte: 59.052 linhas na bronze, 0 em quarentena e 33 de 33 checagens aprovadas.
-  - Foi a segunda carga, e a bronze ingeriu 0 arquivos, como esperado.
-- **Executar localmente:** `uv run python scripts/run_pipeline_local.py --out <pasta>`. Roda o mesmo código em cerca de 23 s.
-- **Testes:** dentro de `retail_analytics/`, `uv run --no-project --with pytest --with pyyaml --with duckdb --with pyarrow pytest tests -q`, com 24 testes.
-
-Os achados 1 a 9 da [revisão](../reports/pr-review/pr_review_pipeline_07_09.html) foram corrigidos (31 testes; rodada `498752805931100` com SUCCESS). Continuam abertos o achado 11 (a montagem do ambiente leva cerca de 220 s) e os baixos, de 12 a 16. O prompt 11 (qualidade) também está concluído: os dados estão certos, a gold está "usar com cuidado" porque não tem rodada agendada e passou do SLA, e nenhuma das 38 checagens tem um teste que confira o status com dado ruim. O prompt 12 (reconciliação) deu diferença zero em todos os pares; a armadilha do fuso (agrupar em UTC) ficou registrada no glossário. Próximo passo: prompts 13 a 19.
+- **Prompts 01 a 16:** concluídos.
+- **Prompt 17 (knowledge-refresh):** as [6 propostas](../reports/knowledge-refresh/knowledge_refresh_2026-10-30.html) aguardam o sim do engenheiro de dados.
+- **Prompt 18 (incident):** aplicado à rodada `966981410696310` ([página](../reports/incident/incident_2026-10-30_rystore_pipeline.html)). A entrada no incident-log aguarda o sim.
+- **Prompt 19 (big-review e cost-review):** fica para quando houver histórico.
+  - Hoje há 1 dia de `system.query.history`, e o `system.billing.usage` ainda não traz as rodadas do job.
+  - Rodar depois de 1 a 3 meses do job agendado no prod.
+- **Pendências:**
+  - os pontos em aberto do [decision-log](../knowledge/decisions/decision-log.md): `dim_promocao`, custo histórico, agendamento no prod e as descrições das colunas;
+  - os achados abertos da [revisão 07 a 09](../reports/pr-review/pr_review_pipeline_07_09.html): o 11 e os de 12 a 16.

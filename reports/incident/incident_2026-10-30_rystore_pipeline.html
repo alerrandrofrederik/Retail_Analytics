@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Incidente · rystore_pipeline 2026-10-30</title>
+<style>
+@font-face{font-family:'Bricolage Grotesque';font-weight:600;font-display:block;src:url('fonts/BricolageGrotesque-600.woff2') format('woff2');}
+@font-face{font-family:'Bricolage Grotesque';font-weight:700;font-display:block;src:url('fonts/BricolageGrotesque-700.woff2') format('woff2');}
+@font-face{font-family:'Bricolage Grotesque';font-weight:800;font-display:block;src:url('fonts/BricolageGrotesque-800.woff2') format('woff2');}
+@font-face{font-family:'JetBrains Mono';font-weight:500;font-display:block;src:url('fonts/JetBrainsMono-500.woff2') format('woff2');}
+@font-face{font-family:'JetBrains Mono';font-weight:600;font-display:block;src:url('fonts/JetBrainsMono-600.woff2') format('woff2');}
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#0f0a1e;--ink:#ece7f8;--ink-2:rgba(236,231,248,.66);--ink-3:rgba(236,231,248,.48);--line:rgba(236,231,248,.14);
+  --purple:#8a63f2;--purple-soft:#c9b8ff;--gold:#ffd23f;--red:#ff8a73;--green:#5fe3a1;--plaque:#1a1230;}
+.err,.rowcard,.copy{background:var(--plate);border-color:var(--plate-border);}
+html{background:var(--bg);}
+body{font-family:'Bricolage Grotesque',sans-serif;color:var(--ink);background:var(--bg);font-size:24px;line-height:1.45;-webkit-font-smoothing:antialiased;}
+main{position:relative;z-index:1;max-width:1440px;margin:0 auto;padding:72px 48px 96px;}
+.mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums;}
+.nw{white-space:nowrap;}
+/* head */
+.status{display:flex;align-items:center;gap:16px;margin-top:0;font-family:'JetBrains Mono',monospace;font-weight:600;font-size:20px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);}
+
+h1{margin-top:16px;font-size:68px;font-weight:800;letter-spacing:-.022em;line-height:1.04;}
+.lead{margin-top:22px;font-size:28px;line-height:1.4;color:var(--ink);max-width:1180px;}
+/* the summary: nine facts, a grid that reads as a table */
+.facts{display:grid;grid-template-columns:repeat(3,1fr);margin-top:40px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+.fact{padding:24px 28px 24px 0;border-bottom:1px solid var(--line);}
+.fact:nth-child(3n+2),.fact:nth-child(3n+3){border-left:1px solid var(--line);padding-left:28px;}
+.fact:nth-last-child(-n+3){border-bottom:0;}
+.fact .v{text-wrap:balance;}
+.fact svg{width:36px;height:36px;color:var(--purple-soft);margin-top:-4px;}
+.fact svg *{fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+.fact .l{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:20px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);}
+.fact .v{margin-top:8px;font-size:28px;font-weight:700;line-height:1.2;color:var(--ink);letter-spacing:-.01em;}
+.fact .v .mono{font-size:25px;font-weight:600;color:var(--purple-soft);}
+/* the severity meter: three steps, the lit one carries the state */
+.meter{display:inline-flex;align-items:flex-end;gap:5px;height:26px;margin-left:14px;vertical-align:baseline;}
+.meter i{display:block;width:14px;border-radius:3px 3px 2px 2px;background:rgba(236,231,248,.32);}
+.meter i:nth-child(1){height:8px;} .meter i:nth-child(2){height:17px;} .meter i:nth-child(3){height:26px;}
+.meter.red i:nth-child(3){background:var(--red);}
+.meter.held i:nth-child(2){background:var(--purple);}
+.meter.green i:nth-child(1){background:var(--purple-soft);}
+.fact .v.sev b{color:var(--red);font-weight:700;}
+.fact .v.sev .top{display:flex;align-items:baseline;}
+/* sections */
+section{margin-top:72px;}
+section.map svg{display:block;width:100%;height:auto;margin-top:0;}
+section > header{display:flex;align-items:baseline;gap:22px;padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:26px;}
+section > header .n{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:22px;color:var(--purple-soft);letter-spacing:.1em;}
+section > header h2{font-size:40px;font-weight:700;letter-spacing:-.015em;line-height:1.1;}
+p{max-width:1180px;}
+p,.lead,.row .b,.row .b small,ul.bul li{text-wrap:pretty;}
+/* rows, in the language of the deck */
+.rows{display:grid;row-gap:0;}
+.row{display:grid;grid-template-columns:200px minmax(0,1fr) 180px;column-gap:28px;align-items:baseline;padding:16px 0;border-bottom:1px solid var(--line);}
+.row:last-child{border-bottom:0;}
+.row .a{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:21px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);}
+.row .b{font-size:24px;color:var(--ink);}
+.row .b small{display:block;font-size:21px;color:var(--ink-2);margin-top:4px;}
+.row .b .mono,.row .b small .mono{color:var(--purple-soft);font-size:22px;}
+.row .c{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:22px;text-align:right;color:var(--ink-2);}
+.row .c.bad{color:var(--red);} .row .c.ok{color:var(--ink-2);}
+.row .c:empty{display:none;} .row:has(.c:empty) .b{grid-column:2/4;}
+/* the error as printed */
+.err{position:relative;margin-top:44px;padding:30px 34px 28px;background:var(--plaque);border:1px solid var(--line);border-radius:14px;}
+.err .tag.draft,.rowcard .tag.draft{position:absolute;left:34px;top:-18px;background:var(--bg);color:var(--ink-2);border:1px solid var(--line);border-radius:8px;padding:5px 12px;font-family:'JetBrains Mono',monospace;font-weight:600;font-size:20px;letter-spacing:.14em;text-transform:uppercase;}
+.err button.tag{position:absolute;right:34px;top:18px;cursor:pointer;background:transparent;font-family:'JetBrains Mono',monospace;font-weight:600;font-size:20px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);border:1px solid var(--line);border-radius:8px;padding:5px 12px;}
+.err button.tag:hover{color:var(--ink);border-color:var(--ink-3);} .err button.tag.done{color:var(--green);border-color:rgba(95,227,161,.5);}
+.err pre{font-family:'JetBrains Mono',monospace;font-variant-ligatures:none;font-weight:500;font-size:22px;line-height:1.55;color:var(--ink);white-space:pre-wrap;word-break:break-word;}
+.err pre b{color:var(--red);font-weight:600;}
+/* a row of the 18th beside a row of the 19th */
+.rows2{display:grid;grid-template-columns:1fr 1fr;column-gap:32px;margin:36px 0 0;}
+.cause{font-size:30px;line-height:1.35;color:var(--ink);max-width:1180px;}
+.cause .mono{font-size:27px;color:var(--purple-soft);}
+.rowcard{position:relative;background:var(--plaque);border:1px solid var(--line);border-radius:14px;padding:30px 34px 22px;}
+.rowcard pre{font-family:'JetBrains Mono',monospace;font-variant-ligatures:none;font-weight:500;font-size:22px;line-height:1.6;color:var(--ink-2);white-space:pre-wrap;word-break:break-word;}
+.rowcard pre .was{color:var(--ink);font-weight:600;border-bottom:3px solid var(--red);}
+.rowcard pre .new{color:var(--purple-soft);font-weight:600;}
+.rowcard pre .add{color:var(--purple-soft);font-weight:600;}
+/* seen before: the counter card and the closest */
+.seen{display:grid;grid-template-columns:272px minmax(0,1fr);column-gap:0;}
+.count{padding:4px 40px 4px 0;}
+.count .k,.closest .k{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:20px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);}
+.count .n0{margin-top:10px;font-size:48px;font-weight:800;letter-spacing:-.03em;line-height:1;color:var(--ink);}
+.closest{padding:4px 0 4px 40px;border-left:1px solid var(--line);}
+.closest .tags{margin:0 0 14px;}
+.pill.id{color:var(--purple-soft);border-color:rgba(201,184,255,.45);}
+
+.closest h3{margin-top:10px;font-size:30px;font-weight:700;letter-spacing:-.01em;line-height:1.2;color:var(--ink);}
+.closest h3 .mono{font-size:28px;color:var(--purple-soft);font-weight:600;}
+.closest p{margin-top:14px;font-size:24px;line-height:1.45;color:var(--ink-2);max-width:900px;}
+/* bullets, the workaround and the solutions */
+ul.bul{list-style:none;display:grid;row-gap:12px;max-width:1180px;}
+ul.bul li{position:relative;padding-left:34px;font-size:24px;line-height:1.45;color:var(--ink);}
+ul.bul li::before{content:'';position:absolute;left:4px;top:15px;width:9px;height:9px;border-radius:50%;background:var(--purple);}
+ul.bul li .mono{font-size:23px;color:var(--purple-soft);}
+.sol{padding:26px 0 30px;border-bottom:1px solid var(--line);}
+.sol:first-of-type{padding-top:0;}
+.sol:last-child{border-bottom:0;padding-bottom:0;}
+.sol .meta{display:flex;gap:16px;align-items:baseline;font-family:'JetBrains Mono',monospace;font-weight:600;font-size:20px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);}
+.sol h3{margin:10px 0 0;font-size:34px;font-weight:700;letter-spacing:-.015em;line-height:1.15;color:var(--ink);}
+.tags{display:flex;gap:12px;margin:8px 0 26px;}
+.pill{display:inline-flex;align-items:center;gap:9px;padding:5px 12px;line-height:1;border-radius:8px;border:1px solid rgba(236,231,248,.4);font-family:'JetBrains Mono',monospace;font-weight:600;font-size:20px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);}
+.pill svg{color:var(--purple-soft);} .pill svg *{fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;}
+.pill.gold{color:var(--bg);background:var(--gold);border-color:var(--gold);}
+.sol.pick h3{color:#fff;}
+/* copy-paste blocks */
+.copy{position:relative;margin-top:44px;background:var(--plaque);border:1px solid var(--line);border-radius:14px;padding:30px 34px 32px;}
+.copy button.tag{cursor:pointer;background:transparent;font:inherit;}
+.copy button.tag:hover{color:var(--ink);border-color:var(--ink-3);}
+.copy button.tag.done{color:var(--green);border-color:rgba(95,227,161,.5);}
+.copy .tag{position:absolute;right:34px;top:18px;font-family:'JetBrains Mono',monospace;font-weight:600;font-size:20px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);border:1px solid var(--line);border-radius:8px;padding:5px 12px;}
+.copy .tag.draft{color:var(--ink-2);border-color:var(--line);right:auto;left:34px;top:-18px;background:var(--bg);}
+.effort{margin:10px 0 22px;font-family:'JetBrains Mono',monospace;font-weight:600;font-size:20px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);}
+.effort b{color:var(--gold);font-weight:600;}
+.copy pre{font-family:'JetBrains Mono',monospace;font-variant-ligatures:none;font-weight:500;font-size:22px;line-height:1.55;color:var(--ink);white-space:pre-wrap;word-break:break-word;}
+.copy pre b{font-weight:600;color:var(--purple-soft);}
+.copy + .copy{margin-top:56px;}
+.copy h3{font-size:24px;font-weight:700;margin-bottom:14px;color:var(--ink);}
+.copy h3.path{font-weight:500;font-size:22px;color:var(--purple-soft);}
+
+
+/* the head: title with severity, the map, three blocks, the error */
+.sevtag{display:inline-flex;align-items:center;vertical-align:middle;margin-left:18px;padding:6px 14px;line-height:1;border-radius:10px;border:2px solid var(--red);color:var(--red);background:rgba(255,138,115,.08);font-family:'JetBrains Mono',monospace;font-weight:700;font-size:24px;letter-spacing:.14em;text-transform:uppercase;position:relative;top:-6px;}
+.map0{margin-top:40px;}
+.map0 svg{display:block;width:100%;height:auto;}
+.fbs{margin-top:34px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;align-items:stretch;}
+.fb{border:1px solid var(--plate-border);border-radius:16px;background:var(--plate);padding:20px 24px 14px;}
+.fh{font-family:'JetBrains Mono',monospace;font-weight:600;font-size:20px;letter-spacing:.14em;text-transform:uppercase;color:var(--purple-soft);padding-bottom:12px;border-bottom:1px solid var(--line);}
+.fr{display:grid;grid-template-columns:132px minmax(0,1fr);column-gap:14px;align-items:baseline;padding:11px 0;border-bottom:1px solid rgba(173,150,255,.1);}
+.fr:last-child{border-bottom:0;}
+.fl{font-family:'JetBrains Mono',monospace;font-size:18px;color:var(--ink-3);}
+.fv{font-size:22px;font-weight:700;line-height:1.3;color:var(--ink);}
+.fv .mono{font-size:20px;font-weight:600;color:var(--purple-soft);}
+.err0{margin-top:40px;}
+</style>
+</head>
+<body>
+<main>
+  <div class="status">relatório de incidente <span class="pill id">2026-10-30</span></div>
+  <h1>A publicação falhou e a silver ficou pela metade. <span class="sevtag">média</span></h1>
+  <div class="map0"><svg viewBox="0 96 1344 98" width="1344" height="98" font-family="'Bricolage Grotesque',sans-serif">
+      <rect class="nd" x="0" y="100" width="188" height="90" rx="14"/><text class="t" x="94" y="138">ingest_bronze</text><text class="s" x="94" y="170">737 arquivos, ok</text>
+      <rect class="nd" x="289" y="100" width="188" height="90" rx="14"/><text class="t" x="383" y="138">build_silver</text><text class="s" x="383" y="170">falhou 1x, ok na 2ª</text>
+      <rect class="nd" x="578" y="100" width="188" height="90" rx="14"/><text class="t" x="672" y="138">build_gold</text><text class="s" x="672" y="170">8 tabelas, ok</text>
+      <rect class="nd bad" x="867" y="100" width="188" height="90" rx="14"/><text class="t" x="961" y="138">publish</text><text class="s bad" x="961" y="170">falhou 17:31 e 17:35</text>
+      <rect class="nd dim" x="1156" y="100" width="188" height="90" rx="14"/><text class="t dim" x="1250" y="138">Unity Catalog</text><text class="s dim" x="1250" y="170">17 de 30 tabelas</text>
+      <line class="ln" x1="188" y1="145" x2="289" y2="145"/><circle class="g" cx="238.5" cy="145" r="12" stroke="rgba(236,231,248,.5)"/>
+      <line class="ln" x1="477" y1="145" x2="578" y2="145"/><circle class="g" cx="527.5" cy="145" r="12" stroke="rgba(236,231,248,.5)"/>
+      <line class="ln" x1="766" y1="145" x2="867" y2="145"/><line class="ln dim" x1="1055" y1="145" x2="1156" y2="145"/>
+    </svg></div>
+  <div class="fbs"><div class="fb"><div class="fh">Onde</div><div class="fr"><span class="fl">job</span><span class="fv"><span class="mono">rystore_pipeline</span> (dev)</span></div><div class="fr"><span class="fl">rodada</span><span class="fv"><span class="mono">966981410696310</span></span></div><div class="fr"><span class="fl">tarefa</span><span class="fv"><span class="mono">publish</span> (e 1x <span class="mono">build_silver</span>)</span></div><div class="fr"><span class="fl">arquivo</span><span class="fv"><span class="mono">src/jobs/publish.py:31</span></span></div><div class="fr"><span class="fl">tabela</span><span class="fv"><span class="mono">silver.orders</span></span></div></div><div class="fb"><div class="fh">Quando</div><div class="fr"><span class="fl">início</span><span class="fv"><span class="nw">2026-10-30</span> 17:22 UTC</span></div><div class="fr"><span class="fl">falhou</span><span class="fv">17:31 e 17:35 UTC</span></div><div class="fr"><span class="fl">já houve</span><span class="fv">não; 1 incidente antes, outra causa</span></div><div class="fr"><span class="fl">impacto</span><span class="fv">dev, nenhum consumidor</span></div></div><div class="fb"><div class="fh">Status</div><div class="fr"><span class="fl">causa raiz</span><span class="fv">tabela Delta antiga sem <span class="mono">timestampNtz</span></span></div><div class="fr"><span class="fl">status</span><span class="fv">resolvido em <span class="nw">2026-10-30</span></span></div><div class="fr"><span class="fl">prova</span><span class="fv">rodadas <span class="mono">173663739566769</span> e <span class="mono">498752805931100</span> com SUCCESS</span></div></div></div>
+  <div class="err0"><div class="err">
+      <span class="tag draft">mensagem de erro</span>
+<pre>publish  FAILED  tentativa 0 (17:31) e tentativa 1 (17:35)
+<b>RuntimeError: CREATE OR REPLACE TABLE `lh_retail_analytics`.`silver`.`orders`
+  AS SELECT * FROM parquet.`/Volumes/lh_retail_analytics/silver/files/orders`
+[DELTA_FEATURES_REQUIRE_MANUAL_ENABLEMENT] Your table schema requires manually
+enablement of the following table feature(s): timestampNtz.</b>
+
+build_silver  FAILED  tentativa 0 (17:29), SUCCESS na tentativa 1
+<b>IOException: IO Error: Async write failed for range [offset=669, size=1521]:
+Could not write file "/Volumes/lh_retail_analytics/silver/files/promotions/part-0.parquet": Input/output error</b></pre>
+    </div></div>
+
+  <section>
+    <header><span class="n">01</span><h2>O que aconteceu, camada por camada</h2></header>
+    <ul class="bul">
+      <li><b>ingest_bronze</b> (17:22–17:28): 737 arquivos, 59.052 linhas, 0 em quarentena. Montagem do ambiente: 205 s.</li>
+      <li><b>build_silver</b>, tentativa 0 (17:28–17:29): falhou ao gravar <span class="mono">silver/files/promotions/part-0.parquet</span> no volume. A nova tentativa automática (17:29) passou com as 33 checagens aprovadas.</li>
+      <li><b>build_gold</b> (17:29): 8 tabelas, com as contagens certas.</li>
+      <li><b>publish</b>, tentativas 0 e 1: publicou as 11 tabelas da bronze e 6 da silver (<span class="mono">_checks</span>, <span class="mono">_quarantine</span>, <span class="mono">customers</span>, <span class="mono">employees</span>, <span class="mono">inventory</span> e <span class="mono">order_items</span>) e parou em <span class="mono">silver.orders</span>. Ficaram sem publicar <span class="mono">silver.orders</span>, <span class="mono">products</span>, <span class="mono">promotions</span>, <span class="mono">stores</span>, <span class="mono">suppliers</span> e as 8 tabelas da gold. A nova tentativa gastou mais 145 s montando o ambiente e falhou igual.</li>
+    </ul>
+  </section>
+
+  <section>
+    <header><span class="n">02</span><h2>Causa raiz</h2></header>
+    <p class="cause">A tabela <span class="mono">silver.orders</span> já existia: foi criada pela versão em PySpark na rodada cancelada (<span class="mono">719373279280521</span>), com o protocolo Delta sem o recurso <span class="mono">timestampNtz</span>. A versão em Python puro grava <span class="mono">order_datetime_local</span> como hora local sem fuso, que o Databricks lê como <span class="mono">TIMESTAMP_NTZ</span>. Um <span class="mono">CREATE OR REPLACE</span> sobre uma tabela existente mantém o protocolo antigo e recusa a coluna nova. As outras 17 tabelas publicadas não têm coluna sem fuso. A gold, que também tem essa coluna (<span class="mono">fato_pedidos</span>), ainda não existia, e numa tabela nova o recurso é ligado sozinho [med]. A segunda falha, na silver, foi do volume: o DuckDB grava o Parquet em blocos fora de ordem, e o volume montado recusou um deles.</p>
+    <div class="rows2">
+      <div class="rowcard"><span class="tag draft">antes · silver.orders (PySpark)</span>
+<pre>order_datetime_local   <span class="was">TIMESTAMP</span>
+order_datetime_utc     TIMESTAMP
+delta.feature.*        sem <span class="was">timestampNtz</span></pre></div>
+      <div class="rowcard"><span class="tag draft">depois · Parquet da silver (DuckDB)</span>
+<pre>order_datetime_local   <span class="new">TIMESTAMP_NTZ</span>
+order_datetime_utc     TIMESTAMP (UTC)
+<span class="add">exige delta.feature.timestampNtz = supported</span></pre></div>
+    </div>
+  </section>
+
+  <section>
+    <header><span class="n">03</span><h2>Já aconteceu antes</h2></header>
+    <div class="seen">
+      <div class="count"><div class="k">Ocorrências</div><div class="n0">0</div></div>
+      <div class="closest">
+        <div class="tags"><span class="pill"><span class="nw">2026-10-30</span></span><span class="pill">rystore_pipeline</span></div>
+        <h3>A primeira execução, abortada por lentidão</h3>
+        <p>É a única entrada do <a class="mono" href="../../knowledge/incidents/incident-log.md">incident-log</a>, com outra causa: a versão em PySpark era lenta, e foi a troca dela que deixou as tabelas antigas que causaram este incidente.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <header><span class="n">04</span><h2>Contorno</h2></header>
+    <ul class="bul">
+      <li>No dev ainda não há consumidores (<span class="mono">system.query.history</span> só mostra o engenheiro de dados), então ninguém leu as tabelas pela metade.</li>
+      <li>Se houvesse: rodar só a <span class="mono">publish</span> depois da correção (<span class="mono">databricks bundle run rystore_pipeline -p pessoal --only publish</span>), porque os Parquet da silver e da gold já estavam certos.</li>
+    </ul>
+  </section>
+
+  <section>
+    <header><span class="n">05</span><h2>Soluções</h2></header>
+    <div class="sol pick">
+      <div class="meta"><span class="no">Solução 1</span></div>
+      <h3>Ligar o recurso no CREATE e gravar o Parquet fora do volume</h3>
+      <div class="effort">1 hora · <b>recomendada, aplicada</b></div>
+      <ul class="bul">
+        <li><span class="mono">publish.py</span>: <span class="mono">TBLPROPERTIES ('delta.feature.timestampNtz' = 'supported')</span> em todo <span class="mono">CREATE OR REPLACE</span>. A hora local continua sem fuso, como manda o contrato.</li>
+        <li><span class="mono">silver._copy</span>: o DuckDB grava num arquivo temporário local, copiado inteiro para o volume.</li>
+        <li>Já aplicada (commit <span class="mono">5ed9235</span>) e confirmada nas rodadas <span class="mono">173663739566769</span> e <span class="mono">498752805931100</span>. Depois, a publicação passou a ter duas fases (achado 6 da revisão 07 a 09).</li>
+      </ul>
+    </div>
+    <div class="sol">
+      <div class="meta"><span class="no">Solução 2</span></div>
+      <h3>Publicar a hora local como texto ou com fuso</h3>
+      <div class="effort">2 horas</div>
+      <ul class="bul">
+        <li>Gravar <span class="mono">order_datetime_local</span> como <span class="mono">TIMESTAMP</span> com fuso ou como texto, para não precisar de <span class="mono">TIMESTAMP_NTZ</span>.</li>
+        <li>Contra: uma hora local com fuso UTC engana quem consulta (a armadilha da reconciliação), e texto perde o tipo. Por isso não é a recomendada.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <header><span class="n">06</span><h2>Riscos futuros</h2></header>
+    <ul class="bul">
+      <li>Toda coluna nova sem fuso já está coberta: a propriedade vale para todas as 30 tabelas da <span class="mono">publish</span>.</li>
+      <li>Toda gravação do DuckDB num volume passa por <span class="mono">silver._copy</span>: as tabelas da silver, a quarentena, as checagens e a gold (<span class="mono">gold.build</span> usa <span class="mono">silver._write</span>).</li>
+      <li>A bronze grava com pyarrow direto no volume, em sequência, e não falhou em 4 rodadas [med]. Se falhar, a correção é a mesma.</li>
+      <li>Uma nova tentativa automática remonta o ambiente (145 s nesta rodada); ver o achado 11 da revisão.</li>
+    </ul>
+  </section>
+
+  <section>
+    <header><span class="n">07</span><h2>Rascunhos de e-mail</h2></header>
+    <div class="copy">
+      <span class="tag draft">rascunho · não enviado</span>
+      <button class="tag" type="button" data-copy>copiar</button>
+      <h3>Para os consumidores</h3>
+<pre><b>Para:</b>    analistas da gold RYStore (ainda não há consumidores no dev)
+<b>Assunto:</b> Tabelas da RYStore incompletas no dev entre 17:31 e 17:42 UTC de 2026-10-30
+
+Olá,
+
+Na rodada das 17:22 UTC de 2026-10-30, a publicação das tabelas no catálogo
+lh_retail_analytics parou no meio. Entre 17:31 e 17:42 UTC, a bronze e parte
+da silver estavam na versão nova, mas silver.orders, products, promotions,
+stores, suppliers e a gold não.
+
+O que foi afetado: consultas que cruzassem a silver nesse intervalo.
+O que não foi afetado: os números; a rodada seguinte (173663739566769, de
+17:35 a 17:42 UTC) publicou tudo de novo, e a reconciliação com a fonte deu
+diferença zero.
+Desde então: a publicação só troca as tabelas quando todas estão prontas.
+
+Engenharia de dados</pre>
+    </div>
+    <div class="copy">
+      <span class="tag draft">rascunho · não enviado</span>
+      <button class="tag" type="button" data-copy>copiar</button>
+      <h3>Para o dono da fonte</h3>
+<pre><b>Para:</b>    o dono da fonte RYStore
+<b>Assunto:</b> Falha no pipeline de 2026-10-30: nada a fazer do seu lado
+
+Olá,
+
+A rodada de 2026-10-30 às 17:22 UTC falhou na publicação das tabelas, por uma
+causa interna da plataforma (uma tabela antiga sem um recurso do Delta). A
+entrega da RYStore estava dentro do contrato 1.0.0: 737 arquivos e 59.052
+linhas, nenhuma em quarentena.
+
+Não precisamos de reenvio nem de nenhuma mudança.
+
+Obrigado,
+Engenharia de dados</pre>
+    </div>
+  </section>
+
+  <section>
+    <header><span class="n">08</span><h2>Entrada do registro</h2></header>
+    <div class="copy">
+      <span class="tag draft">entrada · rascunho, escrita só depois do sim</span>
+      <h3 class="mono path">knowledge/incidents/incident-log.md</h3>
+<pre>## 2026-10-30: rystore_pipeline: publish falhou em silver.orders (timestampNtz)
+
+- Erro: na rodada 966981410696310, a publish falhou duas vezes com
+  DELTA_FEATURES_REQUIRE_MANUAL_ENABLEMENT (timestampNtz) ao recriar
+  silver.orders. A build_silver tinha falhado uma vez antes, com um erro de E/S
+  do volume (Async write failed), e passou na nova tentativa automática.
+- Causa raiz: silver.orders vinha da versão em PySpark, com o protocolo Delta sem
+  timestampNtz, e o CREATE OR REPLACE mantém o protocolo. O DuckDB grava o
+  Parquet fora de ordem, o que o volume montado às vezes recusa.
+- Impacto: no dev, de 17:31 a 17:42 UTC, 17 das 30 tabelas estavam na versão nova
+  e as outras não (a gold ainda não existia). Nenhum consumidor.
+- Ação: TBLPROPERTIES delta.feature.timestampNtz em todo CREATE da publish, e
+  gravação via arquivo temporário (silver._copy), no commit 5ed9235. Depois, a
+  publish em duas fases (b6e5f95).
+- Status: resolvido em 2026-10-30
+  (rodadas 173663739566769 e 498752805931100).</pre>
+    </div>
+  </section>
+
+</main>
+<script>
+document.querySelectorAll('[data-copy]').forEach(function(b){
+  b.addEventListener('click',function(){
+    var pre=b.parentElement.querySelector('pre'); var txt=pre.innerText;
+    function done(){b.textContent='copied';b.classList.add('done');setTimeout(function(){b.textContent='copy';b.classList.remove('done');},1600);}
+    if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(txt).then(done,fallback);}else{fallback();}
+    function fallback(){var ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done();}catch(e){}document.body.removeChild(ta);}
+  });
+});
+</script>
+</body>
+</html>

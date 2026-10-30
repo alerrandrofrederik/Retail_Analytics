@@ -1,6 +1,6 @@
 # Retail Analytics: Gestão de Vendas e Estoque
 
-Projeto de análise de dados de varejo construído sobre o banco **RYStore**. O objetivo é montar um pipeline que sai dos arquivos CSV originais, passa por um banco PostgreSQL no Supabase e chega a um modelo dimensional pronto para indicadores de vendas, estoque e inteligência de negócio.
+Projeto de análise de dados de varejo construído sobre o banco **RYStore**. O objetivo é montar um pipeline que sai dos arquivos CSV originais, passa pelo Supabase (o OLTP simulado da empresa) e chega a um lakehouse no Databricks, em arquitetura medalhão, com um modelo dimensional pronto para indicadores de vendas, estoque e inteligência de negócio.
 
 > **Fonte dos dados:** [RYStore Retail Dataset](https://github.com/ryanariefe/RYStore-Retail-Dataset)
 
@@ -19,16 +19,26 @@ Projeto de análise de dados de varejo construído sobre o banco **RYStore**. O 
 
 ## Arquitetura do pipeline
 
+O **Supabase** simula o sistema transacional (OLTP) da empresa e é a origem dos dados. O **Databricks** é a plataforma de dados: lá construímos o lakehouse em arquitetura medalhão, no catálogo `lh_retail_analytics`.
+
 ```
-┌──────────────┐     ┌──────────────────────┐     ┌─────────────────────┐     ┌────────────────┐
-│ Arquivos CSV │ ──▶ │ Supabase PostgreSQL  │ ──▶ │     ETL com SQL     │ ──▶ │ Chat Genie One │
-│ dados brutos │     │ importação e staging │     │ limpeza, transforma-│     │                │
-│              │     │                      │     │ ção e modelagem     │     │                │
-└──────────────┘     └──────────────────────┘     └─────────────────────┘     └────────────────┘
+┌──────────────┐   ┌───────────────────┐   ┌──────────────────────────── Databricks ─────────────────────────────┐   ┌──────────┐
+│ Arquivos CSV │──▶│ Supabase          │──▶│ notebook Python ──▶ bronze ──▶ silver ──▶ gold                      │──▶│ Consumo  │
+│ RYStore      │   │ OLTP + Storage S3 │   │ (boto3)            brutos     limpos     modelo dimensional         │   │ (Genie)  │
+└──────────────┘   └───────────────────┘   └─────────────────────────────────────────────────────────────────────┘   └──────────┘
 ```
 
-| Etapa | Responsabilidade |
-|---|---|
+| Etapa | Onde | Responsabilidade |
+|---|---|---|
+| **Fonte** | Arquivos CSV | Dados originais do RYStore |
+| **Origem (OLTP)** | Supabase | Banco transacional simulado da empresa; arquivos expostos pela API compatível com S3 do Supabase Storage |
+| **Ingestão** | Databricks, notebook Python | Lê o Supabase com `boto3`, com as credenciais do `.env` guardadas nos *secrets* do Databricks, e grava no volume `bronze.raw` |
+| **Bronze** | `lh_retail_analytics.bronze` | Dados como chegam da origem, sem regra de negócio |
+| **Silver** | `lh_retail_analytics.silver` | Dados limpos, tipados e integrados |
+| **Gold** | `lh_retail_analytics.gold` | Modelo dimensional pronto para indicadores |
+| **Consumo** | Chat Genie One | Consumo e análise dos dados modelados |
+
+---|---|
 | **Arquivos CSV** | Dados originais do RYStore |
 | **Supabase PostgreSQL** | Importação dos CSVs para tabelas de *staging* |
 | **ETL com SQL** | Limpeza, transformação e modelagem dimensional |
@@ -54,7 +64,7 @@ lojas
        └── categorias
 ```
 
-### Modelo dimensional (PostgreSQL)
+### Modelo dimensional (camada gold)
 
 | Tabela | Tipo | Finalidade |
 |---|---|---|
@@ -188,8 +198,19 @@ Retail_Analytics/
 │   └── <nome>/
 │       ├── SKILL.md      # passos, entradas, saídas e limites da skill
 │       └── references/   # exemplos e modelos usados pela skill
+├── knowledge/        # conhecimento do projeto, uma página por assunto
+│   ├── architecture/     # plataforma, ambientes e camadas
+│   ├── business/         # glossário e regras de negócio
+│   ├── decisions/        # decisões tomadas e em aberto
+│   ├── incidents/        # registro de incidentes
+│   └── sources/          # uma página por fonte de dados
+├── reports/          # relatórios gerados (ex.: perfil de dados da fonte)
+├── llm/              # prompts usados com o Claude Code
+├── RYStore-Retail-Dataset/  # arquivos da fonte RYStore
 └── README.md
 ```
+
+Tudo o que o projeto aprende (fatos das fontes, regras de negócio, decisões, incidentes) fica em [`knowledge/`](knowledge/README.md).
 
 <details>
 <summary>Como este projeto foi criado</summary>

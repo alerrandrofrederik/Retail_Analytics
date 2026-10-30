@@ -38,8 +38,21 @@ The skills live in the `skills/` folder at the root of the repo, one folder per 
 - `knowledge-refresh`: the knowledge of the project against the code and the data, as proposals.
 - `migration`: an old estate inventoried, rated and planned into waves.
 
+# Knowledge
+
+Todo conhecimento aprendido no projeto fica em `knowledge/`, uma página por assunto na subpasta do tema. O índice é [`knowledge/README.md`](knowledge/README.md).
+
+- `architecture/`: plataforma, ambientes, camadas, onde cada coisa vive.
+- `business/`: glossário, regras de negócio, stakeholders.
+- `decisions/`: registro de decisões, tomadas e em aberto.
+- `incidents/`: registro de incidentes.
+- `sources/`: uma página por fonte de dados.
+
+Leia a página do assunto antes de decidir. Ao aprender algo novo (um fato da fonte, uma regra, uma decisão, um incidente), atualize a página existente ou crie uma na subpasta certa e liste-a no índice. Cite a origem de cada fato e linke os relatórios em `reports/` em vez de copiar números. Nada de e-mails, URLs de workspace ou dados pessoais: o repositório é público.
+
 ## Databricks
 
 - Sempre usar o perfil **`pessoal`** do Databricks CLI neste projeto: passe `-p pessoal` (ou `--profile pessoal`) em todo comando `databricks`.
 - Nunca usar o perfil `DEFAULT`: ele pertence a outro workspace/conta.
 - Sempre trabalhar no catálogo **`lh_retail_analytics`** do Unity Catalog. Criar schemas, tabelas, volumes e demais objetos do projeto dentro dele e nunca em outros catálogos do workspace.
+- Schemas, volumes e detalhes do acesso: [`knowledge/architecture/databricks.md`](knowledge/architecture/databricks.md).
